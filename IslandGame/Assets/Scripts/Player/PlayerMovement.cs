@@ -4,8 +4,12 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    public float walkSpeed = 3f;
+    public float walkSpeed = 3f, brakeTime = 0.5f, acceleration = 2f, expectedSpeed = 0f;
     public Camera playerCamera;
+
+    private Vector3 lastDirection;
+
+    public Vector3 pointDirection;
 	
 	// Update is called once per frame
 	void Update ()
@@ -25,10 +29,38 @@ public class PlayerMovement : MonoBehaviour
             Quaternion cameraQuat = Quaternion.LookRotation(cameraFoward, Vector3.up);
 
             //Move the character in the direction of the camera
-            Vector3 input = cameraQuat * new Vector3(hori, 0f, -verti) * walkSpeed;
+            Vector3 input = new Vector3(hori, 0f, -verti).normalized;
 
-            Vector3 acceleration = (Vector3.Scale(input, new Vector3(1f, 0f, 1f)) - Vector3.Scale(rigidbody.velocity, new Vector3(1f, 0f, 1f))) / Time.fixedDeltaTime;
-            rigidbody.AddForce(acceleration, ForceMode.Acceleration);
+            Vector2 inputAmount = new Vector2(hori, verti);
+            float moveAmount = Mathf.Clamp(inputAmount.magnitude, 0f, 1f);
+
+            if (moveAmount == 0)
+            {
+                float cacceleration = -expectedSpeed / brakeTime;
+                expectedSpeed += (cacceleration * Time.fixedDeltaTime);
+
+                if (Mathf.Abs(expectedSpeed) <= 0.1f)
+                    expectedSpeed = 0;
+
+                input = lastDirection;
+            }
+            else
+            {            
+                expectedSpeed += (moveAmount * acceleration) * Time.fixedDeltaTime;
+                expectedSpeed = Mathf.Clamp(expectedSpeed, 0f, walkSpeed);
+
+                if (moveAmount > 0.5f)
+                {
+                    lastDirection = input;
+                }
+            }
+
+            Vector3 finalInput = cameraQuat * input * expectedSpeed;
+
+            pointDirection = (cameraQuat * input).normalized;
+
+            Vector3 accelerationVec = (Vector3.Scale(finalInput, new Vector3(1f, 0f, 1f)) - Vector3.Scale(rigidbody.velocity, new Vector3(1f, 0f, 1f))) / Time.fixedDeltaTime;
+            rigidbody.AddForce(accelerationVec, ForceMode.Acceleration);
         }
     }
 }

@@ -292,6 +292,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\Helpers\MathHelper.cs" />
+    <Compile Include="Assets\Scripts\Managers\Building\Builder.cs" />
+    <Compile Include="Assets\Scripts\Managers\Building\WorldBuilder.cs" />
     <Compile Include="Assets\Scripts\Managers\Input Manager\Devices.cs" />
     <Compile Include="Assets\Scripts\Managers\Input Manager\InputDevice.cs" />
     <Compile Include="Assets\Scripts\Managers\Input Manager\InputManager.cs" />

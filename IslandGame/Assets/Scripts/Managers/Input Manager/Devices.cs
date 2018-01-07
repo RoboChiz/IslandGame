@@ -31,7 +31,9 @@ public class KeyboardDevice : InputDevice
             //Player Controls           
             {"MovementHorizontal", new List<ControlName>() {new ControlName("a-", false), new ControlName("d+", false) } },
             {"MovementVertical", new List<ControlName>() {new ControlName("w-", false), new ControlName("s+", false) } },
-            {"Focus", new List<ControlName>() {new ControlName("f", true) } },           
+            {"Focus", new List<ControlName>() {new ControlName("f", true) } },
+            {"Create", new List<ControlName>() {new ControlName("z", true) } },
+            {"Delete", new List<ControlName>() {new ControlName("x", true) } },
         }
     );
 }
@@ -60,8 +62,10 @@ public class XBox360Device : InputDevice
             {"MovementVertical", new List<ControlName>() {new ControlName(LeftStickVert,true)} }, 
             {"CameraHorizontal", new List<ControlName>() {new ControlName(RightStickHori, true) } },
             {"CameraVertical", new List<ControlName>() {new ControlName(RightStickVert, true) } },
-            {"Focus", new List<ControlName>() {new ControlName(LS, true) } },
-        
+            {"Focus", new List<ControlName>() {new ControlName(LS, false) } },
+            {"Create", new List<ControlName>() {new ControlName(A, false) } },
+            {"Delete", new List<ControlName>() {new ControlName(B, false) } },
+
         }
     );
 
