@@ -10,11 +10,15 @@ public class OrbitCam : MonoBehaviour
     private float actualRadius;
 
     public Transform target;
-    public float radius = 6f;
-
-    public float rotateControllerSpeed = 2f, zoomControllerSpeed = 0.2f;
+    private float radius = 6f;
 
     public float mouseScale = 50f, controllerScale = 50f;
+
+    private bool focused = true;
+    public float focusedRadius = 19.8f, unfocusedRadius = 35.0f;
+
+    //Set by Camera Swap
+    public bool invertHorizontal = false, invertVertical = true;
 
     // Use this for initialization
     void Start ()
@@ -36,22 +40,24 @@ public class OrbitCam : MonoBehaviour
                     float xInput = Input.GetAxis("Mouse X") * mouseScale;
                     float yInput = Input.GetAxis("Mouse Y") * mouseScale;
 
-                    //Inputs
-                    xyValues.x += xInput * xSpeed * Time.deltaTime;
-                    xyValues.y += yInput * ySpeed * Time.deltaTime;
+                    xyValues.x += xInput * xSpeed * Time.deltaTime * (invertHorizontal ? -1f : 1f);
+                    xyValues.y += yInput * ySpeed * Time.deltaTime * (invertVertical ? -1f : 1f);
                 }
                 else if ( InputManager.controllers[0].inputType == InputType.Xbox360)
-                {
-                    xyValues.y -= InputManager.controllers[0].GetInput("CameraVertical") * rotateControllerSpeed * controllerScale;
-                    xyValues.x -= InputManager.controllers[0].GetInput("CameraHorizontal") * rotateControllerSpeed * controllerScale;
-
-                    //radius += InputManager.controllers[0].GetInput("MenuVertical") * zoomControllerSpeed;
+                {                  
+                    xyValues.x -= InputManager.controllers[0].GetInput("CameraHorizontal") * ySpeed * controllerScale * Time.deltaTime * (invertHorizontal ? -1f : 1f);
+                    xyValues.y += InputManager.controllers[0].GetInput("CameraVertical") * xSpeed * controllerScale * Time.deltaTime * (invertVertical ? -1f : 1f);
                 }
 
-                //radius -= Input.mouseScrollDelta.y * zoomSpeed;
+                if(inputDevice.GetButtonWithLock("Focus"))
+                {
+                    focused = !focused;
+                }
             }
 
             xyValues.y = Mathf.Clamp(xyValues.y, 0f, 90f);
+
+            radius = focused ? focusedRadius : unfocusedRadius;
 
             actualXYValues = Vector2.Lerp(actualXYValues, xyValues, Time.deltaTime * lerpSpeed);
             actualRadius = Mathf.Lerp(actualRadius, radius, Time.deltaTime * lerpSpeed);

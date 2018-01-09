@@ -12,7 +12,7 @@ public class PlayerMovement : MonoBehaviour
     public Vector3 pointDirection;
 	
 	// Update is called once per frame
-	void Update ()
+	void FixedUpdate ()
     {
         Rigidbody rigidbody = GetComponent<Rigidbody>();
 

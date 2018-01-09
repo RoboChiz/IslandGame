@@ -27,13 +27,16 @@ public class KeyboardDevice : InputDevice
             {"MenuVertical", new List<ControlName>() {new ControlName("w-", false), new ControlName("s+", false) } },
             {"Submit", new List<ControlName>() {new ControlName("return", false) } },
             {"Cancel", new List<ControlName>() {new ControlName("escape", false) } },
+            {"Pause", new List<ControlName>() {new ControlName("escape", false) } },
 
             //Player Controls           
             {"MovementHorizontal", new List<ControlName>() {new ControlName("a-", false), new ControlName("d+", false) } },
             {"MovementVertical", new List<ControlName>() {new ControlName("w-", false), new ControlName("s+", false) } },
-            {"Focus", new List<ControlName>() {new ControlName("f", true) } },
-            {"Create", new List<ControlName>() {new ControlName("z", true) } },
-            {"Delete", new List<ControlName>() {new ControlName("x", true) } },
+            {"Focus", new List<ControlName>() {new ControlName("f", false) } },
+            {"RotateLeft", new List<ControlName>() {new ControlName("q", false) } },
+            {"RotateRight", new List<ControlName>() {new ControlName("e", false) } },
+            {"Create", new List<ControlName>() {new ControlName("z", false) } },
+            {"Delete", new List<ControlName>() {new ControlName("x", false) } },
         }
     );
 }
@@ -54,8 +57,9 @@ public class XBox360Device : InputDevice
             {"Leave", new List<ControlName>() {new ControlName(Back, false) } },
             {"MenuHorizontal", new List<ControlName>() {new ControlName(LeftStickHori,true), new ControlName(DPadHori, true) } },
             {"MenuVertical", new List<ControlName>() {new ControlName(LeftStickVert,true), new ControlName(DPadVert + "*", true) } },
-            {"Submit", new List<ControlName>() {new ControlName(Start, false), new ControlName(A, false) } },
+            {"Submit", new List<ControlName>() {new ControlName(A, false) } },
             {"Cancel", new List<ControlName>() {new ControlName(B, false) } },
+            {"Pause", new List<ControlName>() {new ControlName(Start, false) } },
 
             //Player Controls
             {"MovementHorizontal", new List<ControlName>() {new ControlName(LeftStickHori,true)} },
@@ -63,6 +67,8 @@ public class XBox360Device : InputDevice
             {"CameraHorizontal", new List<ControlName>() {new ControlName(RightStickHori, true) } },
             {"CameraVertical", new List<ControlName>() {new ControlName(RightStickVert, true) } },
             {"Focus", new List<ControlName>() {new ControlName(LS, false) } },
+            {"RotateLeft", new List<ControlName>() {new ControlName(RightStickHori + "-", true) } },
+            {"RotateRight", new List<ControlName>() {new ControlName(RightStickHori + "+", true) } },
             {"Create", new List<ControlName>() {new ControlName(A, false) } },
             {"Delete", new List<ControlName>() {new ControlName(B, false) } },
 

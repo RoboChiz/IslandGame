@@ -22,4 +22,6 @@ public class SaveData
     public string[] customStringKey;
     public string[] customStringValue;
 
+    public WorldState worldState;
+
 }

@@ -10,7 +10,7 @@ public class SaveDataManager : MonoBehaviour
     private SaveData saveData;
     public Dictionary<string, string> customStringDatabase;
 
-    private const string saveLocation = "/YogscartSaveData.gd";
+    private const string saveLocation = "/Save1.gd";
 
     public bool resetOnStart;
 
@@ -35,10 +35,35 @@ public class SaveDataManager : MonoBehaviour
         saveData.customStringKey = new string[] { };
         saveData.customStringValue = new string[] { };
 
+        saveData.worldState = new WorldState();
+
         customStringDatabase = new Dictionary<string, string>();
 
         //Save the new Game Data
         SaveGame();
+    }
+
+    //Saving for this specific game (Performed Last)
+    private void GameSpecificSave()
+    {
+        //Ask each Manager to update it's saved data
+        WorldStateManager worldStateManager = FindObjectOfType<WorldStateManager>();
+        if(worldStateManager != null)
+        {
+            worldStateManager.SaveWorldState(this);
+        }
+
+    }
+
+    //Loading for this specific game (Performed Last)
+    private void GameSpecificLoad()
+    {
+        //Ask each Manager to update it's saved data from the save data
+        WorldStateManager worldStateManager = FindObjectOfType<WorldStateManager>();
+        if (worldStateManager != null)
+        {
+            worldStateManager.LoadWorldState(this);
+        }
     }
 
     //Used for converting a save to the current version
@@ -50,6 +75,11 @@ public class SaveDataManager : MonoBehaviour
         //Save the Game Data
         SaveGame();
     }
+
+    //----------------------------------Changeable Getters/Setters-----------------------------------
+
+    public void SetWorldState(WorldState _state) { saveData.worldState = _state; }
+    public WorldState GetWorldState() { return saveData.worldState; }
 
     //------------------------------------Non-Changeable Methods-------------------------------------
     public void Save()
@@ -70,6 +100,8 @@ public class SaveDataManager : MonoBehaviour
         saveData.customStringKey = customStringKey.ToArray();
         saveData.customStringValue = customStringValue.ToArray();
 
+        GameSpecificSave();
+
         //Save the Game Data
         SaveGame();
     }
@@ -82,7 +114,7 @@ public class SaveDataManager : MonoBehaviour
         file.Close();
     }
 
-    private void LoadGame()
+    public void Load()
     {
         bool saveLoaded = false;
 
@@ -125,6 +157,8 @@ public class SaveDataManager : MonoBehaviour
             {
                 customStringDatabase.Add(saveData.customStringKey[i], saveData.customStringValue[i]);
             }
+
+            GameSpecificLoad();
         }
     }
 
