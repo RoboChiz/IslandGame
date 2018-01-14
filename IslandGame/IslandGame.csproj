@@ -295,9 +295,9 @@
     <Compile Include="Assets\Scripts\Managers\Input Manager\Devices.cs" />
     <Compile Include="Assets\Scripts\Managers\Input Manager\InputDevice.cs" />
     <Compile Include="Assets\Scripts\Managers\Input Manager\InputManager.cs" />
+    <Compile Include="Assets\Scripts\Managers\Saving\ISavingManager.cs" />
     <Compile Include="Assets\Scripts\Managers\Saving\SaveData.cs" />
     <Compile Include="Assets\Scripts\Managers\Saving\SaveDataManager.cs" />
-    <Compile Include="Assets\Scripts\Managers\World\WorldState.cs" />
     <Compile Include="Assets\Scripts\Managers\World\WorldStateManager.cs" />
     <Compile Include="Assets\Scripts\Menus\InputModule.cs" />
     <Compile Include="Assets\Scripts\Menus\PauseMenu.cs" />

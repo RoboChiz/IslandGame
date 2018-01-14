@@ -1,56 +1,44 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
-public class WorldStateManager : MonoBehaviour
+public class WorldStateManager : ISavingManager
 {
-    private WorldState worldState;
+    override public char[] uniqueID { get { return new char[4] { 'W', 'S', 'M', '_' }; } }
 
+    //Player Data
     public Transform player;
 
-    private void Start()
+    public override void DoSave(BinaryWriter _stream)
     {
-        worldState = new WorldState();
+        //Update Player Stats
+        PlayerMovement playerMovement = player.GetComponent<PlayerMovement>();
+
+        //Save Player Stats
+        SaveDataManager.SaveVector3(_stream, player.position);
+        SaveDataManager.SaveVector3(_stream, player.rotation.eulerAngles);
+        SaveDataManager.SaveVector3(_stream, playerMovement.lastDirection);
+        SaveDataManager.SaveVector3(_stream, playerMovement.pointDirection);
+        _stream.Write(playerMovement.expectedSpeed);
     }
 
-    private void UpdateWorldState ()
+    public override void DoLoad(int _version, BinaryReader _stream)
     {
-        //Player Location
-        worldState.playerLocationX = player.transform.position.x;
-        worldState.playerLocationY = player.transform.position.y;
-        worldState.playerLocationZ = player.transform.position.z;
+        PlayerMovement playerMovement = player.GetComponent<PlayerMovement>();
 
-        worldState.playerRotationX = player.transform.rotation.eulerAngles.x;
-        worldState.playerRotationY = player.transform.rotation.eulerAngles.y;
-        worldState.playerRotationZ = player.transform.rotation.eulerAngles.z;
+        //Load Player Stats
+        Vector3 playerPosition = SaveDataManager.LoadVector3(_stream);
+        player.transform.position = playerPosition;
+
+        Vector3 playerRotation = SaveDataManager.LoadVector3(_stream);
+        player.transform.rotation = Quaternion.Euler(playerRotation);
+
+        Vector3 lastDirection = SaveDataManager.LoadVector3(_stream);
+        Vector3 pointDirection = SaveDataManager.LoadVector3(_stream);
+        float expectedSpeed = _stream.ReadSingle();
+
+        playerMovement.GetFromLoad(lastDirection, pointDirection, expectedSpeed);
     }
 
-    private void UpdateFromWorldState()
-    {
-        //Player Location
-        player.transform.position = new Vector3(worldState.playerLocationX, worldState.playerLocationY, worldState.playerLocationZ);
-        player.transform.rotation = Quaternion.Euler(new Vector3(worldState.playerRotationX, worldState.playerRotationY, worldState.playerRotationZ));
-
-        //Disable any Player Velocity
-        Rigidbody playerRigidbody = player.GetComponent<Rigidbody>();
-        playerRigidbody.velocity = Vector3.zero;
-    }
-
-    public void SaveWorldState(SaveDataManager _saveDataManager)
-    {
-        //Make sure values are up to date
-        UpdateWorldState();
-
-        //Send the World State to the Save Data Manager
-        _saveDataManager.SetWorldState(worldState);
-    }
-
-    public void LoadWorldState(SaveDataManager _saveDataManager)
-    {
-        //Send the World State to the Save Data Manager
-        worldState = _saveDataManager.GetWorldState();
-
-        //Copy values from save to this
-        UpdateFromWorldState();
-    }
 }

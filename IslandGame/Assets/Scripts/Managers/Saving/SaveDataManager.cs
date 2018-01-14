@@ -35,8 +35,6 @@ public class SaveDataManager : MonoBehaviour
         saveData.customStringKey = new string[] { };
         saveData.customStringValue = new string[] { };
 
-        saveData.worldState = new WorldState();
-
         customStringDatabase = new Dictionary<string, string>();
 
         //Save the new Game Data
@@ -44,25 +42,47 @@ public class SaveDataManager : MonoBehaviour
     }
 
     //Saving for this specific game (Performed Last)
-    private void GameSpecificSave()
+    private void GameSpecificSave(BinaryWriter bw)
     {
-        //Ask each Manager to update it's saved data
-        WorldStateManager worldStateManager = FindObjectOfType<WorldStateManager>();
-        if(worldStateManager != null)
-        {
-            worldStateManager.SaveWorldState(this);
-        }
+        ISavingManager[] managers = FindObjectsOfType<ISavingManager>();
+        bw.Write(managers.Length);
 
+        foreach (ISavingManager savingManager in managers)
+        {
+            //Save UniqueID so we can identify this manager when loading
+            bw.Write(savingManager.uniqueID);
+            savingManager.DoSave(bw);
+        }
     }
 
     //Loading for this specific game (Performed Last)
-    private void GameSpecificLoad()
+    private void GameSpecificLoad(int _version, BinaryReader br)
     {
-        //Ask each Manager to update it's saved data from the save data
-        WorldStateManager worldStateManager = FindObjectOfType<WorldStateManager>();
-        if (worldStateManager != null)
+        ISavingManager[] managers = FindObjectsOfType<ISavingManager>();
+
+        int managersSize = br.ReadInt32();
+        for(int i = 0; i < managersSize; i++)
         {
-            worldStateManager.LoadWorldState(this);
+            //Load Unique ID
+            char[] uniqueID = br.ReadChars(4);
+
+            foreach (ISavingManager savingManager in managers)
+            {
+                bool isTheSame = true;
+                for(int j = 0; j < 4; j++)
+                {
+                    if(savingManager.uniqueID[j] != uniqueID[j])
+                    {
+                        isTheSame = false;
+                        break;
+                    }
+                }
+
+                if(isTheSame)
+                {
+                    savingManager.DoLoad(_version, br);
+                }
+            }
         }
     }
 
@@ -78,8 +98,19 @@ public class SaveDataManager : MonoBehaviour
 
     //----------------------------------Changeable Getters/Setters-----------------------------------
 
-    public void SetWorldState(WorldState _state) { saveData.worldState = _state; }
-    public WorldState GetWorldState() { return saveData.worldState; }
+    //-----------------------------------------Useful Methods----------------------------------------
+
+    public static void SaveVector3(BinaryWriter _stream, Vector3 _vector)
+    {
+        _stream.Write(_vector.x);
+        _stream.Write(_vector.y);
+        _stream.Write(_vector.z);
+    }
+
+    public static Vector3 LoadVector3(BinaryReader _stream)
+    {
+        return new Vector3(_stream.ReadSingle(), _stream.ReadSingle(), _stream.ReadSingle());
+    }
 
     //------------------------------------Non-Changeable Methods-------------------------------------
     public void Save()
@@ -100,18 +131,23 @@ public class SaveDataManager : MonoBehaviour
         saveData.customStringKey = customStringKey.ToArray();
         saveData.customStringValue = customStringValue.ToArray();
 
-        GameSpecificSave();
-
         //Save the Game Data
         SaveGame();
     }
 
     private void SaveGame()
     {
-        BinaryFormatter bf = new BinaryFormatter();
-        FileStream file = File.Create(Application.persistentDataPath + saveLocation);
-        bf.Serialize(file, saveData);
-        file.Close();
+        BinaryWriter bw = new BinaryWriter(File.Create(Application.persistentDataPath + saveLocation));
+        
+        //Load Save Data
+        saveData.SaveAllData(bw);
+
+        //Load Game Specific Managers
+        GameSpecificSave(bw);
+
+        bw.Close();
+
+        Debug.Log("Game Saved!");
     }
 
     public void Load()
@@ -122,10 +158,17 @@ public class SaveDataManager : MonoBehaviour
         {
             if (File.Exists(Application.persistentDataPath + saveLocation))
             {
-                BinaryFormatter bf = new BinaryFormatter();
-                FileStream file = File.Open(Application.persistentDataPath + saveLocation, FileMode.Open);
-                saveData = (SaveData)bf.Deserialize(file);
-                file.Close();
+                BinaryReader br = new BinaryReader(File.Open(Application.persistentDataPath + saveLocation, FileMode.Open));
+
+                int version = br.ReadInt32();
+
+                //Load Save Data
+                saveData.LoadAllData(version, br);
+
+                //Load Game Specific Managers
+                GameSpecificLoad(version, br);
+
+                br.Close();
 
                 if (saveData.localVersion != SaveData.saveVersion)
                 {
@@ -157,8 +200,6 @@ public class SaveDataManager : MonoBehaviour
             {
                 customStringDatabase.Add(saveData.customStringKey[i], saveData.customStringValue[i]);
             }
-
-            GameSpecificLoad();
         }
     }
 

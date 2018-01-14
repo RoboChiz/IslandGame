@@ -7,12 +7,11 @@ public class PlayerMovement : MonoBehaviour
     public float walkSpeed = 3f, brakeTime = 0.5f, acceleration = 2f, expectedSpeed = 0f;
     public Camera playerCamera;
 
-    private Vector3 lastDirection;
+    public Vector3 lastDirection { get; private set; }
+    public Vector3 pointDirection { get; private set; }
 
-    public Vector3 pointDirection;
-	
-	// Update is called once per frame
-	void FixedUpdate ()
+    // Update is called once per frame
+    void FixedUpdate ()
     {
         Rigidbody rigidbody = GetComponent<Rigidbody>();
 
@@ -62,5 +61,17 @@ public class PlayerMovement : MonoBehaviour
             Vector3 accelerationVec = (Vector3.Scale(finalInput, new Vector3(1f, 0f, 1f)) - Vector3.Scale(rigidbody.velocity, new Vector3(1f, 0f, 1f))) / Time.fixedDeltaTime;
             rigidbody.AddForce(accelerationVec, ForceMode.Acceleration);
         }
+    }
+
+    public void GetFromLoad
+    (
+        Vector3 _lastDirection, 
+        Vector3 _pointDirection, 
+        float _expectedSpeed
+    )
+    {
+        lastDirection = _lastDirection;
+        pointDirection = _pointDirection;
+        expectedSpeed = _expectedSpeed;
     }
 }

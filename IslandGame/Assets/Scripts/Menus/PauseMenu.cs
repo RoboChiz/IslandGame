@@ -128,4 +128,9 @@ public class PauseMenu : MonoBehaviour
 
         rectTransform.anchoredPosition = _end;
     }
+
+    public void QuitGame()
+    {
+        Application.Quit();
+    }
 }
