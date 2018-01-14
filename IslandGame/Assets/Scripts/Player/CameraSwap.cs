@@ -27,15 +27,17 @@ public class CameraSwap : MonoBehaviour
         UpdateCameraState();
     }
 
-    public void SetInvertHorizontal(Toggle _toggle)
+    public void SetInvertHorizontal(Toggle _toggle) { SetInvertHorizontal(_toggle.isOn); }
+    public void SetInvertHorizontal(bool _value)
     {
-        invertHorizontal = _toggle.isOn;
+        invertHorizontal = _value;
         UpdateCameraState();
     }
 
-    public void SetInvertVertical (Toggle _toggle)
+    public void SetInvertVertical(Toggle _toggle) { SetInvertVertical(_toggle.isOn); }
+    public void SetInvertVertical (bool _value)
     {
-        invertVertical = _toggle.isOn;
+        invertVertical = _value;
         UpdateCameraState();
     }
 

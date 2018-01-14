@@ -14,6 +14,7 @@ public class WorldStateManager : ISavingManager
     {
         //Update Player Stats
         PlayerMovement playerMovement = player.GetComponent<PlayerMovement>();
+        CameraSwap cameraSwap = GetComponent<CameraSwap>();
 
         //Save Player Stats
         SaveDataManager.SaveVector3(_stream, player.position);
@@ -21,11 +22,18 @@ public class WorldStateManager : ISavingManager
         SaveDataManager.SaveVector3(_stream, playerMovement.lastDirection);
         SaveDataManager.SaveVector3(_stream, playerMovement.pointDirection);
         _stream.Write(playerMovement.expectedSpeed);
+
+        //Save Camera Stats
+        _stream.Write(cameraSwap.GetCameraState());
+        _stream.Write(cameraSwap.GetInvertHorizontal());
+        _stream.Write(cameraSwap.GetInvertVertical());
     }
 
     public override void DoLoad(int _version, BinaryReader _stream)
     {
+        //Get Components
         PlayerMovement playerMovement = player.GetComponent<PlayerMovement>();
+        CameraSwap cameraSwap = GetComponent<CameraSwap>();
 
         //Load Player Stats
         Vector3 playerPosition = SaveDataManager.LoadVector3(_stream);
@@ -39,6 +47,12 @@ public class WorldStateManager : ISavingManager
         float expectedSpeed = _stream.ReadSingle();
 
         playerMovement.GetFromLoad(lastDirection, pointDirection, expectedSpeed);
+
+        //Load Camera Stats
+        cameraSwap.SetCameraState(_stream.ReadBoolean());
+        cameraSwap.SetInvertHorizontal(_stream.ReadBoolean());
+        cameraSwap.SetInvertVertical(_stream.ReadBoolean());
+
     }
 
 }

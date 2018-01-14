@@ -6,7 +6,8 @@ using UnityEngine.UI;
 
 public class PauseMenu : MonoBehaviour
 {
-    private bool isAnimating = false, isPaused = false;
+    public static bool isPaused { get; private set; }
+    private bool isAnimating = false;
 
     private RectTransform rectTransform;
     private CameraSwap cameraSwap;

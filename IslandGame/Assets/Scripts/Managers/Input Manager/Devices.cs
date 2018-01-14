@@ -28,6 +28,7 @@ public class KeyboardDevice : InputDevice
             {"Submit", new List<ControlName>() {new ControlName("return", false) } },
             {"Cancel", new List<ControlName>() {new ControlName("escape", false) } },
             {"Pause", new List<ControlName>() {new ControlName("escape", false) } },
+            {"BuildMode", new List<ControlName>() {new ControlName("x", false) } },
 
             //Player Controls           
             {"MovementHorizontal", new List<ControlName>() {new ControlName("a-", false), new ControlName("d+", false) } },
@@ -60,6 +61,7 @@ public class XBox360Device : InputDevice
             {"Submit", new List<ControlName>() {new ControlName(A, false) } },
             {"Cancel", new List<ControlName>() {new ControlName(B, false) } },
             {"Pause", new List<ControlName>() {new ControlName(Start, false) } },
+            {"BuildMode", new List<ControlName>() {new ControlName(X, false) } },
 
             //Player Controls
             {"MovementHorizontal", new List<ControlName>() {new ControlName(LeftStickHori,true)} },

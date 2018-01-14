@@ -10,6 +10,8 @@ public class PlayerMovement : MonoBehaviour
     public Vector3 lastDirection { get; private set; }
     public Vector3 pointDirection { get; private set; }
 
+    public bool lockMovements = false;
+
     // Update is called once per frame
     void FixedUpdate ()
     {
@@ -33,7 +35,7 @@ public class PlayerMovement : MonoBehaviour
             Vector2 inputAmount = new Vector2(hori, verti);
             float moveAmount = Mathf.Clamp(inputAmount.magnitude, 0f, 1f);
 
-            if (moveAmount == 0)
+            if (moveAmount == 0 || lockMovements)
             {
                 float cacceleration = -expectedSpeed / brakeTime;
                 expectedSpeed += (cacceleration * Time.fixedDeltaTime);
