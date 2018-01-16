@@ -4,13 +4,14 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    public float walkSpeed = 3f, brakeTime = 0.5f, acceleration = 2f, expectedSpeed = 0f;
+    public float walkSpeed = 3f, brakeTime = 0.5f, acceleration = 2f, expectedSpeed = 0f, jumpVelocity = 10f;
     public Camera playerCamera;
 
     public Vector3 lastDirection { get; private set; }
     public Vector3 pointDirection { get; private set; }
 
     public bool lockMovements = false;
+    private bool isFalling = false, jumpLock = false;
 
     // Update is called once per frame
     void FixedUpdate ()
@@ -24,6 +25,12 @@ public class PlayerMovement : MonoBehaviour
             //Get Inputs
             float hori = inputDevice.GetInput("MovementHorizontal");
             float verti = inputDevice.GetInput("MovementVertical");
+            bool jump = false;
+
+            if(!lockMovements)
+            {
+                jump = inputDevice.GetButtonWithLock("Jump");
+            }
 
             //Get Correct Camera Transform
             Vector3 cameraFoward = Vector3.Scale(playerCamera.transform.forward, new Vector3(1.0f, 0.0f, 1.0f)).normalized;
@@ -62,6 +69,20 @@ public class PlayerMovement : MonoBehaviour
 
             Vector3 accelerationVec = (Vector3.Scale(finalInput, new Vector3(1f, 0f, 1f)) - Vector3.Scale(rigidbody.velocity, new Vector3(1f, 0f, 1f))) / Time.fixedDeltaTime;
             rigidbody.AddForce(accelerationVec, ForceMode.Acceleration);
+
+            //Do Jump
+            if(jump && !isFalling && !jumpLock)
+            {
+                rigidbody.velocity += new Vector3(0f, jumpVelocity, 0f);
+                jumpLock = true;
+            }
+        }
+
+        isFalling = !Physics.Raycast(transform.position, Vector3.down, 0.75f);
+
+        if(rigidbody.velocity.y <= 0f && jumpLock)
+        {
+            jumpLock = false;
         }
     }
 

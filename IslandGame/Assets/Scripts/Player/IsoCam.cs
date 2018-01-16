@@ -49,14 +49,15 @@ public class IsoCam : MonoBehaviour
             transform.rotation = rotation;
 
             //Set Forward
-            Vector3 localForward = rotation * Vector3.forward;
-            transform.position = target.position - (localForward * 50f);
+            Vector3 localForward = rotation * Vector3.forward;           
 
             //Do Sizing
             size = focused ? focusedSize : unfocusedSize;
             actualSize = Mathf.Lerp(actualSize, size, Time.deltaTime * lerpSpeed);
 
-            myCamera.orthographicSize = actualSize;
+            transform.position = target.position - (localForward * actualSize);
+
+            //myCamera.orthographicSize = actualSize;
 
             //User Inputs
             if (InputManager.controllers.Count > 0)

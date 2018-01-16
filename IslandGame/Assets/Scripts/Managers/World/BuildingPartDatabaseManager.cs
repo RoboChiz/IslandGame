@@ -13,6 +13,11 @@ public class BuildingPartDatabaseManager : MonoBehaviour
         LoadDatabase("ItemDatabase");
     }
 
+    public BuildingPart GetBuildingPart(int _id)
+    {
+        return buildingPartDatabase[_id - 1];
+    }
+
     /// <summary>
     /// Load the Building Part Database from an XML File
     /// </summary>
@@ -37,7 +42,7 @@ public class BuildingPartDatabaseManager : MonoBehaviour
             if(xmlNode.Name == "BuildingPart")
             {
                 int id = int.Parse(xmlNode.Attributes["id"].Value);
-                if (id != buildingPartDatabase.Count)
+                if (id != buildingPartDatabase.Count + 1)
                 {
                     throw new Exception("Dialogue ID's are an incorrect Order");
                 }
@@ -50,6 +55,16 @@ public class BuildingPartDatabaseManager : MonoBehaviour
 
                 buildingPart.prefabResourceName = xmlNode.Attributes["resource"].Value;
                 buildingPart.prefab = Resources.Load<GameObject>(buildingPart.prefabResourceName);
+
+                buildingPart.partType = BuildingPart.PartType.Max;
+
+                if(xmlNode.Attributes["type"] != null)
+                {
+                    switch(xmlNode.Attributes["type"].Value)
+                    {
+                        case "base": buildingPart.partType = BuildingPart.PartType.Base; break;
+                    }
+                }
 
                 buildingPartDatabase.Add(buildingPart);
 
@@ -64,6 +79,9 @@ public class BuildingPart
     public int uniqueID { get; private set; }
     public int gridSize;
     public string partName;
+
+    public enum PartType { Base, Max};
+    public PartType partType;
 
     //Prefab Data
     public string prefabResourceName;

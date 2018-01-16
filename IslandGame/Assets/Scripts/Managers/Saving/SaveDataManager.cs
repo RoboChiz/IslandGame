@@ -14,10 +14,11 @@ public class SaveDataManager : MonoBehaviour
 
     public bool resetOnStart;
 
-    private void Start()
+    private IEnumerator Start()
     {
         if(resetOnStart)
         {
+            yield return new WaitForEndOfFrame();
             ResetSave();
         }
     }
@@ -38,7 +39,7 @@ public class SaveDataManager : MonoBehaviour
         customStringDatabase = new Dictionary<string, string>();
 
         //Save the new Game Data
-        SaveGame();
+       // SaveGame();
     }
 
     //Saving for this specific game (Performed Last)

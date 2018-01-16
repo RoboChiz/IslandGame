@@ -15,6 +15,24 @@ public class BuildingModeManager : MonoBehaviour
     private float hideTimer;
     Coroutine buildHideCoroutine, playHideCoroutine;
 
+    public GameObject cursor, player;
+    private PlayerMovement playerMovement;
+    private WorldStateManager worldStateManager;
+
+    private Vector3 actualCursorPos;
+    public float lerpAmount = 10f;
+
+    private Vector3 inputRecieved;
+
+    private const float maxInputLockTimer = 0.03f;
+    private float inputLockTimer = maxInputLockTimer;
+
+    private void Start()
+    {
+        playerMovement = player.GetComponent<PlayerMovement>();
+        worldStateManager = FindObjectOfType<WorldStateManager>();
+    }
+
     private void Update()
     {
         //User Inputs
@@ -43,6 +61,65 @@ public class BuildingModeManager : MonoBehaviour
                 hideTimer = 5f;
                 isHiding = false;
             }
+
+            if(isActivated)
+            {             
+                //Get Inputs
+                float hori = inputDevice.GetInput("MovementHorizontal");
+                float verti = inputDevice.GetInput("MovementVertical");
+                float height = inputDevice.GetInput("MovementHeight");
+
+                bool build = inputDevice.GetButtonWithLock("Create");
+                bool delete = inputDevice.GetButtonWithLock("Delete");
+
+                //Debug Draw
+                Quaternion cameraQuat = Quaternion.LookRotation(Vector3.Scale(playerMovement.playerCamera.transform.forward, new Vector3(1f, 0f, 1f)).normalized, Vector3.up);
+                Vector3 input = new Vector3(MathHelper.Sign(hori), MathHelper.Sign(-height), MathHelper.Sign(-verti)).normalized;
+                float squareSize = (((hori != 0 && verti == 0) || (verti != 0 && hori == 0)) ? 1.5f : 1f);
+                Vector3 finalInput = cameraQuat * input * squareSize;
+                Vector3 finalPos = actualCursorPos + finalInput;
+
+                Debug.DrawLine(actualCursorPos, finalPos, Color.red);
+
+                if (hori != 0f || verti != 0f || height != 0f)
+                {
+                    if (inputLockTimer > 0f)
+                    {
+                        inputRecieved.x = (hori != 0f)      ? Mathf.Sign(hori)      : inputRecieved.x;
+                        inputRecieved.y = (height != 0f)    ? Mathf.Sign(-height)    : inputRecieved.y;
+                        inputRecieved.z = (verti != 0f)     ? Mathf.Sign(-verti)     : inputRecieved.z;
+                    }
+                }
+                else
+                {
+                    inputLockTimer = maxInputLockTimer;
+                }
+
+                if(inputRecieved.sqrMagnitude != 0)
+                {
+                    if (inputLockTimer < 0)
+                    {
+                        DoInput();
+                        inputRecieved = Vector3.zero;
+                    }
+                    else
+                    {
+                        inputLockTimer -= Time.deltaTime;
+                    }        
+                }
+
+                if(build)
+                {
+                    worldStateManager.CreateItem(1, actualCursorPos);
+                }
+
+                if (delete)
+                {
+                    worldStateManager.DeleteItem(actualCursorPos);
+                }
+
+                cursor.transform.position = Vector3.Lerp(cursor.transform.position, actualCursorPos, Time.deltaTime * lerpAmount);
+            }
         }
 
         if(hideTimer > 0f)
@@ -55,6 +132,23 @@ public class BuildingModeManager : MonoBehaviour
             buildHideCoroutine = StartCoroutine(FlipFade(buildModeImage, 0f));
             playHideCoroutine = StartCoroutine(FlipFade(playModeImage, 0f));
         }
+
+        cursor.SetActive(isActivated);
+    }
+
+    public void DoInput()
+    {
+        Quaternion cameraQuat = Quaternion.LookRotation(Vector3.Scale(playerMovement.playerCamera.transform.forward, new Vector3(1f, 0f, 1f)).normalized, Vector3.up);
+
+        Vector3 finalInput = (cameraQuat * inputRecieved);
+        finalInput = new Vector3(MathHelper.Sign(finalInput.x), MathHelper.Sign(finalInput.y), MathHelper.Sign(finalInput.z));
+
+        Vector3 finalPos = actualCursorPos + finalInput;
+
+        if (worldStateManager.IsInsideWorldChunk(finalPos) != null)
+        {
+            actualCursorPos = finalPos;
+        }
     }
 
     public void StartBuildMode()
@@ -65,10 +159,40 @@ public class BuildingModeManager : MonoBehaviour
             isAnimating = true;
 
             //Turn off Player
-            FindObjectOfType<PlayerMovement>().lockMovements = true;
+            playerMovement.lockMovements = true;
+
+            //Set Cursor as Target
+            IsoCam isoCam = playerMovement.playerCamera.GetComponent<IsoCam>();
+            OrbitCam orbitCam = playerMovement.playerCamera.GetComponent<OrbitCam>();
+
+            if (isoCam != null)
+            {
+                isoCam.target = cursor.transform;
+            }
+            else if(orbitCam != null)
+            {
+                orbitCam.target = cursor.transform;
+            }
+
+            Vector3 playerPos = player.transform.position - Vector3.up;
+            WorldChunk localChunk = worldStateManager.IsInsideWorldChunk(playerPos);
+            if (localChunk != null)
+            {
+                Vector3 newPos = SnapToGrid(playerPos, localChunk);
+                newPos.y = Mathf.Clamp(newPos.y, 0.5f, 10.5f);
+
+                cursor.transform.position = newPos;
+                actualCursorPos = cursor.transform.position;
+            }
 
             StartCoroutine(DoSwapAnimation());
         }
+    }
+
+    public Vector3 SnapToGrid(Vector3 _position, WorldChunk _chunk)
+    {
+        Vector3 chunkPos = worldStateManager.WorldToChunk(_chunk, _position);
+        return worldStateManager.ChunkToWorld(_chunk, chunkPos);
     }
 
     public void EndBuildMode()
@@ -79,7 +203,20 @@ public class BuildingModeManager : MonoBehaviour
             isAnimating = true;
 
             //Turn off Player
-            FindObjectOfType<PlayerMovement>().lockMovements = false;
+            playerMovement.lockMovements = false;
+
+            //Set Cursor as Target
+            IsoCam isoCam = playerMovement.playerCamera.GetComponent<IsoCam>();
+            OrbitCam orbitCam = playerMovement.playerCamera.GetComponent<OrbitCam>();
+
+            if (isoCam != null)
+            {
+                isoCam.target = playerMovement.transform;
+            }
+            else if(orbitCam != null)
+            {
+                orbitCam.target = playerMovement.transform;
+            }
 
             StartCoroutine(DoSwapAnimation());
         }

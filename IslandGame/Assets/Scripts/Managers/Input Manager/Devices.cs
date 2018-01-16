@@ -33,11 +33,13 @@ public class KeyboardDevice : InputDevice
             //Player Controls           
             {"MovementHorizontal", new List<ControlName>() {new ControlName("a-", false), new ControlName("d+", false) } },
             {"MovementVertical", new List<ControlName>() {new ControlName("w-", false), new ControlName("s+", false) } },
+            {"Jump", new List<ControlName>() {new ControlName("space", false) } },
+            {"MovementHeight", new List<ControlName>() {new ControlName("left shift-", false), new ControlName("left ctrl+", false) } },
             {"Focus", new List<ControlName>() {new ControlName("f", false) } },
             {"RotateLeft", new List<ControlName>() {new ControlName("q", false) } },
             {"RotateRight", new List<ControlName>() {new ControlName("e", false) } },
-            {"Create", new List<ControlName>() {new ControlName("z", false) } },
-            {"Delete", new List<ControlName>() {new ControlName("x", false) } },
+            {"Create", new List<ControlName>() {new ControlName("k", false) } },
+            {"Delete", new List<ControlName>() {new ControlName("l", false) } },          
         }
     );
 }
@@ -65,9 +67,13 @@ public class XBox360Device : InputDevice
 
             //Player Controls
             {"MovementHorizontal", new List<ControlName>() {new ControlName(LeftStickHori,true)} },
-            {"MovementVertical", new List<ControlName>() {new ControlName(LeftStickVert,true)} }, 
+            {"MovementVertical", new List<ControlName>() {new ControlName(LeftStickVert,true)} },
+            {"Jump", new List<ControlName>() {new ControlName(A, false) } },
+
             {"CameraHorizontal", new List<ControlName>() {new ControlName(RightStickHori, true) } },
             {"CameraVertical", new List<ControlName>() {new ControlName(RightStickVert, true) } },
+
+            {"MovementHeight", new List<ControlName>() {new ControlName(RightStickVert, true) } },
             {"Focus", new List<ControlName>() {new ControlName(LS, false) } },
             {"RotateLeft", new List<ControlName>() {new ControlName(RightStickHori + "-", true) } },
             {"RotateRight", new List<ControlName>() {new ControlName(RightStickHori + "+", true) } },

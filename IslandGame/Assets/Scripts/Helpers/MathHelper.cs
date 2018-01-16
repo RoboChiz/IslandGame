@@ -48,7 +48,7 @@ public class MathHelper
 
     public static int Sign(float value)
     {
-        if (value == 0f)
+        if (value < 0.0001f && value > -0.0001f)
             return 0;
         else
             return (int)Mathf.Sign(value);

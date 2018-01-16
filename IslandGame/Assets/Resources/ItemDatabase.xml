@@ -1,3 +1,3 @@
 <ItemDatabase>
-  <BuildingPart id="0" partname="Block" gridsize="1" resource="Prefabs/Cube"/>
+  <BuildingPart id="1" partname="Block" gridsize="1" type ="base" resource="Prefabs/Cube"/>
 </ItemDatabase>
