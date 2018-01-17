@@ -347,6 +347,7 @@
     <Compile Include="Assets\Scripts\Managers\World\BuildingPartDatabaseManager.cs" />
     <Compile Include="Assets\Scripts\Managers\World\WorldStateManager.cs" />
     <Compile Include="Assets\Scripts\Menus\InputModule.cs" />
+    <Compile Include="Assets\Scripts\Menus\ItemHide.cs" />
     <Compile Include="Assets\Scripts\Menus\PauseMenu.cs" />
     <Compile Include="Assets\Scripts\Player\CameraSwap.cs" />
     <Compile Include="Assets\Scripts\Player\IsoCam.cs" />

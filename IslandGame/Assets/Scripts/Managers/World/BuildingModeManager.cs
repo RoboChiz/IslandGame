@@ -15,11 +15,13 @@ public class BuildingModeManager : MonoBehaviour
     private float hideTimer;
     Coroutine buildHideCoroutine, playHideCoroutine;
 
-    public GameObject cursor, player;
+    public GameObject cursor, player, itemsPanel;
     private PlayerMovement playerMovement;
     private WorldStateManager worldStateManager;
 
     private Vector3 actualCursorPos;
+    private float rotationAmount = 0f, lerpingRotationAmount = 0f;
+
     public float lerpAmount = 10f;
 
     private Vector3 inputRecieved;
@@ -27,10 +29,14 @@ public class BuildingModeManager : MonoBehaviour
     private const float maxInputLockTimer = 0.03f;
     private float inputLockTimer = maxInputLockTimer;
 
+    private int currentSelection = 1;
+
     private void Start()
     {
         playerMovement = player.GetComponent<PlayerMovement>();
         worldStateManager = FindObjectOfType<WorldStateManager>();
+
+        itemsPanel.SetActive(false);
     }
 
     private void Update()
@@ -72,6 +78,8 @@ public class BuildingModeManager : MonoBehaviour
                 bool build = inputDevice.GetButtonWithLock("Create");
                 bool delete = inputDevice.GetButtonWithLock("Delete");
 
+                int rotate = inputDevice.GetIntInputWithLock("Rotate");
+
                 //Debug Draw
                 Quaternion cameraQuat = Quaternion.LookRotation(Vector3.Scale(playerMovement.playerCamera.transform.forward, new Vector3(1f, 0f, 1f)).normalized, Vector3.up);
                 Vector3 input = new Vector3(MathHelper.Sign(hori), MathHelper.Sign(-height), MathHelper.Sign(-verti)).normalized;
@@ -108,9 +116,14 @@ public class BuildingModeManager : MonoBehaviour
                     }        
                 }
 
+                if(rotate != 0)
+                {
+                    rotationAmount -= rotate * 90f;
+                }
+
                 if(build)
                 {
-                    worldStateManager.CreateItem(1, actualCursorPos);
+                    worldStateManager.CreateItem(currentSelection, actualCursorPos, rotationAmount);
                 }
 
                 if (delete)
@@ -119,6 +132,31 @@ public class BuildingModeManager : MonoBehaviour
                 }
 
                 cursor.transform.position = Vector3.Lerp(cursor.transform.position, actualCursorPos, Time.deltaTime * lerpAmount);
+
+                lerpingRotationAmount = Mathf.Lerp(lerpingRotationAmount, rotationAmount, Time.deltaTime * lerpAmount);
+                cursor.transform.rotation = Quaternion.identity * Quaternion.AngleAxis(lerpingRotationAmount, Vector3.up);
+
+                //Item Swapping
+                if(inputDevice.inputType == InputType.Keyboard)
+                {
+                    for(int i = 1; i < 9; i++)
+                    {
+                        if(inputDevice.GetButtonWithLock("Item" + i))
+                        {
+                            ChangeSelection(i);
+                        }
+                    }
+                }
+                else
+                {
+                    int itemSwitch = inputDevice.GetIntInputWithLock("ItemSwitch");
+
+                    if(itemSwitch != 0)
+                    {
+                        int max = FindObjectOfType<BuildingPartDatabaseManager>().GetBuildingPartCount() + 1;
+                        ChangeSelection(MathHelper.NumClamp(currentSelection + itemSwitch, 1, Mathf.Min(max, 9)));
+                    }
+                }
             }
         }
 
@@ -148,6 +186,33 @@ public class BuildingModeManager : MonoBehaviour
         if (worldStateManager.IsInsideWorldChunk(finalPos) != null)
         {
             actualCursorPos = finalPos;
+        }
+    }
+
+    public void ChangeSelection(int _value)
+    {
+        currentSelection = _value;
+
+        Color highlightedColour = Color.white;
+        ColorUtility.TryParseHtmlString("#F5F5F5FF", out highlightedColour);
+
+        foreach (ItemHide itemHide in FindObjectsOfType<ItemHide>())
+        {
+            Button button = itemHide.GetComponent<Button>();
+            ColorBlock colorBlock = button.colors;
+
+            if (itemHide.uniqueID != _value)
+            {
+                colorBlock.normalColor = Color.white;
+                colorBlock.highlightedColor = highlightedColour;
+            }
+            else
+            {
+                colorBlock.normalColor = Color.cyan;
+                colorBlock.highlightedColor = Color.cyan;
+            }
+
+            button.colors = colorBlock;
         }
     }
 
@@ -186,6 +251,15 @@ public class BuildingModeManager : MonoBehaviour
             }
 
             StartCoroutine(DoSwapAnimation());
+
+            itemsPanel.SetActive(true);
+
+            foreach(ItemHide itemHide in FindObjectsOfType<ItemHide>())
+            {
+                itemHide.UpdateAvailablilty();
+            }
+
+            ChangeSelection(currentSelection);
         }
     }
 
@@ -219,6 +293,8 @@ public class BuildingModeManager : MonoBehaviour
             }
 
             StartCoroutine(DoSwapAnimation());
+
+            itemsPanel.SetActive(false);
         }
     }
 

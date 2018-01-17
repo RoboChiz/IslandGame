@@ -18,6 +18,18 @@ public class BuildingPartDatabaseManager : MonoBehaviour
         return buildingPartDatabase[_id - 1];
     }
 
+    public int GetBuildingPartCount()
+    {
+        if (buildingPartDatabase != null)
+        {
+            return buildingPartDatabase.Count;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
     /// <summary>
     /// Load the Building Part Database from an XML File
     /// </summary>
@@ -56,6 +68,9 @@ public class BuildingPartDatabaseManager : MonoBehaviour
                 buildingPart.prefabResourceName = xmlNode.Attributes["resource"].Value;
                 buildingPart.prefab = Resources.Load<GameObject>(buildingPart.prefabResourceName);
 
+                buildingPart.iconResourceName = xmlNode.Attributes["icon"].Value;
+                buildingPart.icon = Resources.Load<Sprite>(buildingPart.iconResourceName);
+
                 buildingPart.partType = BuildingPart.PartType.Max;
 
                 if(xmlNode.Attributes["type"] != null)
@@ -86,6 +101,9 @@ public class BuildingPart
     //Prefab Data
     public string prefabResourceName;
     public GameObject prefab;
+
+    public string iconResourceName;
+    public Sprite icon;
 
     public BuildingPart(int _uniqueID)
     {

@@ -19,7 +19,6 @@ public class PauseMenu : MonoBehaviour
         //Hide Pause off screen
         rectTransform.anchoredPosition = new Vector2(0f, 1000f);
 
-        FindObjectOfType<EventSystem>().enabled = false;
         cameraSwap = FindObjectOfType<CameraSwap>();
     }
 
@@ -103,13 +102,10 @@ public class PauseMenu : MonoBehaviour
         yield return SlideTo(new Vector2(0f, -50f),     new Vector2(0f, 0f),    0.1f);
 
         isAnimating = false;
-        FindObjectOfType<EventSystem>().enabled = true;
     }
 
     private IEnumerator HidePauseMenu()
     {
-        FindObjectOfType<EventSystem>().enabled = false;
-
         yield return SlideTo(new Vector2(0f, 0f),   new Vector2(0f, 50f),       0.1f);
         yield return SlideTo(new Vector2(0f, 50f),  new Vector2(0f, -1000f),    0.45f);
         

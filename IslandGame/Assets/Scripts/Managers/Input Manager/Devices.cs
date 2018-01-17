@@ -39,7 +39,17 @@ public class KeyboardDevice : InputDevice
             {"RotateLeft", new List<ControlName>() {new ControlName("q", false) } },
             {"RotateRight", new List<ControlName>() {new ControlName("e", false) } },
             {"Create", new List<ControlName>() {new ControlName("k", false) } },
-            {"Delete", new List<ControlName>() {new ControlName("l", false) } },          
+            {"Delete", new List<ControlName>() {new ControlName("l", false) } },
+            {"Rotate", new List<ControlName>() {new ControlName("z" + "-", false) } },
+
+            {"Item1", new List<ControlName>() {new ControlName("1", false) } },
+            {"Item2", new List<ControlName>() {new ControlName("2", false) } },
+            {"Item3", new List<ControlName>() {new ControlName("3", false) } },
+            {"Item4", new List<ControlName>() {new ControlName("4", false) } },
+            {"Item5", new List<ControlName>() {new ControlName("5", false) } },
+            {"Item6", new List<ControlName>() {new ControlName("6", false) } },
+            {"Item7", new List<ControlName>() {new ControlName("7", false) } },
+            {"Item8", new List<ControlName>() {new ControlName("8", false) } },
         }
     );
 }
@@ -79,7 +89,8 @@ public class XBox360Device : InputDevice
             {"RotateRight", new List<ControlName>() {new ControlName(RightStickHori + "+", true) } },
             {"Create", new List<ControlName>() {new ControlName(A, false) } },
             {"Delete", new List<ControlName>() {new ControlName(B, false) } },
-
+            {"ItemSwitch", new List<ControlName>() {new ControlName(LB + "-", false), new ControlName(RB + "+", false) } },
+            {"Rotate", new List<ControlName>() {new ControlName(LT, true), new ControlName(RT, true) } },
         }
     );
 

@@ -53,8 +53,9 @@ public class WorldStateManager : ISavingManager
                     for (int z = 0; z < chunk.gridData.GetLength(2); z++)
                     {
                         _stream.Write(chunk.gridData[x,y,z]);
+                        _stream.Write(chunk.gridRotationAngles[x, y, z]);
 
-                        if(chunk.gridData[x, y, z] != 0)
+                        if (chunk.gridData[x, y, z] != 0)
                         {
                             Debug.Log("Saved Block at " + x + "," + y + "," + z);
                         }
@@ -126,11 +127,12 @@ public class WorldStateManager : ISavingManager
                     for (int z = 0; z < chunk.gridData.GetLength(2); z++)
                     {
                         int _id = _stream.ReadInt32();
+                        float _rotation = _stream.ReadSingle();
 
-                        if(_id != 0)
+                        if (_id != 0)
                         {
                             Debug.Log("Loaded Block at " + x + "," + y + "," + z);
-                            CreateItem(_id, ChunkToWorld(chunk, new Vector3(x, y, z)));                        
+                            CreateItem(_id, ChunkToWorld(chunk, new Vector3(x, y, z)), _rotation);                        
                         }
                     }
                 }
@@ -152,7 +154,7 @@ public class WorldStateManager : ISavingManager
         return null;
     }
 
-    public void CreateItem(int _databaseID, Vector3 _position)
+    public void CreateItem(int _databaseID, Vector3 _position, float _rotation)
     {
         WorldChunk insideChunk = IsInsideWorldChunk(_position);
 
@@ -168,7 +170,10 @@ public class WorldStateManager : ISavingManager
 
                 GameObject prefab = Instantiate(FindObjectOfType<BuildingPartDatabaseManager>().GetBuildingPart(_databaseID).prefab);
                 prefab.transform.position = _position;
+                prefab.transform.rotation = Quaternion.AngleAxis(_rotation, Vector3.up);
+
                 insideChunk.gridObjects[(int)chunkPos.x, (int)chunkPos.y, (int)chunkPos.z] = prefab;
+                insideChunk.gridRotationAngles[(int)chunkPos.x, (int)chunkPos.y, (int)chunkPos.z] = _rotation;
             }
         }
     }
@@ -187,6 +192,7 @@ public class WorldStateManager : ISavingManager
             if (insideChunk.gridData[xChunk, yChunk, zChunk] != 0)
             {
                 insideChunk.gridData[xChunk, yChunk, zChunk] = 0;
+                insideChunk.gridRotationAngles[xChunk, yChunk, zChunk] = 0;
                 Debug.Log("Deleted Block at " + xChunk + "," + yChunk + "," + zChunk);
 
                 Destroy(insideChunk.gridObjects[xChunk, yChunk, zChunk]);
@@ -238,6 +244,7 @@ public class WorldChunk
 
     public int[,,] gridData;
     public GameObject[,,] gridObjects;
+    public float[,,] gridRotationAngles;
 
     public Vector3 Size()
     {
@@ -250,6 +257,7 @@ public class WorldChunk
 
         gridData = new int[20, 10, 20];
         gridObjects = new GameObject[20, 10, 20];
+        gridRotationAngles = new float[20, 10, 20];
 
         centrePoint = _centrePoint;
     }
