@@ -4,19 +4,23 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    public float walkSpeed = 3f, brakeTime = 0.5f, acceleration = 2f, expectedSpeed = 0f, jumpVelocity = 10f;
+    public float walkSpeed = 3f, brakeTime = 0.5f, acceleration = 2f, expectedSpeed = 0f, jumpVelocity = 10f, turnSpeed = 5f, swimSpeed = 2f;
     public Camera playerCamera;
 
     public Vector3 lastDirection { get; private set; }
     public Vector3 pointDirection { get; private set; }
 
-    public bool lockMovements = false;
+    public bool lockMovements = false, inWater= false;
     private bool isFalling = false, jumpLock = false;
 
     // Update is called once per frame
     void FixedUpdate ()
     {
         Rigidbody rigidbody = GetComponent<Rigidbody>();
+
+        //Get Correct Camera Transform
+        Vector3 cameraFoward = Vector3.Scale(playerCamera.transform.forward, new Vector3(1.0f, 0.0f, 1.0f)).normalized;
+        Quaternion cameraQuat = Quaternion.LookRotation(cameraFoward, Vector3.up);
 
         if (InputManager.controllers.Count > 0)
         {
@@ -31,10 +35,6 @@ public class PlayerMovement : MonoBehaviour
             {
                 jump = inputDevice.GetButtonWithLock("Jump");
             }
-
-            //Get Correct Camera Transform
-            Vector3 cameraFoward = Vector3.Scale(playerCamera.transform.forward, new Vector3(1.0f, 0.0f, 1.0f)).normalized;
-            Quaternion cameraQuat = Quaternion.LookRotation(cameraFoward, Vector3.up);
 
             //Move the character in the direction of the camera
             Vector3 input = new Vector3(hori, 0f, -verti).normalized;
@@ -55,7 +55,7 @@ public class PlayerMovement : MonoBehaviour
             else
             {            
                 expectedSpeed += (moveAmount * acceleration) * Time.fixedDeltaTime;
-                expectedSpeed = Mathf.Clamp(expectedSpeed, 0f, walkSpeed);
+                expectedSpeed = Mathf.Clamp(expectedSpeed, 0f, !inWater? walkSpeed : swimSpeed);
 
                 if (moveAmount > 0.5f)
                 {
@@ -78,11 +78,17 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
-        isFalling = !Physics.Raycast(transform.position, Vector3.down, 0.75f);
+        isFalling = !Physics.Raycast(transform.position, Vector3.down, 0.6f);
 
         if(rigidbody.velocity.y <= 0f && jumpLock)
         {
             jumpLock = false;
+        }
+
+        //Turn to Face Look Direction
+        if (lastDirection != Vector3.zero)
+        {
+            transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(cameraQuat * lastDirection, Vector3.up), Time.fixedDeltaTime * turnSpeed);
         }
     }
 

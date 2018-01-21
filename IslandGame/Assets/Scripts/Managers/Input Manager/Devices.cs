@@ -83,14 +83,14 @@ public class XBox360Device : InputDevice
             {"CameraHorizontal", new List<ControlName>() {new ControlName(RightStickHori, true) } },
             {"CameraVertical", new List<ControlName>() {new ControlName(RightStickVert, true) } },
 
-            {"MovementHeight", new List<ControlName>() {new ControlName(RightStickVert, true) } },
+            {"MovementHeight", new List<ControlName>() { new ControlName(LT, true), new ControlName(RT, true) } },
             {"Focus", new List<ControlName>() {new ControlName(LS, false) } },
             {"RotateLeft", new List<ControlName>() {new ControlName(RightStickHori + "-", true) } },
             {"RotateRight", new List<ControlName>() {new ControlName(RightStickHori + "+", true) } },
             {"Create", new List<ControlName>() {new ControlName(A, false) } },
             {"Delete", new List<ControlName>() {new ControlName(B, false) } },
-            {"ItemSwitch", new List<ControlName>() {new ControlName(LB + "-", false), new ControlName(RB + "+", false) } },
-            {"Rotate", new List<ControlName>() {new ControlName(LT, true), new ControlName(RT, true) } },
+            {"ItemSwitch", new List<ControlName>() { new ControlName(DPadHori, true) } },
+            {"Rotate", new List<ControlName>() {new ControlName(LB + "-", false), new ControlName(RB + "+", false) } },
         }
     );
 
