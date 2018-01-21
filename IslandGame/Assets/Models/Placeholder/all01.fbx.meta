@@ -29,7 +29,37 @@ ModelImporter:
     4300002: Ground
     4300004: Water
     9500000: //RootNode
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: EdgeWater
+    second: {fileID: 2100000, guid: 4e204ac36defb8a4a8c6e089528042b0, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: WhiteWater
+    second: {fileID: 2100000, guid: f4cd491347c1f5b4a8adb6438bae41ba, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: oceanFloor
+    second: {fileID: 2100000, guid: 766eb3fea56382242b576381ae1b5b56, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: sand
+    second: {fileID: 2100000, guid: 068eb8b830de766468d01767c9a08570, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: swatch
+    second: {fileID: 2100000, guid: 3e91e0c79f169cc4f806a08978fe2d54, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: water_mat1
+    second: {fileID: 2100000, guid: d840a712532082d4dad02f1c1525fc86, type: 2}
   materials:
     importMaterials: 1
     materialName: 0
