@@ -16,7 +16,7 @@ public class WorldStateManager : ISavingManager
     public void Start()
     {
         worldChunks = new List<WorldChunk>();
-        worldChunks.Add(new WorldChunk(worldChunks.Count, new Vector3(0f, 0.5f, 0f)));
+        worldChunks.Add(new WorldChunk(worldChunks.Count, new Vector3(0f, 0f, 0f)));
     }
 
     public override void DoSave(BinaryWriter _stream)
@@ -30,6 +30,7 @@ public class WorldStateManager : ISavingManager
         SaveDataManager.SaveVector3(_stream, player.rotation.eulerAngles);
         SaveDataManager.SaveVector3(_stream, playerMovement.lastDirection);
         SaveDataManager.SaveVector3(_stream, playerMovement.pointDirection);
+        SaveDataManager.SaveVector3(_stream, playerMovement.lastCameraQuat.eulerAngles);
         _stream.Write(playerMovement.expectedSpeed);
 
         //Save Camera Stats
@@ -101,9 +102,10 @@ public class WorldStateManager : ISavingManager
 
         Vector3 lastDirection = SaveDataManager.LoadVector3(_stream);
         Vector3 pointDirection = SaveDataManager.LoadVector3(_stream);
+        Vector3 lastCameraQuat = SaveDataManager.LoadVector3(_stream);
         float expectedSpeed = _stream.ReadSingle();
 
-        playerMovement.GetFromLoad(lastDirection, pointDirection, expectedSpeed);
+        playerMovement.GetFromLoad(lastDirection, pointDirection, expectedSpeed, lastCameraQuat);
 
         //Load Camera Stats
         cameraSwap.SetCameraState(_stream.ReadBoolean());

@@ -38,35 +38,60 @@ public class WaterBody : MonoBehaviour
     {
         if (other.attachedRigidbody)
         {
+            bool ignorePhysics = false;
+            Vector3 objectPos = other.transform.position;
+
+            //If something is registered as In Water, do Raycasts to determine depth .etc         
+            RaycastHit hit;
+            Physics.Raycast(objectPos + (Vector3.up * 100f), Vector3.down, out hit, 200f, LayerMask.GetMask("Water"), QueryTriggerInteraction.Collide);
+
             //Set In Water for Player
             PlayerMovement player = other.GetComponent<PlayerMovement>();
             if (player != null)
             {
-                player.inWater = true;
+                bool isActuallyInWater = true;
+
+                //Do Ground Check
+                RaycastHit groundHit = new RaycastHit();
+                if (Physics.Raycast(objectPos, Vector3.down, out groundHit, 15f, ~(LayerMask.GetMask("Water") | LayerMask.GetMask("Ignore Raycast")), QueryTriggerInteraction.Collide))
+                {
+                    float groundWaterDiff = hit.point.y - groundHit.point.y;
+
+                    //If the difference between the top of the water and the ground is less than the height of the player, presume we're above ground
+                    if(groundWaterDiff < 0.5f)
+                    {
+                        isActuallyInWater = false;
+                    }
+                }
+
+                player.inWater = isActuallyInWater;
+
+                if(player.isJumping || !player.inWater)
+                {
+                    ignorePhysics = true;
+                }
             }
 
-            //If something is registered as In Water, do Raycasts to determine depth .etc
-            Vector3 objectPos = other.transform.position;
-
-            RaycastHit hit;
-            Physics.Raycast(objectPos + (Vector3.up * 100f), Vector3.down, out hit, 200f, LayerMask.GetMask("Water"), QueryTriggerInteraction.Collide);
-
-            if(hit.transform == null)
+            if (!ignorePhysics)
             {
-                Debug.Log("Something's Wrong!");
+                
+                if (hit.transform == null)
+                {
+                    Debug.Log("Something's Wrong!");
+                }
+                else
+                {
+                    //Apply Water Physics to Object
+                    float depth = objectPos.y - hit.point.y; //Should only be in the y direction
+
+                    depth += Mathf.Sin(Time.time) * offsetHeight;
+
+                    Vector3 newVelocity = -Vector3.up * depth * buoyancy;
+
+                    Vector3 accelerationVec = (Vector3.Scale(newVelocity, new Vector3(0f, 1f, 1f)) - Vector3.Scale(other.attachedRigidbody.velocity, new Vector3(0f, 1f, 0f))) / Time.fixedDeltaTime;
+                    other.attachedRigidbody.AddForce(accelerationVec, ForceMode.Acceleration);
+                }
             }
-            else
-            {
-                //Apply Water Physics to Object
-                float depth = objectPos.y - hit.point.y; //Should only be in the y direction
-
-                depth += Mathf.Sin(Time.time) * offsetHeight;
-
-                Vector3 newVelocity = -Vector3.up * depth * buoyancy;
-
-                Vector3 accelerationVec = (Vector3.Scale(newVelocity, new Vector3(0f, 1f, 1f)) - Vector3.Scale(other.attachedRigidbody.velocity, new Vector3(0f, 1f, 0f))) / Time.fixedDeltaTime;
-                other.attachedRigidbody.AddForce(accelerationVec, ForceMode.Acceleration);
-            }          
         }
     }
 }

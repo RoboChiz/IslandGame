@@ -4,14 +4,21 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    public float walkSpeed = 3f, brakeTime = 0.5f, acceleration = 2f, expectedSpeed = 0f, jumpVelocity = 10f, turnSpeed = 5f, swimSpeed = 2f;
+    public float tiptoeSpeedPercent = 0.3333f, walkSpeedPercent = 0.6666f, moveSpeed = 4f,
+        brakeTime = 0.5f, acceleration = 2f, 
+        expectedSpeed = 0f, jumpVelocity = 10f, 
+        turnSpeed = 5f, swimSpeed = 2f;
+
+    private const float tipPercent = 0.25f, walkPercent = 0.5f;
     public Camera playerCamera;
 
     public Vector3 lastDirection { get; private set; }
+    public Quaternion lastCameraQuat { get; private set; }
+
     public Vector3 pointDirection { get; private set; }
 
-    public bool lockMovements = false, inWater= false;
-    private bool isFalling = false, jumpLock = false;
+    public bool lockMovements = false, inWater= false, isJumping = false;
+    public bool isFalling = false, jumpLock = false;
 
     // Update is called once per frame
     void FixedUpdate ()
@@ -37,6 +44,8 @@ public class PlayerMovement : MonoBehaviour
             }
 
             //Move the character in the direction of the camera
+            float maxInput = Mathf.Max(Mathf.Abs(hori), Mathf.Abs(verti));
+
             Vector3 input = new Vector3(hori, 0f, -verti).normalized;
 
             Vector2 inputAmount = new Vector2(hori, verti);
@@ -53,13 +62,31 @@ public class PlayerMovement : MonoBehaviour
                 input = lastDirection;
             }
             else
-            {            
-                expectedSpeed += (moveAmount * acceleration) * Time.fixedDeltaTime;
-                expectedSpeed = Mathf.Clamp(expectedSpeed, 0f, !inWater? walkSpeed : swimSpeed);
+            {
+                //Get Max Movement Speed
+                float maxSpeed = moveSpeed;
+                if(inWater)
+                {
+                    maxSpeed = swimSpeed;
+                }
+              
+                //Adjust speed depending on amount of input
+                if(maxInput < tipPercent)
+                {
+                    maxSpeed *= tiptoeSpeedPercent; 
+                }
+                else if (maxInput < walkPercent)
+                {
+                    maxSpeed *= walkSpeedPercent;
+                }
 
-                if (moveAmount > 0.5f)
+                expectedSpeed += (moveAmount * acceleration) * Time.fixedDeltaTime;
+                expectedSpeed = Mathf.Clamp(expectedSpeed, 0f, maxSpeed);
+
+                if (maxInput > 0.01f)
                 {
                     lastDirection = input;
+                    lastCameraQuat = cameraQuat;
                 }
             }
 
@@ -71,24 +98,27 @@ public class PlayerMovement : MonoBehaviour
             rigidbody.AddForce(accelerationVec, ForceMode.Acceleration);
 
             //Do Jump
-            if(jump && !isFalling && !jumpLock)
+            if(jump && (!isFalling || inWater) && !jumpLock)
             {
                 rigidbody.velocity += new Vector3(0f, jumpVelocity, 0f);
                 jumpLock = true;
+                isJumping = true;
             }
         }
 
-        isFalling = !Physics.Raycast(transform.position, Vector3.down, 0.6f);
+        RaycastHit hit;
+        isFalling = !Physics.Raycast(transform.position, Vector3.down, out hit, 0.6f, ~(LayerMask.GetMask("Water") | LayerMask.GetMask("Ignore Raycast")), QueryTriggerInteraction.UseGlobal);
 
         if(rigidbody.velocity.y <= 0f && jumpLock)
         {
             jumpLock = false;
+            isJumping = false;
         }
 
         //Turn to Face Look Direction
         if (lastDirection != Vector3.zero)
         {
-            transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(cameraQuat * lastDirection, Vector3.up), Time.fixedDeltaTime * turnSpeed);
+            transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(lastCameraQuat * lastDirection, Vector3.up), Time.fixedDeltaTime * turnSpeed);
         }
     }
 
@@ -96,11 +126,13 @@ public class PlayerMovement : MonoBehaviour
     (
         Vector3 _lastDirection, 
         Vector3 _pointDirection, 
-        float _expectedSpeed
+        float _expectedSpeed,
+        Vector3 _lastCameraQuat
     )
     {
         lastDirection = _lastDirection;
         pointDirection = _pointDirection;
         expectedSpeed = _expectedSpeed;
+        lastCameraQuat = Quaternion.Euler(_lastCameraQuat);
     }
 }

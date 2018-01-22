@@ -15,8 +15,8 @@ public class IsoCam : MonoBehaviour
 
     public float mouseScale = 50f, controllerScale = 50f;
 
-    private bool focused = true;
-    public float focusedSize = 5f, unfocusedSize = 15f;
+    public float[] focusToggleDepths;
+    private int currentDepth = 0;
 
     private Camera myCamera;
 
@@ -49,10 +49,10 @@ public class IsoCam : MonoBehaviour
             transform.rotation = rotation;
 
             //Set Forward
-            Vector3 localForward = rotation * Vector3.forward;           
+            Vector3 localForward = rotation * Vector3.forward;
 
             //Do Sizing
-            size = focused ? focusedSize : unfocusedSize;
+            size = focusToggleDepths[currentDepth];
             actualSize = Mathf.Lerp(actualSize, size, Time.deltaTime * lerpSpeed);
 
             transform.position = target.position - (localForward * actualSize);
@@ -76,7 +76,7 @@ public class IsoCam : MonoBehaviour
 
                 if (inputDevice.GetButtonWithLock("Focus"))
                 {
-                    focused = !focused;
+                    currentDepth = MathHelper.NumClamp(currentDepth + 1, 0, focusToggleDepths.Length);
                 }
             }
         }
