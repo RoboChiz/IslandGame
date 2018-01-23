@@ -64,12 +64,12 @@ public class IsoCam : MonoBehaviour
             {
                 InputDevice inputDevice = InputManager.controllers[0];
 
-                if (inputDevice.GetButtonWithLock("RotateLeft"))
+                if (inputDevice.GetButtonWithDelay("RotateLeft", 0.5f, Time.deltaTime))
                 {
                     xyValues.y += 90f;
                 }
 
-                if (inputDevice.GetButtonWithLock("RotateRight"))
+                if (inputDevice.GetButtonWithDelay("RotateRight", 0.5f, Time.deltaTime))
                 {
                     xyValues.y -= 90f;
                 }

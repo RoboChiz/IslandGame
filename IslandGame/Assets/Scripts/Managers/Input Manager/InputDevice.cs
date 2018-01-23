@@ -30,6 +30,7 @@ public abstract class InputDevice
     }
 
     public string inputLock = "";
+    public float inputTimer = 0f;
 
     //Used in Menus
     public bool toggle, killing;
@@ -88,6 +89,28 @@ public abstract class InputDevice
         return 0;
     }
 
+    public int GetIntInputWithDelay(string _input, float _delay, float _deltaTime)
+    {
+        float val = GetIntInput(_input);
+
+        if (!toggle && inputTimer <= 0f && (inputLock == _input || inputLock == ""))
+        {           
+            if (val != 0)
+            {
+                inputLock = _input;
+                inputTimer = _delay;
+                return (int)Mathf.Sign(val);
+            }
+        }
+
+        if (inputLock == _input && val != 0f)
+        {
+            inputTimer -= _deltaTime;
+        }
+
+        return 0;
+    }
+
     public float GetRawInputWithLock(string _input)
     {
         if (!toggle && inputLock == "")
@@ -127,6 +150,28 @@ public abstract class InputDevice
                 inputLock = _input;
                 return true;
             }
+        }
+
+        return false;
+    }
+
+    public bool GetButtonWithDelay(string _input, float _delay, float _deltaTime)
+    {
+        bool val = GetButton(_input);
+
+        if (!toggle && inputTimer <= 0f && (inputLock == "" || inputLock == _input))
+        {
+            if (val)
+            {
+                inputLock = _input;
+                inputTimer = _delay;
+                return true;
+            }
+        }
+
+        if (inputLock == _input && val)
+        {
+                inputTimer -= _deltaTime;
         }
 
         return false;

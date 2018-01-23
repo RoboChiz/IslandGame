@@ -9,10 +9,12 @@ ModelImporter:
     100002: Ground
     100004: Jetty
     100006: Water
+    100008: Border
     400000: //RootNode
     400002: Ground
     400004: Jetty
     400006: Water
+    400008: Border
     2100000: swatch
     2100002: sand
     2100004: oceanFloor
@@ -22,12 +24,15 @@ ModelImporter:
     2300000: Ground
     2300002: Jetty
     2300004: Water
+    2300006: Border
     3300000: Ground
     3300002: Jetty
     3300004: Water
+    3300006: Border
     4300000: Jetty
     4300002: Ground
     4300004: Water
+    4300006: Border
     9500000: //RootNode
   externalObjects:
   - first:

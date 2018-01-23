@@ -78,7 +78,7 @@ public class BuildingModeManager : MonoBehaviour
                 bool build = inputDevice.GetButtonWithLock("Create");
                 bool delete = inputDevice.GetButtonWithLock("Delete");
 
-                int rotate = inputDevice.GetIntInputWithLock("Rotate");
+                int rotate = inputDevice.GetIntInputWithDelay("Rotate", 0.3f, Time.deltaTime);
 
                 //Debug Draw
                 Quaternion cameraQuat = Quaternion.LookRotation(Vector3.Scale(playerMovement.playerCamera.transform.forward, new Vector3(1f, 0f, 1f)).normalized, Vector3.up);
@@ -96,6 +96,15 @@ public class BuildingModeManager : MonoBehaviour
                         inputRecieved.x = (hori != 0f)      ? Mathf.Sign(hori)      : inputRecieved.x;
                         inputRecieved.y = (height != 0f)    ? Mathf.Sign(-height)    : inputRecieved.y;
                         inputRecieved.z = (verti != 0f)     ? Mathf.Sign(-verti)     : inputRecieved.z;
+                    }
+                    else
+                    {
+                        inputLockTimer -= Time.deltaTime;
+
+                        if(inputLockTimer < -0.3f)
+                        {
+                            inputLockTimer = maxInputLockTimer;
+                        }
                     }
                 }
                 else
@@ -149,7 +158,7 @@ public class BuildingModeManager : MonoBehaviour
                 }
                 else
                 {
-                    int itemSwitch = inputDevice.GetIntInputWithLock("ItemSwitch");
+                    int itemSwitch = inputDevice.GetIntInputWithDelay("ItemSwitch", 0.25f, Time.deltaTime);
 
                     if(itemSwitch != 0)
                     {

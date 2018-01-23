@@ -149,7 +149,10 @@ public class InputManager : MonoBehaviour
             if (controller.inputLock != "")
             {
                 if (controller.GetRawInput(controller.inputLock) == 0f)
+                {
                     controller.inputLock = "";
+                    controller.inputTimer = 0f;
+                }
             }
 
             /*

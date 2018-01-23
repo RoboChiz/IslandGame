@@ -20,6 +20,8 @@ public class PlayerMovement : MonoBehaviour
     public bool lockMovements = false, inWater= false, isJumping = false;
     public bool isFalling = false, jumpLock = false;
 
+    Queue<float> lastRotAngles = new Queue<float>();
+
     // Update is called once per frame
     void FixedUpdate ()
     {
@@ -118,7 +120,29 @@ public class PlayerMovement : MonoBehaviour
         //Turn to Face Look Direction
         if (lastDirection != Vector3.zero)
         {
-            transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(lastCameraQuat * lastDirection, Vector3.up), Time.fixedDeltaTime * turnSpeed);
+            //Do a bunch of angle checks, if we're moving alot presume we're spinning
+            Quaternion finalRot = Quaternion.LookRotation(lastCameraQuat * lastDirection, Vector3.up);
+            float angle = Quaternion.Angle(transform.rotation, finalRot), averageAngle = 0f;
+            float currentTurnSpeed = turnSpeed;
+
+            if(lastRotAngles.Count >= 40f)
+            {
+                lastRotAngles.Dequeue();
+            } 
+            lastRotAngles.Enqueue(angle);
+      
+            foreach(float value in lastRotAngles)
+            {
+                averageAngle += value;
+            }
+            averageAngle /= lastRotAngles.Count;
+
+            if (averageAngle > 50f)
+            {
+                currentTurnSpeed *= 3f;
+            }
+
+            transform.rotation = Quaternion.Lerp(transform.rotation, finalRot, Time.fixedDeltaTime * currentTurnSpeed);
         }
     }
 
