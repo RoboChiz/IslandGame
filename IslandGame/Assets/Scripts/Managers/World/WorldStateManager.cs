@@ -223,7 +223,7 @@ public class WorldStateManager : ISavingManager
         int gridWidth = (int)_chunk.Size().x, gridHeight = (int)_chunk.Size().y, gridLength = (int)_chunk.Size().z;
         float halfWidth = gridWidth / 2f, halfLength = gridLength / 2f;
 
-        Vector3 bottomEdge  = _chunk.centrePoint - new Vector3((halfWidth - 0.5f), 0f, (halfLength - 0.5f));
+        Vector3 bottomEdge  = _chunk.centrePoint - new Vector3(halfWidth, 0f, halfLength);
 
         return bottomEdge + _pos;
     }
@@ -231,7 +231,7 @@ public class WorldStateManager : ISavingManager
     public Vector3 WorldToChunk(WorldChunk _chunk, Vector3 _pos)
     {
         Vector3 local = _pos - _chunk.centrePoint;
-        local += new Vector3(_chunk.Size().x / 2f, 0f, _chunk.Size().z / 2f);
+        local += new Vector3((_chunk.Size().x / 2f) + 0.5f, 0f, (_chunk.Size().z / 2f) + 0.5f);
 
         return new Vector3(Mathf.Floor(local.x), Mathf.Floor(Mathf.Clamp(local.y, 0.5f, 10.5f)), Mathf.Floor(local.z));
     }

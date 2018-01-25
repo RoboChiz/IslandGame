@@ -350,6 +350,7 @@
     <Compile Include="Assets\Scripts\Menus\ItemHide.cs" />
     <Compile Include="Assets\Scripts\Menus\PauseMenu.cs" />
     <Compile Include="Assets\Scripts\Player\CameraSwap.cs" />
+    <Compile Include="Assets\Scripts\Player\FluidCursor.cs" />
     <Compile Include="Assets\Scripts\Player\IsoCam.cs" />
     <Compile Include="Assets\Scripts\Player\OrbitCam.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerMovement.cs" />

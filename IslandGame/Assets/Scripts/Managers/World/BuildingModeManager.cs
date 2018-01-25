@@ -15,7 +15,7 @@ public class BuildingModeManager : MonoBehaviour
     private float hideTimer;
     Coroutine buildHideCoroutine, playHideCoroutine;
 
-    public GameObject cursor, player, itemsPanel;
+    public GameObject cursor, fluidCursor, player, itemsPanel;
     private PlayerMovement playerMovement;
     private WorldStateManager worldStateManager;
 
@@ -69,16 +69,11 @@ public class BuildingModeManager : MonoBehaviour
             }
 
             if(isActivated)
-            {             
-                //Get Inputs
+            {
+                /*//Get Inputs
                 float hori = inputDevice.GetInput("MovementHorizontal");
                 float verti = inputDevice.GetInput("MovementVertical");
                 float height = inputDevice.GetInput("MovementHeight");
-
-                bool build = inputDevice.GetButtonWithLock("Create");
-                bool delete = inputDevice.GetButtonWithLock("Delete");
-
-                int rotate = inputDevice.GetIntInputWithDelay("Rotate", 0.3f, Time.deltaTime);
 
                 //Debug Draw
                 Quaternion cameraQuat = Quaternion.LookRotation(Vector3.Scale(playerMovement.playerCamera.transform.forward, new Vector3(1f, 0f, 1f)).normalized, Vector3.up);
@@ -125,12 +120,24 @@ public class BuildingModeManager : MonoBehaviour
                     }        
                 }
 
-                if(rotate != 0)
-                {
-                    rotationAmount -= rotate * 90f;
+              
+
+                cursor.transform.position = Vector3.Lerp(cursor.transform.position, actualCursorPos, Time.deltaTime * lerpAmount);
+                */
+
+                WorldChunk insideChunk = worldStateManager.IsInsideWorldChunk(fluidCursor.transform.position);
+                if (insideChunk != null)
+                {                   
+                    actualCursorPos = worldStateManager.ChunkToWorld(insideChunk, worldStateManager.WorldToChunk(insideChunk, fluidCursor.GetComponent<FluidCursor>().GetActualPos()));
+                    cursor.transform.position = actualCursorPos;
                 }
 
-                if(build)
+                //Build Controls
+                bool build = inputDevice.GetButtonWithLock("Create");
+                bool delete = inputDevice.GetButtonWithLock("Delete");
+              
+
+                if (build)
                 {
                     worldStateManager.CreateItem(currentSelection, actualCursorPos, rotationAmount);
                 }
@@ -140,7 +147,12 @@ public class BuildingModeManager : MonoBehaviour
                     worldStateManager.DeleteItem(actualCursorPos);
                 }
 
-                cursor.transform.position = Vector3.Lerp(cursor.transform.position, actualCursorPos, Time.deltaTime * lerpAmount);
+                //Rotation
+                int rotate = inputDevice.GetIntInputWithDelay("Rotate", 0.3f, Time.deltaTime);
+                if (rotate != 0)
+                {
+                    rotationAmount -= rotate * 90f;
+                }
 
                 lerpingRotationAmount = Mathf.Lerp(lerpingRotationAmount, rotationAmount, Time.deltaTime * lerpAmount);
                 cursor.transform.rotation = Quaternion.identity * Quaternion.AngleAxis(lerpingRotationAmount, Vector3.up);
@@ -181,6 +193,7 @@ public class BuildingModeManager : MonoBehaviour
         }
 
         cursor.SetActive(isActivated);
+        fluidCursor.SetActive(isActivated);
     }
 
     public void DoInput()
@@ -241,11 +254,11 @@ public class BuildingModeManager : MonoBehaviour
 
             if (isoCam != null)
             {
-                isoCam.target = cursor.transform;
+                isoCam.target = fluidCursor.transform;
             }
             else if(orbitCam != null)
             {
-                orbitCam.target = cursor.transform;
+                orbitCam.target = fluidCursor.transform;
             }
 
             Vector3 playerPos = player.transform.position - Vector3.up;
@@ -257,6 +270,8 @@ public class BuildingModeManager : MonoBehaviour
 
                 cursor.transform.position = newPos;
                 actualCursorPos = cursor.transform.position;
+
+                fluidCursor.transform.position = newPos;
             }
 
             StartCoroutine(DoSwapAnimation());
