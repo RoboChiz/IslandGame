@@ -36,12 +36,9 @@ public class InputManager : MonoBehaviour
         //Load all of the available configs
         LoadAllControllerLayouts();
 
-#if UNITY_EDITOR
         inputState = localInput;
         toggleState = localToggle;
-#else
-        inputState = InputState.Locked;
-#endif
+
 
     }
 
