@@ -22,6 +22,13 @@ public class PlayerMovement : MonoBehaviour
 
     Queue<float> lastRotAngles = new Queue<float>();
 
+    private Animator animator;
+
+    private void Start()
+    {
+        animator = GetComponentInChildren<Animator>();
+    }
+
     // Update is called once per frame
     void FixedUpdate ()
     {
@@ -90,7 +97,7 @@ public class PlayerMovement : MonoBehaviour
                     lastDirection = input;
                     lastCameraQuat = cameraQuat;
                 }
-            }
+            }        
 
             Vector3 finalInput = cameraQuat * input * expectedSpeed;
 
@@ -144,6 +151,11 @@ public class PlayerMovement : MonoBehaviour
 
             transform.rotation = Quaternion.Lerp(transform.rotation, finalRot, Time.fixedDeltaTime * currentTurnSpeed);
         }
+
+        // -- Do Animation --
+
+        animator.SetFloat("Speed", expectedSpeed);
+        animator.SetBool("IsFalling", isFalling);
     }
 
     public void GetFromLoad

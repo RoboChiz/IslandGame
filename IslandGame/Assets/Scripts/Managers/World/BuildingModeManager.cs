@@ -15,7 +15,7 @@ public class BuildingModeManager : MonoBehaviour
     private float hideTimer;
     Coroutine buildHideCoroutine, playHideCoroutine;
 
-    public GameObject cursor, fluidCursor, player, itemsPanel;
+    public GameObject cursor, fluidCursor, player, itemsPanel, grid;
     private PlayerMovement playerMovement;
     private WorldStateManager worldStateManager;
 
@@ -194,6 +194,7 @@ public class BuildingModeManager : MonoBehaviour
 
         cursor.SetActive(isActivated);
         fluidCursor.SetActive(isActivated);
+        grid.SetActive(isActivated);
     }
 
     public void DoInput()
