@@ -173,7 +173,9 @@ public class BuildingModeManager : MonoBehaviour
                     if (validCursor)
                     {
                         build = InputManager.GetClick(0);
-                        delete = InputManager.GetClick(1);
+                        delete = InputManager.GetClickHold(1);
+
+                        Debug.Log("delete:" + delete);
                     }
 
                     //Set Cursor as Target

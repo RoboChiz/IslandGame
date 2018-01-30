@@ -253,6 +253,17 @@ public class InputManager : MonoBehaviour
         return false;
     }
 
+    //Checks for a click
+    public static bool GetClickHold(int _mouseButton)
+    {
+        if (Input.GetMouseButton(_mouseButton))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
     //Removes the specified controller
     public static void RemoveController(int id)
     {
