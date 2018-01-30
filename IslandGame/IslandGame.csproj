@@ -355,6 +355,7 @@
     <Compile Include="Assets\Scripts\Player\IsoCam.cs" />
     <Compile Include="Assets\Scripts\Player\OrbitCam.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerMovement.cs" />
+    <Compile Include="Assets\Scripts\World\PhysicsPrefab.cs" />
     <Compile Include="Assets\Scripts\World\WaterBody.cs" />
   </ItemGroup>
   <ItemGroup>

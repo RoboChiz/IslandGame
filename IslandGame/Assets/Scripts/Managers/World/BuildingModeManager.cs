@@ -31,6 +31,8 @@ public class BuildingModeManager : MonoBehaviour
 
     private int currentSelection = 1;
 
+    private bool cursorMode;
+
     private void Start()
     {
         playerMovement = player.GetComponent<PlayerMovement>();
@@ -70,73 +72,128 @@ public class BuildingModeManager : MonoBehaviour
 
             if(isActivated)
             {
-                /*//Get Inputs
-                float hori = inputDevice.GetInput("MovementHorizontal");
-                float verti = inputDevice.GetInput("MovementVertical");
-                float height = inputDevice.GetInput("MovementHeight");
-
-                //Debug Draw
-                Quaternion cameraQuat = Quaternion.LookRotation(Vector3.Scale(playerMovement.playerCamera.transform.forward, new Vector3(1f, 0f, 1f)).normalized, Vector3.up);
-                Vector3 input = new Vector3(MathHelper.Sign(hori), MathHelper.Sign(-height), MathHelper.Sign(-verti)).normalized;
-                float squareSize = (((hori != 0 && verti == 0) || (verti != 0 && hori == 0)) ? 1.5f : 1f);
-                Vector3 finalInput = cameraQuat * input * squareSize;
-                Vector3 finalPos = actualCursorPos + finalInput;
-
-                Debug.DrawLine(actualCursorPos, finalPos, Color.red);
-
-                if (hori != 0f || verti != 0f || height != 0f)
+                //Map Cursor to Grid
+                WorldChunk insideChunk = worldStateManager.IsInsideWorldChunk(fluidCursor.transform.position);
+                bool validCursor = insideChunk != null;
+                if (validCursor)
                 {
-                    if (inputLockTimer > 0f)
-                    {
-                        inputRecieved.x = (hori != 0f)      ? Mathf.Sign(hori)      : inputRecieved.x;
-                        inputRecieved.y = (height != 0f)    ? Mathf.Sign(-height)    : inputRecieved.y;
-                        inputRecieved.z = (verti != 0f)     ? Mathf.Sign(-verti)     : inputRecieved.z;
-                    }
-                    else
-                    {
-                        inputLockTimer -= Time.deltaTime;
+                    actualCursorPos = worldStateManager.ChunkToWorld(insideChunk, worldStateManager.WorldToChunk(insideChunk, fluidCursor.GetComponent<FluidCursor>().GetActualPos()));
+                    cursor.transform.position = actualCursorPos;
+                }
 
-                        if(inputLockTimer < -0.3f)
+                bool build = false, delete = false;
+                int rotate = 0;
+
+                if(inputDevice.inputType == InputType.Keyboard)
+                {
+                    if(Cursor.visible)
+                    {
+                        cursorMode = true;
+                    }
+                    else if (cursorMode)
+                    {
+                        float hori = inputDevice.GetInput("MovementHorizontal");
+                        float verti = inputDevice.GetInput("MovementVertical");
+
+                        if(hori != 0 || verti != 0)
                         {
-                            inputLockTimer = maxInputLockTimer;
+                            cursorMode = false;
+                        }
+                    }
+                }
+
+                //Build Controls
+                if (validCursor)
+                {
+                    build = inputDevice.GetButtonWithLock("Create");
+                    delete = inputDevice.GetButtonWithLock("Delete");
+                }
+
+                //Rotation
+                rotate = inputDevice.GetIntInputWithDelay("Rotate", 0.3f, Time.deltaTime);
+
+
+                //Item Swapping
+                if (inputDevice.inputType == InputType.Keyboard)
+                {
+                    for (int i = 1; i < 9; i++)
+                    {
+                        if (inputDevice.GetButtonWithLock("Item" + i))
+                        {
+                            ChangeSelection(i);
                         }
                     }
                 }
                 else
                 {
-                    inputLockTimer = maxInputLockTimer;
-                }
+                    int itemSwitch = inputDevice.GetIntInputWithDelay("ItemSwitch", 0.25f, Time.deltaTime);
 
-                if(inputRecieved.sqrMagnitude != 0)
-                {
-                    if (inputLockTimer < 0)
+                    if (itemSwitch != 0)
                     {
-                        DoInput();
-                        inputRecieved = Vector3.zero;
+                        int max = FindObjectOfType<BuildingPartDatabaseManager>().GetBuildingPartCount() + 1;
+                        ChangeSelection(MathHelper.NumClamp(currentSelection + itemSwitch, 1, Mathf.Min(max, 9)));
                     }
-                    else
+                }
+
+                if (!cursorMode)
+                {
+                    //Keyboard / Controller Commands
+
+                    //Set Cursor as Target
+                    IsoCam isoCam = playerMovement.playerCamera.GetComponent<IsoCam>();
+                    OrbitCam orbitCam = playerMovement.playerCamera.GetComponent<OrbitCam>();
+
+                    //Turn off Target in Camera
+                    if (isoCam != null)
                     {
-                        inputLockTimer -= Time.deltaTime;
-                    }        
+                        isoCam.target = fluidCursor.transform;
+                    }
+                    else if (orbitCam != null)
+                    {
+                        orbitCam.target = fluidCursor.transform;
+                    }
+                }
+                else
+                {
+                    //Mouse Controls
+                    Ray ray = playerMovement.playerCamera.ScreenPointToRay(Input.mousePosition);
+                    float hit;
+
+                    Plane plane = new Plane(Vector3.up, -fluidCursor.transform.position.y);
+
+                    if (plane.Raycast(ray, out hit))
+                    {
+                        Vector3 hitPoint = ray.GetPoint(hit);
+                        hitPoint.y = fluidCursor.transform.position.y;
+                        fluidCursor.transform.position = hitPoint;
+                    }
+
+                    Debug.DrawRay(ray.origin, ray.direction, Color.red);
+
+                    if (validCursor)
+                    {
+                        build = InputManager.GetClick(0);
+                        delete = InputManager.GetClick(1);
+                    }
+
+                    //Set Cursor as Target
+                    IsoCam isoCam = playerMovement.playerCamera.GetComponent<IsoCam>();
+                    OrbitCam orbitCam = playerMovement.playerCamera.GetComponent<OrbitCam>();
+
+                    //Turn off Target in Camera
+                    if (isoCam != null)
+                    {
+                        isoCam.target = playerMovement.transform;
+                    }
+                    else if (orbitCam != null)
+                    {
+                        orbitCam.target = playerMovement.transform;
+                    }
                 }
 
-              
+                grid.transform.position = Vector3.Scale(grid.transform.position, new Vector3(1f,0f,1f)) + Vector3.Scale(actualCursorPos, new Vector3(0f, 1f, 0f));
 
-                cursor.transform.position = Vector3.Lerp(cursor.transform.position, actualCursorPos, Time.deltaTime * lerpAmount);
-                */
-
-                WorldChunk insideChunk = worldStateManager.IsInsideWorldChunk(fluidCursor.transform.position);
-                if (insideChunk != null)
-                {                   
-                    actualCursorPos = worldStateManager.ChunkToWorld(insideChunk, worldStateManager.WorldToChunk(insideChunk, fluidCursor.GetComponent<FluidCursor>().GetActualPos()));
-                    cursor.transform.position = actualCursorPos;
-                }
-
-                //Build Controls
-                bool build = inputDevice.GetButtonWithLock("Create");
-                bool delete = inputDevice.GetButtonWithLock("Delete");
-              
-
+                //Do Build Inputs
                 if (build)
                 {
                     worldStateManager.CreateItem(currentSelection, actualCursorPos, rotationAmount);
@@ -147,8 +204,7 @@ public class BuildingModeManager : MonoBehaviour
                     worldStateManager.DeleteItem(actualCursorPos);
                 }
 
-                //Rotation
-                int rotate = inputDevice.GetIntInputWithDelay("Rotate", 0.3f, Time.deltaTime);
+                //Do Rotating
                 if (rotate != 0)
                 {
                     rotationAmount -= rotate * 90f;
@@ -156,28 +212,6 @@ public class BuildingModeManager : MonoBehaviour
 
                 lerpingRotationAmount = Mathf.Lerp(lerpingRotationAmount, rotationAmount, Time.deltaTime * lerpAmount);
                 cursor.transform.rotation = Quaternion.identity * Quaternion.AngleAxis(lerpingRotationAmount, Vector3.up);
-
-                //Item Swapping
-                if(inputDevice.inputType == InputType.Keyboard)
-                {
-                    for(int i = 1; i < 9; i++)
-                    {
-                        if(inputDevice.GetButtonWithLock("Item" + i))
-                        {
-                            ChangeSelection(i);
-                        }
-                    }
-                }
-                else
-                {
-                    int itemSwitch = inputDevice.GetIntInputWithDelay("ItemSwitch", 0.25f, Time.deltaTime);
-
-                    if(itemSwitch != 0)
-                    {
-                        int max = FindObjectOfType<BuildingPartDatabaseManager>().GetBuildingPartCount() + 1;
-                        ChangeSelection(MathHelper.NumClamp(currentSelection + itemSwitch, 1, Mathf.Min(max, 9)));
-                    }
-                }
             }
         }
 
@@ -285,6 +319,12 @@ public class BuildingModeManager : MonoBehaviour
             }
 
             ChangeSelection(currentSelection);
+
+            foreach(PhysicsPrefab prefab in FindObjectsOfType<PhysicsPrefab>())
+            {
+                prefab.Reset();
+                prefab.GetComponent<Rigidbody>().isKinematic = true;
+            }
         }
     }
 
@@ -320,6 +360,11 @@ public class BuildingModeManager : MonoBehaviour
             StartCoroutine(DoSwapAnimation());
 
             itemsPanel.SetActive(false);
+
+            foreach (PhysicsPrefab prefab in FindObjectsOfType<PhysicsPrefab>())
+            {
+                prefab.GetComponent<Rigidbody>().isKinematic = false;
+            }
         }
     }
 

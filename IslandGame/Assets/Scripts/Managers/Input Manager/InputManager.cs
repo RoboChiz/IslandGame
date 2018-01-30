@@ -49,13 +49,19 @@ public class InputManager : MonoBehaviour
         localToggle = toggleState;
 
         //Hide Mouse if it's not used
-        if (Cursor.lockState == CursorLockMode.Locked || ((Input.anyKey || (controllers.Count > 0 && (controllers[0].GetRawInput("MenuHorizontal") != 0 || controllers[0].GetRawInput("MenuVertical") != 0))) && !Input.GetMouseButton(0)))
+        if (Cursor.lockState == CursorLockMode.Locked || ((Input.anyKey || (controllers.Count > 0 && (controllers[0].GetRawInput("MenuHorizontal") != 0 || controllers[0].GetRawInput("MenuVertical") != 0))) 
+            && !Input.GetMouseButton(0) && !Input.GetMouseButton(1) && !Input.GetMouseButton(2)))
         {
             Cursor.visible = false;
         }
 
-        if (Cursor.lockState != CursorLockMode.Locked && (Input.GetMouseButton(0) || Input.GetAxis("Mouse X") != 0f || Input.GetAxis("Mouse Y") != 0f))
+        if (Cursor.lockState != CursorLockMode.Locked && (Input.GetMouseButton(0) || Input.GetMouseButton(1) || Input.GetMouseButton(2) || Input.GetAxis("Mouse X") != 0f || Input.GetAxis("Mouse Y") != 0f))
             Cursor.visible = true;
+
+        if(mouseLock && !Input.GetMouseButton(0) && !Input.GetMouseButton(1) && !Input.GetMouseButton(2))
+        {
+            mouseLock = false;
+        }
 
         //Check for new inputs
         if (inputState != InputState.Locked && inputState != InputState.LockedShowing)
@@ -236,9 +242,9 @@ public class InputManager : MonoBehaviour
     }
 
     //Checks for a click
-    public static bool GetClick()
+    public static bool GetClick(int _mouseButton)
     {
-        if (!mouseLock && Input.GetMouseButtonDown(0))
+        if (!mouseLock && Input.GetMouseButtonDown(_mouseButton))
         {
             mouseLock = true;
             return true;

@@ -20,6 +20,8 @@ public class PlayerMovement : MonoBehaviour
     public bool lockMovements = false, inWater= false, isJumping = false;
     public bool isFalling = false, jumpLock = false;
 
+    public float isFallCheck = 1f;
+
     Queue<float> lastRotAngles = new Queue<float>();
 
     private Animator animator;
@@ -116,7 +118,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
         RaycastHit hit;
-        isFalling = !Physics.Raycast(transform.position, Vector3.down, out hit, 0.6f, ~(LayerMask.GetMask("Water") | LayerMask.GetMask("Ignore Raycast")), QueryTriggerInteraction.UseGlobal);
+        isFalling = !Physics.Raycast(transform.position, Vector3.down, out hit, isFallCheck, ~(LayerMask.GetMask("Water") | LayerMask.GetMask("Ignore Raycast")), QueryTriggerInteraction.UseGlobal);
 
         if(rigidbody.velocity.y <= 0f && jumpLock)
         {
