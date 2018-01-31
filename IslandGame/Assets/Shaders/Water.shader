@@ -1,55 +1,44 @@
-﻿Shader "Render Depth" {
-    SubShader {
-        Tags { "RenderType"="Opaque" }
-        Pass {
-            CGPROGRAM
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
 
-            #pragma vertex vert
-            #pragma fragment frag
-            #include "UnityCG.cginc"
+Shader "Custom/DepthGrayscale" {
+SubShader {
+Tags { "RenderType"="Opaque" }
 
-            struct vertexInput
-			{
-				float4 vertex : POSITION;
-				float2 uv : TEXCOORD0;
-			};
+Pass{
+CGPROGRAM
+#pragma vertex vert
+#pragma fragment frag
+#include "UnityCG.cginc"
 
-			struct vertexOutput
-			{
-				float4 pos : SV_POSITION;
-				float4 screenPos : TEXCOORD1;
-			};
+sampler2D _CameraDepthTexture;
 
-			// Unity built-in - NOT required in Properties
-			uniform sampler2D _CameraDepthTexture;
-			
-			vertexOutput vert (vertexInput input)
-			{
-				vertexOutput output;
-				
-				//Convert position to world space
-				output.pos = UnityObjectToClipPos(input.vertex);
+struct v2f {
+   float4 pos : SV_POSITION;
+   float4 scrPos:TEXCOORD1;
+};
 
-				//Compte Depth
-				output.screenPos = ComputeScreenPos(output.pos);
+//Vertex Shader
+v2f vert (appdata_base v){
+   v2f o;
+   o.pos = UnityObjectToClipPos (v.vertex);
+   o.scrPos=ComputeScreenPos(o.pos);
+   return o;
+}
 
-				return output;
-			}
-			
-			fixed4 frag (vertexOutput input) : COLOR
-			{
-				// Sample the Camera Depth texture
-				float4 s = UNITY_PROJ_COORD(input.screenPos);
+//Fragment Shader
+half4 frag (v2f i) : COLOR{
+   float depthValue = Linear01Depth (tex2Dproj(_CameraDepthTexture, UNITY_PROJ_COORD(i.scrPos)).r);
+   half4 depth;
 
-				float4 depthSample = SAMPLE_DEPTH_TEXTURE_PROJ(_CameraDepthTexture, s);
-				float depth = LinearEyeDepth(depthSample).r;
+   depth.r = depthValue;
+   depth.g = depthValue;
+   depth.b = depthValue;
 
-				// Because the camera depth texture returns a value between 0-1
-				// we can use that value to create a grayscale color to test the value output.
-				float4 foamline = float4(depth, depth, depth, 1);
-				return foamline;
-			}
-			ENDCG
-        }
-    }
+   depth.a = 1;
+   return depth;
+}
+ENDCG
+}
+}
+FallBack "Diffuse"
 }
