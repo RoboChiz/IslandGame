@@ -15,7 +15,7 @@ public class BuildingModeManager : MonoBehaviour
     private float hideTimer;
     Coroutine buildHideCoroutine, playHideCoroutine;
 
-    public GameObject cursor, fluidCursor, player, itemsPanel, grid;
+    public GameObject cursor, fluidCursor, player, itemsPanel, grid, cameraTarget;
     private PlayerMovement playerMovement;
     private WorldStateManager worldStateManager;
 
@@ -30,8 +30,6 @@ public class BuildingModeManager : MonoBehaviour
     private float inputLockTimer = maxInputLockTimer;
 
     private int currentSelection = 1;
-
-    private bool cursorMode;
 
     private void Start()
     {
@@ -73,45 +71,40 @@ public class BuildingModeManager : MonoBehaviour
             if(isActivated)
             {
                 //Map Cursor to Grid
-                WorldChunk insideChunk = worldStateManager.IsInsideWorldChunk(fluidCursor.transform.position);
+                Vector3 mousePos;
+
+                if (inputDevice.inputType == InputType.Keyboard)
+                {
+                    mousePos = fluidCursor.transform.position;
+                }
+                else
+                {
+                    mousePos = cameraTarget.transform.position;
+                }
+
+                mousePos.y = cameraTarget.GetComponent<FluidCursor>().GetActualPos().y;
+
+                WorldChunk insideChunk = worldStateManager.IsInsideWorldChunk(mousePos);
                 bool validCursor = insideChunk != null;
                 if (validCursor)
                 {
-                    actualCursorPos = worldStateManager.ChunkToWorld(insideChunk, worldStateManager.WorldToChunk(insideChunk, fluidCursor.GetComponent<FluidCursor>().GetActualPos()));
+                    actualCursorPos = worldStateManager.ChunkToWorld(insideChunk, worldStateManager.WorldToChunk(insideChunk, mousePos));
                     cursor.transform.position = actualCursorPos;
                 }
+
+                //Move the Cursor
+                mousePos.y = cameraTarget.transform.position.y;
+                fluidCursor.transform.position = mousePos;
 
                 bool build = false, delete = false;
                 int rotate = 0;
 
-                if(inputDevice.inputType == InputType.Keyboard)
-                {
-                    if(Cursor.visible)
-                    {
-                        cursorMode = true;
-                    }
-                    else if (cursorMode)
-                    {
-                        float hori = inputDevice.GetInput("MovementHorizontal");
-                        float verti = inputDevice.GetInput("MovementVertical");
-
-                        if(hori != 0 || verti != 0)
-                        {
-                            cursorMode = false;
-                        }
-                    }
-                }
-
                 //Build Controls
-                if (validCursor)
-                {
-                    build = inputDevice.GetButtonWithLock("Create");
-                    delete = inputDevice.GetButtonWithLock("Delete");
-                }
+                build = inputDevice.GetButton("Create");
+                delete = inputDevice.GetButton("Delete");
 
                 //Rotation
                 rotate = inputDevice.GetIntInputWithDelay("Rotate", 0.3f, Time.deltaTime);
-
 
                 //Item Swapping
                 if (inputDevice.inputType == InputType.Keyboard)
@@ -135,27 +128,11 @@ public class BuildingModeManager : MonoBehaviour
                     }
                 }
 
-                if (!cursorMode)
-                {
-                    //Keyboard / Controller Commands
+                IsoCam isoCam = playerMovement.playerCamera.GetComponent<IsoCam>();
 
-                    //Set Cursor as Target
-                    IsoCam isoCam = playerMovement.playerCamera.GetComponent<IsoCam>();
-                    OrbitCam orbitCam = playerMovement.playerCamera.GetComponent<OrbitCam>();
-
-                    //Turn off Target in Camera
-                    if (isoCam != null)
-                    {
-                        isoCam.target = fluidCursor.transform;
-                    }
-                    else if (orbitCam != null)
-                    {
-                        orbitCam.target = fluidCursor.transform;
-                    }
-                }
-                else
+                //Mouse Controls
+                if (inputDevice.inputType == InputType.Keyboard)
                 {
-                    //Mouse Controls
                     Ray ray = playerMovement.playerCamera.ScreenPointToRay(Input.mousePosition);
                     float hit;
 
@@ -169,28 +146,12 @@ public class BuildingModeManager : MonoBehaviour
                     }
 
                     Debug.DrawRay(ray.origin, ray.direction, Color.red);
+                }
 
-                    if (validCursor)
-                    {
-                        build = InputManager.GetClick(0);
-                        delete = InputManager.GetClickHold(1);
-
-                        Debug.Log("delete:" + delete);
-                    }
-
-                    //Set Cursor as Target
-                    IsoCam isoCam = playerMovement.playerCamera.GetComponent<IsoCam>();
-                    OrbitCam orbitCam = playerMovement.playerCamera.GetComponent<OrbitCam>();
-
-                    //Turn off Target in Camera
-                    if (isoCam != null)
-                    {
-                        isoCam.target = playerMovement.transform;
-                    }
-                    else if (orbitCam != null)
-                    {
-                        orbitCam.target = playerMovement.transform;
-                    }
+                if (validCursor && inputDevice.inputType == InputType.Keyboard)
+                {
+                    build = InputManager.GetClickHold(0);
+                    delete = InputManager.GetClickHold(1);
                 }
 
                 grid.transform.position = Vector3.Scale(grid.transform.position, new Vector3(1f,0f,1f)) + Vector3.Scale(actualCursorPos, new Vector3(0f, 1f, 0f));
@@ -291,14 +252,15 @@ public class BuildingModeManager : MonoBehaviour
 
             if (isoCam != null)
             {
-                isoCam.target = fluidCursor.transform;
+                isoCam.target = cameraTarget.transform;
             }
             else if(orbitCam != null)
             {
-                orbitCam.target = fluidCursor.transform;
+                orbitCam.target = cameraTarget.transform;
             }
 
-            Vector3 playerPos = player.transform.position - Vector3.up;
+
+            Vector3 playerPos = player.transform.position + Vector3.up;
             WorldChunk localChunk = worldStateManager.IsInsideWorldChunk(playerPos);
             if (localChunk != null)
             {
@@ -309,6 +271,7 @@ public class BuildingModeManager : MonoBehaviour
                 actualCursorPos = cursor.transform.position;
 
                 fluidCursor.transform.position = newPos;
+                cameraTarget.transform.position = newPos;
             }
 
             StartCoroutine(DoSwapAnimation());

@@ -268,7 +268,7 @@ public class WorldChunk
     {
         Vector3 size = Size(), halfSize = Size() / 2f;
 
-        if (_position.x >= centrePoint.x - halfSize.x && _position.x < centrePoint.x + halfSize.x &&
+        if (_position.x >= centrePoint.x - halfSize.x - 0.5f && _position.x < centrePoint.x + halfSize.x - 0.5f &&
              _position.y >= 0f && _position.y < size.y &&
              _position.z >= centrePoint.z - halfSize.z && _position.z < centrePoint.z + halfSize.z)
         {

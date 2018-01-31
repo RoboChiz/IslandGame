@@ -55,7 +55,7 @@ public class FluidCursor : MonoBehaviour {
             else
             {
                 expectedSpeed += (moveAmount * acceleration) * Time.fixedDeltaTime;
-                expectedSpeed = Mathf.Clamp(expectedSpeed, 0f, moveSpeed);
+                expectedSpeed = Mathf.Clamp(expectedSpeed, 0f, moveAmount * moveSpeed);
 
                 if (maxInput > 0.01f)
                 {

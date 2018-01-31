@@ -74,6 +74,28 @@ public abstract class InputDevice
         return 0;
     }
 
+    public float GetInputWithDelay(string _input, float _delay, float _deltaTime, float _cutOff)
+    {
+        float val = GetInput(_input);
+
+        if (!toggle && inputTimer <= 0f && (inputLock == _input || inputLock == ""))
+        {
+            if (Mathf.Abs(val) >= _cutOff)
+            {
+                inputLock = _input;
+                inputTimer = _delay;
+                return val;
+            }
+        }
+
+        if (inputLock == _input && val != 0f)
+        {
+            inputTimer -= _deltaTime;
+        }
+
+        return 0;
+    }
+
     public int GetIntInputWithLock(string _input)
     {
         if (!toggle && inputLock == "")
