@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4700034412638252}
   - component: {fileID: 33457924686856970}
   - component: {fileID: 23187468055723894}
-  - component: {fileID: 136586130623361382}
+  - component: {fileID: 64202460727290474}
   m_Layer: 0
   m_Name: Tree
   m_TagString: Untagged
@@ -35,9 +35,9 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1604141432064978}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.456702, y: 0.5, z: -1.716203}
-  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_LocalRotation: {x: 0, y: 0, z: -0.0397468, w: 0.9992098}
+  m_LocalPosition: {x: -0.09687853, y: -0.00696373, z: 4.3585105}
+  m_LocalScale: {x: 0.05, y: 0.05, z: 0.05}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -56,7 +56,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 4f83977eab03bd5409cd4e4993aced38, type: 3}
+  - {fileID: 2100000, guid: 8ebfba771cb69724da3d1978bc2fba79, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -82,17 +82,18 @@ MeshFilter:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1604141432064978}
-  m_Mesh: {fileID: 4300000, guid: 4f83977eab03bd5409cd4e4993aced38, type: 3}
---- !u!136 &136586130623361382
-CapsuleCollider:
+  m_Mesh: {fileID: 4300000, guid: 8ebfba771cb69724da3d1978bc2fba79, type: 3}
+--- !u!64 &64202460727290474
+MeshCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1604141432064978}
-  m_Material: {fileID: 13400000, guid: 8a7c7b80dddc4a742ab7c0e41a5a3539, type: 2}
+  m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.12
-  m_Height: 0.91
-  m_Direction: 1
-  m_Center: {x: 0, y: 0.45, z: 0}
+  serializedVersion: 3
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_SkinWidth: 0.01
+  m_Mesh: {fileID: 4300000, guid: 8ebfba771cb69724da3d1978bc2fba79, type: 3}

@@ -6,7 +6,7 @@ using UnityEngine;
 [RequireComponent(typeof(BoxCollider))]
 public class WaterBody : MonoBehaviour
 {
-    public float buoyancy = 2f, offsetHeight = 0.1f;
+    public float buoyancy = 10f, offsetHeight = 0.05f;
 
     private void Awake()
     {

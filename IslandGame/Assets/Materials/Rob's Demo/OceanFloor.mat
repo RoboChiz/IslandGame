@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: OceanFloor
-  m_Shader: {fileID: 4800000, guid: 4352361aafea84241ab1d82e04b43da4, type: 3}
+  m_Shader: {fileID: 4800000, guid: 384d10275bfe26d4da3020883bf4478c, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -18,13 +18,28 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - _DepthRampTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 2d802f961abe4714f82d06426c69d195, type: 3}
+        m_Texture: {fileID: 2800000, guid: 23fa2bd6e25eadf49b0eb09928cb5935, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _NoiseTex:
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - _BottomLimit: -26.3
+    - _DepthFactor: 3.85
+    - _DistortStrength: -5.24
+    - _ExtraHeight: 0
     - _TopLimit: 21.2
+    - _WaveAmp: 0.2
+    - _WaveSpeed: 4.65
     m_Colors:
     - _BottomShade: {r: 0, g: 0, b: 0, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _EdgeColor: {r: 1, g: 1, b: 1, a: 1}
     - _TopShade: {r: 1, g: 1, b: 1, a: 1}
