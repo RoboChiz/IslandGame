@@ -41,6 +41,7 @@ public class KeyboardDevice : InputDevice
             {"Create", new List<ControlName>() {new ControlName("k", false) } },
             {"Delete", new List<ControlName>() {new ControlName("l", false) } },
             {"Rotate", new List<ControlName>() {new ControlName("z" + "-", false) } },
+            {"FocusDir", new List<ControlName>() {} },
 
             {"Item1", new List<ControlName>() {new ControlName("1", false) } },
             {"Item2", new List<ControlName>() {new ControlName("2", false) } },

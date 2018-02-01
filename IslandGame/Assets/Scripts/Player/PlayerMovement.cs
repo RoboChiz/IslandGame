@@ -157,7 +157,8 @@ public class PlayerMovement : MonoBehaviour
         // -- Do Animation --
 
         animator.SetFloat("Speed", expectedSpeed);
-        animator.SetBool("IsFalling", isFalling);
+        animator.SetBool("IsFalling", isJumping);
+        animator.SetBool("IsSwimming", inWater);
     }
 
     public void GetFromLoad

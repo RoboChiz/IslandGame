@@ -6,7 +6,7 @@ using UnityEngine;
 [RequireComponent(typeof(BoxCollider))]
 public class WaterBody : MonoBehaviour
 {
-    public float buoyancy = 10f, offsetHeight = 0.05f;
+    public float buoyancy = 10f, offsetHeight = -0.15f, waveHeight = 0.05f;
 
     private void Awake()
     {
@@ -84,7 +84,8 @@ public class WaterBody : MonoBehaviour
                     //Apply Water Physics to Object
                     float depth = objectPos.y - hit.point.y; //Should only be in the y direction
 
-                    depth += Mathf.Sin(Time.time) * offsetHeight;
+                    depth += Mathf.Sin(Time.time) * waveHeight;
+                    depth += offsetHeight;
 
                     Vector3 newVelocity = -Vector3.up * depth * buoyancy;
 
