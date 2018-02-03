@@ -55,36 +55,6 @@ public class PauseMenu : MonoBehaviour
 
     public void LoadOptionState()
     {
-        //Setup Camera Buttons
-        bool isIsoCamera = cameraSwap.GetCameraState();
-
-        Button isoButton = transform.Find("Oscar_Button").GetComponent<Button>();
-        Button orbitButton = transform.Find("Rob_Button").GetComponent<Button>();
-        ColorBlock isoColourBlock = isoButton.colors;
-        ColorBlock orbitColourBlock = orbitButton.colors;
-
-        Color highlightedColour = Color.white;
-        ColorUtility.TryParseHtmlString("#F5F5F5FF", out highlightedColour);
-
-        if (isIsoCamera)
-        {
-            isoColourBlock.normalColor = Color.cyan;
-            isoColourBlock.highlightedColor = Color.cyan;
-
-            orbitColourBlock.normalColor = Color.white;
-            orbitColourBlock.highlightedColor = highlightedColour;
-        }
-        else
-        {
-            isoColourBlock.normalColor = Color.white;
-            isoColourBlock.highlightedColor = highlightedColour;
-
-            orbitColourBlock.normalColor = Color.cyan;
-            orbitColourBlock.highlightedColor = Color.cyan;
-        }
-
-        isoButton.colors = isoColourBlock;
-        orbitButton.colors = orbitColourBlock;
 
         //Setup Invert Toggles
         Toggle invertVertical = transform.Find("InvertVertical_Toggle").GetComponent<Toggle>();

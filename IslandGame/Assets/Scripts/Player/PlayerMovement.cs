@@ -111,9 +111,7 @@ public class PlayerMovement : MonoBehaviour
             //Do Jump
             if(jump && (!isFalling || inWater) && !jumpLock)
             {
-                rigidbody.velocity += new Vector3(0f, jumpVelocity, 0f);
-                jumpLock = true;
-                isJumping = true;
+                StartCoroutine(JumpOffset());
             }
         }
 
@@ -157,8 +155,42 @@ public class PlayerMovement : MonoBehaviour
         // -- Do Animation --
 
         animator.SetFloat("Speed", expectedSpeed);
-        animator.SetBool("IsFalling", isJumping);
+        animator.SetBool("IsJumping", isJumping);
+        animator.SetBool("HasJumped", jumpLock);
+        animator.SetBool("IsRising", rigidbody.velocity.y > 0.1f);
+        animator.SetBool("IsFalling", rigidbody.velocity.y < -0.1f && isFalling);
         animator.SetBool("IsSwimming", inWater);
+    }
+
+    private IEnumerator JumpOffset()
+    {
+        isJumping = true;
+
+        if (!inWater)
+        {
+            //Wait 2 frame
+            for (int i = 0; i < 3; i++)
+            {
+                yield return null;
+            }
+
+            isJumping = false;
+
+            for (int i = 0; i < 3; i++)
+            {
+                yield return null;
+            }
+        }
+        
+
+        Rigidbody rigidbody = GetComponent<Rigidbody>();
+        rigidbody.velocity += new Vector3(0f, jumpVelocity, 0f);
+        jumpLock = true;
+
+        if (inWater)
+        {
+            isJumping = false;
+        }
     }
 
     public void GetFromLoad

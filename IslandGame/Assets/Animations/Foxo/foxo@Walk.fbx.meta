@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: 2a0e12c38342fd143825aa34d84632f3
-timeCreated: 1517251686
+guid: b2beaadc86155ee4f8ea390feee647f5
+timeCreated: 1517669582
 licenseType: Free
 ModelImporter:
   serializedVersion: 22
@@ -535,7 +535,7 @@ ModelImporter:
     400524: ikTwist_r_legUpr_joint
     400526: ikTwist_r_toe_joint
     400528: Skeleton
-    7400000: Run
+    7400000: Walk
     9500000: //RootNode
   externalObjects: {}
   materials:
@@ -556,7 +556,7 @@ ModelImporter:
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
-    animationCompression: 3
+    animationCompression: 1
     animationRotationError: 0.5
     animationPositionError: 0.5
     animationScaleError: 0.5
@@ -565,10 +565,10 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Run
+      name: Walk
       takeName: Take 001
       firstFrame: 1
-      lastFrame: 23
+      lastFrame: 22
       wrapMode: 0
       orientationOffsetY: 0
       level: 0

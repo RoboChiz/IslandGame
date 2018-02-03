@@ -66,7 +66,7 @@ public class WaterBody : MonoBehaviour
 
                 player.inWater = isActuallyInWater;
 
-                if(player.isJumping || !player.inWater)
+                if(player.jumpLock || !player.inWater)
                 {
                     ignorePhysics = true;
                 }

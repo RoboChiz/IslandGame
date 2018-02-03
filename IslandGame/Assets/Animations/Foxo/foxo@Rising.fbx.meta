@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: 2a0e12c38342fd143825aa34d84632f3
-timeCreated: 1517251686
+guid: 4593c4f9db5f9124880abc822fc75185
+timeCreated: 1517661769
 licenseType: Free
 ModelImporter:
   serializedVersion: 22
@@ -535,7 +535,7 @@ ModelImporter:
     400524: ikTwist_r_legUpr_joint
     400526: ikTwist_r_toe_joint
     400528: Skeleton
-    7400000: Run
+    7400000: Rising
     9500000: //RootNode
   externalObjects: {}
   materials:
@@ -565,10 +565,10 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Run
+      name: Rising
       takeName: Take 001
       firstFrame: 1
-      lastFrame: 23
+      lastFrame: 2
       wrapMode: 0
       orientationOffsetY: 0
       level: 0

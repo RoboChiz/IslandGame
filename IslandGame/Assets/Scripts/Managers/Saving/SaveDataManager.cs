@@ -7,10 +7,10 @@ using UnityEngine;
 
 public class SaveDataManager : MonoBehaviour
 {
-    private SaveData currentSaveData;
-    public Dictionary<string, string> customStringDatabase;
+    public string saveLocation;
+    public SaveData currentSaveData;
 
-    private const string saveLocation = "/Save1.gd";
+    public Dictionary<string, string> customStringDatabase;
 
     public bool resetOnStart;
 
@@ -28,13 +28,13 @@ public class SaveDataManager : MonoBehaviour
     public void ResetSave()
     {
         Debug.Log("Resetting Save!");
-        saveData = new SaveData();
+        currentSaveData = new SaveData();
 
         //Perform Save Resetting Here
-        saveData.localVersion = SaveData.saveVersion;
+        currentSaveData.localVersion = SaveData.saveVersion;
 
-        saveData.customStringKey = new string[] { };
-        saveData.customStringValue = new string[] { };
+        currentSaveData.customStringKey = new string[] { };
+        currentSaveData.customStringValue = new string[] { };
 
         customStringDatabase = new Dictionary<string, string>();
 
@@ -91,7 +91,7 @@ public class SaveDataManager : MonoBehaviour
     private void UpdateSave()
     {
         //Ensure Save Data has the correct values
-        saveData.localVersion = SaveData.saveVersion;
+        currentSaveData.localVersion = SaveData.saveVersion;
 
         //Save the Game Data
         SaveGame();
@@ -117,7 +117,7 @@ public class SaveDataManager : MonoBehaviour
     public void Save()
     {
         //Ensure Save Data has the correct values
-        saveData.localVersion = SaveData.saveVersion;
+        currentSaveData.localVersion = SaveData.saveVersion;
 
         //Update Custom String Arrays
         List<string> customStringKey = new List<string>();
@@ -129,8 +129,8 @@ public class SaveDataManager : MonoBehaviour
             customStringValue.Add(customString.Value);
         }
 
-        saveData.customStringKey = customStringKey.ToArray();
-        saveData.customStringValue = customStringValue.ToArray();
+        currentSaveData.customStringKey = customStringKey.ToArray();
+        currentSaveData.customStringValue = customStringValue.ToArray();
 
         //Save the Game Data
         SaveGame();
@@ -139,9 +139,9 @@ public class SaveDataManager : MonoBehaviour
     private void SaveGame()
     {
         BinaryWriter bw = new BinaryWriter(File.Create(Application.persistentDataPath + saveLocation));
-        
+
         //Load Save Data
-        saveData.SaveAllData(bw);
+        currentSaveData.SaveAllData(bw);
 
         //Load Game Specific Managers
         GameSpecificSave(bw);
@@ -151,8 +151,9 @@ public class SaveDataManager : MonoBehaviour
         Debug.Log("Game Saved!");
     }
 
-    public void Load()
+    public void Load(string _location)
     {
+        saveLocation = _location;
         bool saveLoaded = false;
 
         try
@@ -164,14 +165,14 @@ public class SaveDataManager : MonoBehaviour
                 int version = br.ReadInt32();
 
                 //Load Save Data
-                saveData.LoadAllData(version, br);
+                currentSaveData.LoadAllData(version, br);
 
                 //Load Game Specific Managers
                 GameSpecificLoad(version, br);
 
                 br.Close();
 
-                if (saveData.localVersion != SaveData.saveVersion)
+                if (currentSaveData.localVersion != SaveData.saveVersion)
                 {
                     UpdateSave();
                 }
@@ -192,14 +193,14 @@ public class SaveDataManager : MonoBehaviour
         {
             Debug.Log("Save Loaded!");
 
-            Debug.Log("Version:" + saveData.localVersion);
+            Debug.Log("Version:" + currentSaveData.localVersion);
 
             //Reload Custom String Dictionary
             customStringDatabase = new Dictionary<string, string>();
 
-            for(int i = 0; i < saveData.customStringKey.Length; i++)
+            for(int i = 0; i < currentSaveData.customStringKey.Length; i++)
             {
-                customStringDatabase.Add(saveData.customStringKey[i], saveData.customStringValue[i]);
+                customStringDatabase.Add(currentSaveData.customStringKey[i], currentSaveData.customStringValue[i]);
             }
         }
     }
