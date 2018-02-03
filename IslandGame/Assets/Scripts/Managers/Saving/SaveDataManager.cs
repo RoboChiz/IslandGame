@@ -7,7 +7,7 @@ using UnityEngine;
 
 public class SaveDataManager : MonoBehaviour
 {
-    private SaveData saveData;
+    private SaveData currentSaveData;
     public Dictionary<string, string> customStringDatabase;
 
     private const string saveLocation = "/Save1.gd";
