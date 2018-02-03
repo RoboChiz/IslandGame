@@ -26,6 +26,7 @@ ModelImporter:
     100036: Shrub_05
     100038: Shrub_Group
     100040: Water
+    100042: Coral
     400000: Ground
     400002: //RootNode
     400004: Jetty
@@ -47,12 +48,14 @@ ModelImporter:
     400036: Shrub_05
     400038: Shrub_Group
     400040: Water
+    400042: Coral
     2100000: sand
     2100002: oceanFloor
     2100004: swatch
     2100006: water_mat1
     2100008: WhiteWater
     2100010: EdgeWater
+    2100012: lambert1
     2300000: Ground
     2300002: Jetty
     2300004: Palm_01
@@ -70,6 +73,7 @@ ModelImporter:
     2300028: Shrub_04
     2300030: Shrub_05
     2300032: Water
+    2300034: Coral
     3300000: Ground
     3300002: Jetty
     3300004: Palm_01
@@ -87,6 +91,7 @@ ModelImporter:
     3300028: Shrub_04
     3300030: Shrub_05
     3300032: Water
+    3300034: Coral
     4300000: Ground
     4300002: Water
     4300004: Jetty
@@ -104,6 +109,7 @@ ModelImporter:
     4300028: Shrub_04
     4300030: Shrub_05
     4300032: Shrub_01
+    4300034: Coral
   externalObjects: {}
   materials:
     importMaterials: 1
