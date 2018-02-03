@@ -67,6 +67,30 @@ public class WorldStateManager : ISavingManager
 
     }
 
+    public void ClearEverything()
+    {
+        //Clear Existing Chunks
+        foreach (WorldChunk chunk in worldChunks)
+        {
+            for (int x = 0; x < chunk.gridData.GetLength(0); x++)
+            {
+                for (int y = 0; y < chunk.gridData.GetLength(1); y++)
+                {
+                    for (int z = 0; z < chunk.gridData.GetLength(2); z++)
+                    {
+                        if (chunk.gridObjects[x, y, z] != null)
+                        {
+                            Destroy(chunk.gridObjects[x, y, z]);
+                        }
+                    }
+                }
+            }
+        }
+
+        worldChunks = new List<WorldChunk>();
+        worldChunks.Add(new WorldChunk(worldChunks.Count, new Vector3(0f, 0f, 0f)));
+    }
+
     public override void DoLoad(int _version, BinaryReader _stream)
     {
         //Clear Existing Chunks

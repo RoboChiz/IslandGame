@@ -31,6 +31,7 @@ public class WaterBody : MonoBehaviour
         if (player != null)
         {
             player.inWater = false;
+            player.overWater = false;
         }
     }
 
@@ -49,6 +50,7 @@ public class WaterBody : MonoBehaviour
             PlayerMovement player = other.GetComponent<PlayerMovement>();
             if (player != null)
             {
+                player.overWater = false;
                 bool isActuallyInWater = true;
 
                 //Do Ground Check
@@ -62,6 +64,11 @@ public class WaterBody : MonoBehaviour
                     {
                         isActuallyInWater = false;
                     }
+                    else if (groundWaterDiff < 5f)
+                    {
+                        player.overWater = true;
+                    }
+
                 }
 
                 player.inWater = isActuallyInWater;

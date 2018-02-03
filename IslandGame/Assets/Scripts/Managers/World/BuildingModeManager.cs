@@ -245,6 +245,7 @@ public class BuildingModeManager : MonoBehaviour
 
             //Turn off Player
             playerMovement.lockMovements = true;
+            playerMovement.isThinking = true;
 
             //Set Cursor as Target
             IsoCam isoCam = playerMovement.playerCamera.GetComponent<IsoCam>();
@@ -308,6 +309,7 @@ public class BuildingModeManager : MonoBehaviour
 
             //Turn off Player
             playerMovement.lockMovements = false;
+            playerMovement.isThinking = false;
 
             //Set Cursor as Target
             IsoCam isoCam = playerMovement.playerCamera.GetComponent<IsoCam>();

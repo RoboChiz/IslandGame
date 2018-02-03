@@ -75,6 +75,12 @@ public class IsoCam : MonoBehaviour
                 }
 
                 float focus = inputDevice.GetInputWithDelay("FocusDir", 0.5f, Time.deltaTime, 0.25f);
+
+                if(focus == 0)
+                {
+                    focus = Input.GetAxis("Mouse Scrollwheel");
+                }
+
                 if (Mathf.Abs(focus) >= 0.25f)
                 {
                     currentDepth = Mathf.Clamp(currentDepth + MathHelper.Sign(focus), 0, focusToggleDepths.Length - 1);

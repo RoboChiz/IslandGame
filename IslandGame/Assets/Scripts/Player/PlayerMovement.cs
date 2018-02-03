@@ -17,10 +17,14 @@ public class PlayerMovement : MonoBehaviour
 
     public Vector3 pointDirection { get; private set; }
 
-    public bool lockMovements = false, inWater= false, isJumping = false;
+    public bool lockMovements = false, inWater= false, isJumping = false, overWater = false;
     public bool isFalling = false, jumpLock = false;
 
-    public float isFallCheck = 1f;
+    public float isFallCheck = 1f, isLandedCheck = 1.2f;
+    public bool isThinking = false;
+
+    private int animationSpeed = 0;
+    private bool sneakMode;
 
     Queue<float> lastRotAngles = new Queue<float>();
 
@@ -48,10 +52,17 @@ public class PlayerMovement : MonoBehaviour
             float hori = inputDevice.GetInput("MovementHorizontal");
             float verti = inputDevice.GetInput("MovementVertical");
             bool jump = false;
+            bool sneakInput = false;
 
-            if(!lockMovements)
+            if (!lockMovements)
             {
                 jump = inputDevice.GetButtonWithLock("Jump");
+                sneakInput = inputDevice.GetButtonWithLock("Sneak");
+
+                if(sneakInput)
+                {
+                    sneakMode = !sneakMode;
+                }
             }
 
             //Move the character in the direction of the camera
@@ -71,25 +82,32 @@ public class PlayerMovement : MonoBehaviour
                     expectedSpeed = 0;
 
                 input = lastDirection;
+                animationSpeed = 0;
             }
             else
             {
                 //Get Max Movement Speed
                 float maxSpeed = moveSpeed;
-                if(inWater)
+                animationSpeed = 3;
+
+                if (inWater)
                 {
                     maxSpeed = swimSpeed;
+                    animationSpeed = 1;
+                }
+                else if(sneakMode)
+                {
+                    maxSpeed *= tiptoeSpeedPercent;
+                    animationSpeed = 1;
                 }
               
                 //Adjust speed depending on amount of input
-                if(maxInput < tipPercent)
-                {
-                    maxSpeed *= tiptoeSpeedPercent; 
-                }
-                else if (maxInput < walkPercent)
+                if (maxInput < walkPercent)
                 {
                     maxSpeed *= walkSpeedPercent;
+                    animationSpeed = 2;
                 }
+
 
                 expectedSpeed += (moveAmount * acceleration) * Time.fixedDeltaTime;
                 expectedSpeed = Mathf.Clamp(expectedSpeed, 0f, maxSpeed);
@@ -117,8 +135,9 @@ public class PlayerMovement : MonoBehaviour
 
         RaycastHit hit;
         isFalling = !Physics.Raycast(transform.position, Vector3.down, out hit, isFallCheck, ~(LayerMask.GetMask("Water") | LayerMask.GetMask("Ignore Raycast")), QueryTriggerInteraction.UseGlobal);
+        bool canLand = !Physics.Raycast(transform.position, Vector3.down, out hit, isLandedCheck, ~(LayerMask.GetMask("Water") | LayerMask.GetMask("Ignore Raycast")), QueryTriggerInteraction.UseGlobal);
 
-        if(rigidbody.velocity.y <= 0f && jumpLock)
+        if (rigidbody.velocity.y <= 0f && jumpLock)
         {
             jumpLock = false;
             isJumping = false;
@@ -154,12 +173,14 @@ public class PlayerMovement : MonoBehaviour
 
         // -- Do Animation --
 
-        animator.SetFloat("Speed", expectedSpeed);
+        animator.SetInteger("Speed", animationSpeed);
         animator.SetBool("IsJumping", isJumping);
         animator.SetBool("HasJumped", jumpLock);
-        animator.SetBool("IsRising", rigidbody.velocity.y > 0.1f);
-        animator.SetBool("IsFalling", rigidbody.velocity.y < -0.1f && isFalling);
+        animator.SetBool("IsRising", rigidbody.velocity.y > 0.5f);
+        animator.SetBool("IsFalling", rigidbody.velocity.y < -0.1f && canLand);
         animator.SetBool("IsSwimming", inWater);
+        animator.SetBool("IsThinking", isThinking);
+        animator.SetBool("IsOverWater", overWater);
     }
 
     private IEnumerator JumpOffset()

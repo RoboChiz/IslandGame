@@ -36,6 +36,7 @@ public class KeyboardDevice : InputDevice
             {"Jump", new List<ControlName>() {new ControlName("space", false) } },
             {"MovementHeight", new List<ControlName>() {new ControlName("left shift-", false), new ControlName("left ctrl+", false) } },
             {"Focus", new List<ControlName>() {new ControlName("f", false) } },
+            {"Sneak", new List<ControlName>() {new ControlName("n", false) } },
             {"RotateLeft", new List<ControlName>() {new ControlName("q", false) } },
             {"RotateRight", new List<ControlName>() {new ControlName("e", false) } },
             {"Create", new List<ControlName>() {new ControlName("k", false) } },
@@ -85,6 +86,7 @@ public class XBox360Device : InputDevice
             {"CameraVertical", new List<ControlName>() {new ControlName(RightStickVert, true) } },
 
             {"MovementHeight", new List<ControlName>() { new ControlName(LT, true), new ControlName(RT, true) } },
+            {"Sneak", new List<ControlName>() {new ControlName(LS, false) } },
             {"Focus", new List<ControlName>() {new ControlName(RS, false) } },
             {"FocusDir", new List<ControlName>() {new ControlName(RightStickVert, true) } },
             {"RotateLeft", new List<ControlName>() {new ControlName(RightStickHori + "-", true) } },
@@ -92,7 +94,7 @@ public class XBox360Device : InputDevice
             {"Create", new List<ControlName>() {new ControlName(A, false) } },
             {"Delete", new List<ControlName>() {new ControlName(B, false) } },
             {"ItemSwitch", new List<ControlName>() { new ControlName(DPadHori, true) } },
-            {"Rotate", new List<ControlName>() {new ControlName(LB + "-", false), new ControlName(RB + "+", false) } },
+            {"Rotate", new List<ControlName>() {new ControlName(Y, false) } },
         }
     );
 
