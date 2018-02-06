@@ -37,6 +37,7 @@ public class KeyboardDevice : InputDevice
             {"MovementHeight", new List<ControlName>() {new ControlName("left shift-", false), new ControlName("left ctrl+", false) } },
             {"Focus", new List<ControlName>() {new ControlName("f", false) } },
             {"Sneak", new List<ControlName>() {new ControlName("n", false) } },
+            {"Walk", new List<ControlName>() {new ControlName("b", false) } },
             {"RotateLeft", new List<ControlName>() {new ControlName("q", false) } },
             {"RotateRight", new List<ControlName>() {new ControlName("e", false) } },
             {"Create", new List<ControlName>() {new ControlName("k", false) } },
@@ -87,6 +88,7 @@ public class XBox360Device : InputDevice
 
             {"MovementHeight", new List<ControlName>() { new ControlName(LT, true), new ControlName(RT, true) } },
             {"Sneak", new List<ControlName>() {new ControlName(LS, false) } },
+            {"Walk", new List<ControlName>() { } },
             {"Focus", new List<ControlName>() {new ControlName(RS, false) } },
             {"FocusDir", new List<ControlName>() {new ControlName(RightStickVert, true) } },
             {"RotateLeft", new List<ControlName>() {new ControlName(RightStickHori + "-", true) } },

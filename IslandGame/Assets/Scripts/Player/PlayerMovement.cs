@@ -24,7 +24,7 @@ public class PlayerMovement : MonoBehaviour
     public bool isThinking = false;
 
     private int animationSpeed = 0;
-    private bool sneakMode;
+    private bool sneakMode, walkMode;
 
     Queue<float> lastRotAngles = new Queue<float>();
 
@@ -52,16 +52,24 @@ public class PlayerMovement : MonoBehaviour
             float hori = inputDevice.GetInput("MovementHorizontal");
             float verti = inputDevice.GetInput("MovementVertical");
             bool jump = false;
-            bool sneakInput = false;
+            bool sneakInput = false, walkInput = false;
 
             if (!lockMovements)
             {
                 jump = inputDevice.GetButtonWithLock("Jump");
                 sneakInput = inputDevice.GetButtonWithLock("Sneak");
+                walkInput = inputDevice.GetButtonWithLock("Walk");
 
-                if(sneakInput)
+                if (sneakInput)
                 {
                     sneakMode = !sneakMode;
+                    walkMode = false;
+                }
+
+                if (walkInput)
+                {
+                    walkMode = !walkMode;
+                    sneakMode = false;
                 }
             }
 
@@ -95,19 +103,16 @@ public class PlayerMovement : MonoBehaviour
                     maxSpeed = swimSpeed;
                     animationSpeed = 1;
                 }
+                else if (walkMode || maxInput < walkPercent)
+                {
+                    maxSpeed *= walkSpeedPercent;
+                    animationSpeed = 2;
+                }
                 else if(sneakMode)
                 {
                     maxSpeed *= tiptoeSpeedPercent;
                     animationSpeed = 1;
                 }
-              
-                //Adjust speed depending on amount of input
-                if (maxInput < walkPercent)
-                {
-                    maxSpeed *= walkSpeedPercent;
-                    animationSpeed = 2;
-                }
-
 
                 expectedSpeed += (moveAmount * acceleration) * Time.fixedDeltaTime;
                 expectedSpeed = Mathf.Clamp(expectedSpeed, 0f, maxSpeed);
