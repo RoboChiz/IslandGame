@@ -63,7 +63,8 @@ public class BuildingPartDatabaseManager : MonoBehaviour
                 BuildingPart buildingPart = new BuildingPart(id);
 
                 buildingPart.partName = xmlNode.Attributes["partname"].Value;
-                buildingPart.gridSize = int.Parse(xmlNode.Attributes["gridsize"].Value);
+                buildingPart.gridSize = new Vector3(int.Parse(xmlNode.Attributes["gridsizeX"].Value), int.Parse(xmlNode.Attributes["gridsizeY"].Value), int.Parse(xmlNode.Attributes["gridsizeZ"].Value));
+                buildingPart.gridOffset = new Vector3(int.Parse(xmlNode.Attributes["offsetX"].Value), int.Parse(xmlNode.Attributes["offsetY"].Value), int.Parse(xmlNode.Attributes["offsetZ"].Value));
 
                 buildingPart.prefabResourceName = xmlNode.Attributes["resource"].Value;
                 buildingPart.prefab = Resources.Load<GameObject>(buildingPart.prefabResourceName);
@@ -92,7 +93,7 @@ public class BuildingPartDatabaseManager : MonoBehaviour
 public class BuildingPart
 {
     public int uniqueID { get; private set; }
-    public int gridSize;
+    public Vector3 gridSize, gridOffset;
     public string partName;
 
     public enum PartType { Base, Max};

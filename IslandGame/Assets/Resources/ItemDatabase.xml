@@ -1,10 +1,10 @@
 <ItemDatabase>
-  <BuildingPart id="1" partname="Block"     gridsize="1" type ="base" resource="Prefabs/Block" icon="Icons/Block"/>
-  <BuildingPart id="2" partname="Wall"      gridsize="1" type ="base" resource="Prefabs/Wall" icon="Icons/Wall"/>
-  <BuildingPart id="3" partname="Door"      gridsize="1" type ="base" resource="Prefabs/Door" icon="Icons/Door"/>
-  <BuildingPart id="4" partname="Roof"      gridsize="1" type ="base" resource="Prefabs/Roof" icon="Icons/Roof"/>
-  <BuildingPart id="5" partname="Rock"      gridsize="1" type ="base" resource="Prefabs/Rock" icon="Icons/Rock"/>
-  <BuildingPart id="6" partname="Tree"      gridsize="1" type ="base" resource="Prefabs/Tree" icon="Icons/Tree"/>
-  <BuildingPart id="7" partname="Crate"     gridsize="1" type ="base" resource="Prefabs/Crate" icon="Icons/Crate"/>
-  <BuildingPart id="8" partname="BeachBall" gridsize="1" type ="base" resource="Prefabs/BeachBall" icon="Icons/BeachBall"/>
+  <BuildingPart id="1" partname="Block"     gridsizeX="1" gridsizeY="1" gridsizeZ="1" offsetX="0" offsetY="0" offsetZ="0" type ="base" resource="Prefabs/Block" icon="Icons/Block"/>
+  <BuildingPart id="2" partname="Wall"      gridsizeX="1" gridsizeY="1" gridsizeZ="1" offsetX="0" offsetY="0" offsetZ="0" type ="base" resource="Prefabs/Wall" icon="Icons/Wall"/>
+  <BuildingPart id="3" partname="Door"      gridsizeX="1" gridsizeY="2" gridsizeZ="1" offsetX="0" offsetY="0" offsetZ="0" type ="base" resource="Prefabs/Door" icon="Icons/Door"/>
+  <BuildingPart id="4" partname="Roof"      gridsizeX="1" gridsizeY="1" gridsizeZ="1" offsetX="0" offsetY="0" offsetZ="0" type ="base" resource="Prefabs/Roof" icon="Icons/Roof"/>
+  <BuildingPart id="5" partname="Rock"      gridsizeX="1" gridsizeY="1" gridsizeZ="1" offsetX="0" offsetY="0" offsetZ="0" type ="base" resource="Prefabs/Rock" icon="Icons/Rock"/>
+  <BuildingPart id="6" partname="Tree"      gridsizeX="1" gridsizeY="1" gridsizeZ="1" offsetX="0" offsetY="0" offsetZ="0" type ="base" resource="Prefabs/Tree" icon="Icons/Tree"/>
+  <BuildingPart id="7" partname="Crate"     gridsizeX="1" gridsizeY="1" gridsizeZ="1" offsetX="0" offsetY="0" offsetZ="0" type ="base" resource="Prefabs/Crate" icon="Icons/Crate"/>
+  <BuildingPart id="8" partname="BeachBall" gridsizeX="1" gridsizeY="1" gridsizeZ="1" offsetX="0" offsetY="0" offsetZ="0" type ="base" resource="Prefabs/BeachBall" icon="Icons/BeachBall"/>
 </ItemDatabase>

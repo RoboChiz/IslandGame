@@ -187,14 +187,43 @@ public class WorldStateManager : ISavingManager
         if (insideChunk != null)
         {
             Vector3 chunkPos = WorldToChunk(insideChunk, _position);
+            int chunkX = (int)chunkPos.x, chunkY = (int)chunkPos.y, chunkZ = (int)chunkPos.z;
 
-            Debug.Log("Created Block at " + chunkPos.x + "," + chunkPos.y + "," + chunkPos.z);
+            BuildingPart part = FindObjectOfType<BuildingPartDatabaseManager>().GetBuildingPart(_databaseID);
 
-            if (insideChunk.gridData[(int)chunkPos.x, (int)chunkPos.y, (int)chunkPos.z] == 0)
+            bool canPlace = true;
+
+            for(int x = chunkX - (int)part.gridOffset.x;  x < chunkX - (int)part.gridOffset.x + (int)part.gridSize.x; x++)
             {
-                insideChunk.gridData[(int)chunkPos.x, (int)chunkPos.y, (int)chunkPos.z] = _databaseID;
+                for (int y = chunkY - (int)part.gridOffset.y; y < chunkY - (int)part.gridOffset.y + (int)part.gridSize.y; y++)
+                {
+                    for (int z = chunkZ - (int)part.gridOffset.z; z < chunkZ - (int)part.gridOffset.z + (int)part.gridSize.z; z++)
+                    {
+                        if (insideChunk.gridData[(int)chunkPos.x, (int)chunkPos.y, (int)chunkPos.z] != 0)
+                        {
+                            canPlace = false;
+                            break;
+                        }
+                    }
+                }
+            }
 
-                GameObject prefab = Instantiate(FindObjectOfType<BuildingPartDatabaseManager>().GetBuildingPart(_databaseID).prefab);
+
+            if (canPlace)
+            {
+                Debug.Log("Created Block at " + chunkPos.x + "," + chunkPos.y + "," + chunkPos.z);
+                for (int x = chunkX - (int)part.gridOffset.x; x < chunkX - (int)part.gridOffset.x + (int)part.gridSize.x; x++)
+                {
+                    for (int y = chunkY - (int)part.gridOffset.y; y < chunkY - (int)part.gridOffset.y + (int)part.gridSize.y; y++)
+                    {
+                        for (int z = chunkZ - (int)part.gridOffset.z; z < chunkZ - (int)part.gridOffset.z + (int)part.gridSize.z; z++)
+                        {
+                            insideChunk.gridData[x, y, z] = _databaseID;
+                        }
+                    }
+                }           
+
+                GameObject prefab = Instantiate(part.prefab);
                 prefab.transform.position = _position;
                 prefab.transform.rotation = Quaternion.AngleAxis(_rotation, Vector3.up);
 
