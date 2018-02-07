@@ -155,7 +155,8 @@ public class WorldStateManager : ISavingManager
                         int _id = _stream.ReadInt32();
                         float _rotation = _stream.ReadSingle();
 
-                        if (_id != 0)
+                        //-1 is used to fill space for big items, 0 is empty, >0 is an item
+                        if (_id >= 0)
                         {
                             Debug.Log("Loaded Block at " + x + "," + y + "," + z);
                             CreateItem(_id, ChunkToWorld(chunk, new Vector3(x, y, z)), _rotation);                        
@@ -199,7 +200,7 @@ public class WorldStateManager : ISavingManager
                 {
                     for (int z = chunkZ - (int)part.gridOffset.z; z < chunkZ - (int)part.gridOffset.z + (int)part.gridSize.z; z++)
                     {
-                        if (insideChunk.gridData[(int)chunkPos.x, (int)chunkPos.y, (int)chunkPos.z] != 0)
+                        if (insideChunk.gridData[x, y, z] != 0)
                         {
                             canPlace = false;
                             break;
@@ -218,10 +219,12 @@ public class WorldStateManager : ISavingManager
                     {
                         for (int z = chunkZ - (int)part.gridOffset.z; z < chunkZ - (int)part.gridOffset.z + (int)part.gridSize.z; z++)
                         {
-                            insideChunk.gridData[x, y, z] = _databaseID;
+                            insideChunk.gridData[x, y, z] = -1;
                         }
                     }
-                }           
+                }
+
+                insideChunk.gridData[chunkX, chunkY, chunkZ] = _databaseID;
 
                 GameObject prefab = Instantiate(part.prefab);
                 prefab.transform.position = _position;
@@ -244,9 +247,21 @@ public class WorldStateManager : ISavingManager
             int yChunk = (int)chunkPos.y;
             int zChunk = (int)chunkPos.z;
 
-            if (insideChunk.gridData[xChunk, yChunk, zChunk] != 0)
+            if (insideChunk.gridData[xChunk, yChunk, zChunk] > 0)
             {
-                insideChunk.gridData[xChunk, yChunk, zChunk] = 0;
+                BuildingPart part = FindObjectOfType<BuildingPartDatabaseManager>().GetBuildingPart(insideChunk.gridData[xChunk, yChunk, zChunk]);
+
+                for (int x = xChunk - (int)part.gridOffset.x; x < xChunk - (int)part.gridOffset.x + (int)part.gridSize.x; x++)
+                {
+                    for (int y = yChunk - (int)part.gridOffset.y; y < yChunk - (int)part.gridOffset.y + (int)part.gridSize.y; y++)
+                    {
+                        for (int z = zChunk - (int)part.gridOffset.z; z < zChunk - (int)part.gridOffset.z + (int)part.gridSize.z; z++)
+                        {
+                            insideChunk.gridData[x, y, z] = 0;
+                        }
+                    }
+                }
+
                 insideChunk.gridRotationAngles[xChunk, yChunk, zChunk] = 0;
                 Debug.Log("Deleted Block at " + xChunk + "," + yChunk + "," + zChunk);
 
