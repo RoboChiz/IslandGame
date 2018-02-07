@@ -155,7 +155,6 @@ public class InputManager : MonoBehaviour
                 {
                     controller.inputLock = "";
                     controller.inputTimer = 0f;
-                    Debug.Log("Releasing Lock");
                 }
             }
 

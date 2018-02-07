@@ -29,6 +29,8 @@ public class BuildingModeManager : MonoBehaviour
     private const float maxInputLockTimer = 0.03f;
     private float inputLockTimer = maxInputLockTimer;
 
+    private GameObject cursorObject;
+
     private int currentSelection = 1;
 
     private void Start()
@@ -234,6 +236,9 @@ public class BuildingModeManager : MonoBehaviour
 
             button.colors = colorBlock;
         }
+
+        //Setup cursorObject
+        SetupCursorObject();
     }
 
     public void StartBuildMode()
@@ -291,6 +296,8 @@ public class BuildingModeManager : MonoBehaviour
                 prefab.Reset();
                 prefab.GetComponent<Rigidbody>().isKinematic = true;
             }
+
+            SetupCursorObject();
         }
     }
 
@@ -331,6 +338,11 @@ public class BuildingModeManager : MonoBehaviour
             foreach (PhysicsPrefab prefab in FindObjectsOfType<PhysicsPrefab>())
             {
                 prefab.GetComponent<Rigidbody>().isKinematic = false;
+            }
+
+            if (cursorObject != null)
+            {
+                Destroy(cursorObject);
             }
         }
     }
@@ -400,5 +412,40 @@ public class BuildingModeManager : MonoBehaviour
 
         Vector2 finalImagePos = new Vector2(radius * Mathf.Cos(_endAngle * Mathf.Deg2Rad), radius * Mathf.Sin(_endAngle * Mathf.Deg2Rad)) + offset;
         _image.rectTransform.anchoredPosition = finalImagePos;
+    }
+
+    private void SetupCursorObject()
+    {
+        if (cursorObject != null)
+        {
+            Destroy(cursorObject);
+        }
+
+        cursorObject = Instantiate(FindObjectOfType<BuildingPartDatabaseManager>().GetBuildingPart(currentSelection).prefab);
+        cursorObject.name = "lalala";
+        cursorObject.transform.parent = cursor.transform;
+        cursorObject.transform.localPosition = Vector3.zero;
+        cursorObject.transform.localRotation = Quaternion.identity;
+
+        Joint[] joints = cursorObject.GetComponentsInChildren<Joint>();
+        WaterBody[] waterBodys = cursorObject.GetComponentsInChildren<WaterBody>();
+        PhysicsPrefab[] physicsPrefabs = cursorObject.GetComponentsInChildren<PhysicsPrefab>();
+        Rigidbody[] cursorBodys = cursorObject.GetComponentsInChildren<Rigidbody>();
+        Collider[] cursorColliders = cursorObject.GetComponentsInChildren<Collider>();
+
+        foreach (Joint joint in joints)
+            Destroy(joint);
+
+        foreach (PhysicsPrefab physics in physicsPrefabs)
+            Destroy(physics);
+
+        foreach (WaterBody water in waterBodys)
+            Destroy(water);
+
+        foreach (Rigidbody rbody in cursorBodys)
+            Destroy(rbody);
+
+        foreach (Collider collider in cursorColliders)
+            Destroy(collider);
     }
 }
