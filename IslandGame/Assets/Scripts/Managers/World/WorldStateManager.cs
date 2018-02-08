@@ -156,7 +156,7 @@ public class WorldStateManager : ISavingManager
                         float _rotation = _stream.ReadSingle();
 
                         //-1 is used to fill space for big items, 0 is empty, >0 is an item
-                        if (_id >= 0)
+                        if (_id > 0)
                         {
                             Debug.Log("Loaded Block at " + x + "," + y + "," + z);
                             CreateItem(_id, ChunkToWorld(chunk, new Vector3(x, y, z)), _rotation);                        
@@ -200,7 +200,7 @@ public class WorldStateManager : ISavingManager
                 {
                     for (int z = chunkZ - (int)part.gridOffset.z; z < chunkZ - (int)part.gridOffset.z + (int)part.gridSize.z; z++)
                     {
-                        if (insideChunk.gridData[x, y, z] != 0)
+                        if (insideChunk.gridData[x, y, z] > 0)
                         {
                             canPlace = false;
                             break;

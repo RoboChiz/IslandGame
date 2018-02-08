@@ -12,6 +12,8 @@ public class PauseMenu : MonoBehaviour
     private RectTransform rectTransform;
     private CameraSwap cameraSwap;
 
+    public GameObject saveSlots;
+
     private void Start()
     {
         rectTransform = GetComponent<RectTransform>();
@@ -99,5 +101,11 @@ public class PauseMenu : MonoBehaviour
     public void QuitGame()
     {
         Application.Quit();
+    }
+
+    public void ShowSaveSlots()
+    {
+        saveSlots.SetActive(true);
+        gameObject.SetActive(false);
     }
 }

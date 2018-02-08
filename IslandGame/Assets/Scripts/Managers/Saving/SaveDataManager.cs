@@ -88,13 +88,13 @@ public class SaveDataManager : MonoBehaviour
     }
 
     //Used for converting a save to the current version
-    private void UpdateSave()
+    private void UpdateSave(string _location)
     {
         //Ensure Save Data has the correct values
         currentSaveData.localVersion = SaveData.saveVersion;
 
         //Save the Game Data
-        SaveGame();
+        SaveGame(_location);
     }
 
     //----------------------------------Changeable Getters/Setters-----------------------------------
@@ -114,7 +114,7 @@ public class SaveDataManager : MonoBehaviour
     }
 
     //------------------------------------Non-Changeable Methods-------------------------------------
-    public void Save()
+    public void Save(string _location)
     {
         //Ensure Save Data has the correct values
         currentSaveData.localVersion = SaveData.saveVersion;
@@ -133,12 +133,13 @@ public class SaveDataManager : MonoBehaviour
         currentSaveData.customStringValue = customStringValue.ToArray();
 
         //Save the Game Data
-        SaveGame();
+        SaveGame(_location);
     }
 
-    private void SaveGame()
+    private void SaveGame(string _location)
     {
-        BinaryWriter bw = new BinaryWriter(File.Create(Application.persistentDataPath + saveLocation));
+        saveLocation = _location;
+        BinaryWriter bw = new BinaryWriter(File.Create(saveLocation));
 
         //Load Save Data
         currentSaveData.SaveAllData(bw);
@@ -155,12 +156,13 @@ public class SaveDataManager : MonoBehaviour
     {
         saveLocation = _location;
         bool saveLoaded = false;
+        BinaryReader br = null;
 
         try
         {
-            if (File.Exists(Application.persistentDataPath + saveLocation))
+            if (File.Exists(saveLocation))
             {
-                BinaryReader br = new BinaryReader(File.Open(Application.persistentDataPath + saveLocation, FileMode.Open));
+                br = new BinaryReader(File.Open(saveLocation, FileMode.Open));
 
                 int version = br.ReadInt32();
 
@@ -168,13 +170,11 @@ public class SaveDataManager : MonoBehaviour
                 currentSaveData.LoadAllData(version, br);
 
                 //Load Game Specific Managers
-                GameSpecificLoad(version, br);
-
-                br.Close();
+                GameSpecificLoad(version, br);               
 
                 if (currentSaveData.localVersion != SaveData.saveVersion)
                 {
-                    UpdateSave();
+                    UpdateSave(_location);
                 }
 
                 saveLoaded = true;
@@ -183,6 +183,10 @@ public class SaveDataManager : MonoBehaviour
         catch (System.Exception err)
         {
             Debug.Log("ERROR LOADING SAVE! " + err.Message);
+        }
+        finally
+        {
+            br.Close();
         }
 
         if (!saveLoaded)
