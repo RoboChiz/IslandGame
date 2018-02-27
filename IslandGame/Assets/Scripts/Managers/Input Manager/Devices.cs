@@ -96,7 +96,7 @@ public class XBox360Device : InputDevice
             {"Create", new List<ControlName>() {new ControlName(A, false) } },
             {"Delete", new List<ControlName>() {new ControlName(B, false) } },
             {"ItemSwitch", new List<ControlName>() { new ControlName(DPadHori, true) } },
-            {"Rotate", new List<ControlName>() {new ControlName(Y, false) } },
+            {"Rotate", new List<ControlName>() {new ControlName(LB + "-", false), new ControlName(RB + "+", false), new ControlName(Y, false) } },
         }
     );
 
