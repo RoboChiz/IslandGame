@@ -23,7 +23,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _CausticMap:
-        m_Texture: {fileID: 2800000, guid: ac4379a91d8db874694b3b7ddb0406f2, type: 3}
+        m_Texture: {fileID: 2800000, guid: c5e6659c06ea7d24482dcb6159471c27, type: 3}
         m_Scale: {x: 2, y: 2}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -82,10 +82,10 @@ Material:
     - _XSpeed: 0.5
     - _YSpeed: 0.2
     - _ZWrite: 1
-    - _maxGroundHeight: -0.55
+    - _maxGroundHeight: -0.64
     - _maxOceanHeight: -0.27
     - _minGroundHeight: -2.93
-    - _minOceanHeight: -0.81
+    - _minOceanHeight: -0.73
     - _oceanCutOff: 12.7
     - _oceanCutOffScale: 1
     m_Colors:
