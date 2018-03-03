@@ -13,21 +13,74 @@ public class WaterMeshGen : MonoBehaviour
     public float gridSize = 1.0f;
     private float lastGridSize = 0.0f;
 
+    //Water Drop
+    public float waterDrop = 10.0f;
+    private float lastwaterDrop = 0.0f;
+
     private MeshFilter meshFilter;
 
-	// Update is called once per frame
-	void Update ()
+    private int[,,] vertGridLayout;
+
+    private Mesh generatedMesh;
+
+    //The Mesh
+    Vector3[] finalVertices, finalNormals;
+    Vector2[] finalUvs;
+    int[] finalTris;
+
+    private bool meshGenerated = false;
+
+    public float waveHeight = 0.5f;
+    public float waveSpeed = 5f;
+
+
+
+    // Update is called once per frame
+    void Update ()
     {
-		if(lastPlaneSize != planeSize || gridSize != lastGridSize)
+		if(lastPlaneSize != planeSize || gridSize != lastGridSize || waterDrop != lastwaterDrop)
         {
             if (gridSize > 0.0f)
             {
+                meshGenerated = false;
                 RegenerateMesh();
+                meshGenerated = true;
                 lastPlaneSize = planeSize;
                 lastGridSize = gridSize;
+                lastwaterDrop = waterDrop;
             }
         }
 	}
+
+    void FixedUpdate()
+    {
+        if(meshGenerated)
+        {
+            int squares = Mathf.RoundToInt(planeSize / gridSize) + (planeSize % gridSize != 0f ? 1 : 0);
+
+            //Do Spring Logic
+            for (int x = 0; x <= squares; x++)
+            {
+                for (int y = 0; y <= squares; y++)
+                {
+                    int id = vertGridLayout[x, 0, y];
+
+                    float pos = Mathf.Sin((Time.time * waveSpeed) + x + y) * waveHeight;
+                    float diff = pos - finalVertices[id].y;
+
+                    finalVertices[id]  += Vector3.up * diff;
+                }
+            }
+
+            //Do Propogate Logic
+
+            //Update Mesh
+            generatedMesh.vertices = finalVertices;
+            generatedMesh.normals = finalNormals;
+            generatedMesh.uv = finalUvs;
+            generatedMesh.triangles = finalTris;
+        }
+    }
 
     /// <summary>
     /// Regenerates the entire mesh from scratch
@@ -45,48 +98,116 @@ public class WaterMeshGen : MonoBehaviour
         List<int> tris = new List<int>();
 
         float halfSize = planeSize / 2f;
-        int squares = Mathf.RoundToInt((planeSize / gridSize) + 0.5f);
+        int squares = Mathf.RoundToInt(planeSize / gridSize) + (planeSize% gridSize != 0f ? 1 : 0);
 
-        int[,] gridLayout = new int[squares, squares];
+        vertGridLayout = new int[squares + 1, 2, squares + 1];
 
         //Setup Verts
         {
-            for (int x = 0; x < squares; x++)
+            for (int x = 0; x <= squares; x++)
             {
-                for (int y = 0; y < squares; y++)
+                for (int y = 0; y <= squares; y++)
                 {
-                    gridLayout[x, y] = vertices.Count;
-                    vertices.Add(new Vector3(-halfSize + (x * gridSize), 0f, -halfSize + (y * gridSize)));
+                    vertGridLayout[x, 0, y] = vertices.Count;
+                    vertices.Add(new Vector3(Mathf.Clamp(-halfSize + (x * gridSize), -halfSize, halfSize), 0f, Mathf.Clamp(-halfSize + (y * gridSize), -halfSize, halfSize)));
+
+                    vertGridLayout[x, 1, y] = vertices.Count;
+                    vertices.Add(new Vector3(Mathf.Clamp(-halfSize + (x * gridSize), -halfSize, halfSize), -waterDrop, Mathf.Clamp(-halfSize + (y * gridSize), -halfSize, halfSize)));
+
                     normals.Add(Vector3.up);
+                    normals.Add(Vector3.up);
+
+                    uvs.Add(new Vector2(x, y));
                     uvs.Add(new Vector2(x, y));
                 }
             }
         }
 
         //Setup Triangles
-        for (int x = 0; x < squares - 1; x++)
+        for (int x = 0; x < squares; x++)
         {
-            for (int y = 0; y < squares - 1; y++)
+            for (int y = 0; y < squares; y++)
             {
                 //Tri 1
-                tris.Add(gridLayout[x+1, y]);
-                tris.Add(gridLayout[x, y]);
-                tris.Add(gridLayout[x, y+1]);
+                tris.Add(vertGridLayout[x+1,0, y]);
+                tris.Add(vertGridLayout[x,  0, y]);
+                tris.Add(vertGridLayout[x,  0, y+1]);
 
                 // Tri 2
-                tris.Add(gridLayout[x + 1, y + 1]);
-                tris.Add(gridLayout[x + 1, y]);
-                tris.Add(gridLayout[x, y + 1]);
+                tris.Add(vertGridLayout[x + 1,  0, y + 1]);
+                tris.Add(vertGridLayout[x + 1,  0, y]);
+                tris.Add(vertGridLayout[x,      0, y + 1]);
             }
         }
 
+        //Setup Walls
+        for (int x = 0; x < squares; x++)
+        {
+            //Left Wall
+            //Tri 1
+            tris.Add(vertGridLayout[x,      0, 0]);
+            tris.Add(vertGridLayout[x + 1,  0, 0]);
+            tris.Add(vertGridLayout[x,      1, 0]);
+
+            //Tri 2
+            tris.Add(vertGridLayout[x + 1,  1, 0]);
+            tris.Add(vertGridLayout[x,      1, 0]);
+            tris.Add(vertGridLayout[x + 1,  0, 0]);
+
+            //Right Wall
+            //Tri 1
+            tris.Add(vertGridLayout[x + 1,  0, squares]);
+            tris.Add(vertGridLayout[x,      0, squares]);
+            tris.Add(vertGridLayout[x,      1, squares]);
+
+            //Tri 2
+            tris.Add(vertGridLayout[x,      1, squares]);
+            tris.Add(vertGridLayout[x + 1,  1, squares]);
+            tris.Add(vertGridLayout[x + 1,  0, squares]);
+
+
+        }
+
+        for (int y = 0; y < squares; y++)
+        {
+            //Front Wall
+            //Tri 1
+            tris.Add(vertGridLayout[0, 0, y + 1]);
+            tris.Add(vertGridLayout[0, 0, y]);
+            tris.Add(vertGridLayout[0, 1, y]);
+
+            //Tri 2
+            tris.Add(vertGridLayout[0, 1, y]);
+            tris.Add(vertGridLayout[0, 1, y + 1]);
+            tris.Add(vertGridLayout[0, 0, y + 1]);
+
+            //Back Wall
+            //Tri 1
+            tris.Add(vertGridLayout[squares, 0, y]);
+            tris.Add(vertGridLayout[squares, 0, y + 1]);
+            tris.Add(vertGridLayout[squares, 1, y]);
+
+            //Tri 2
+            tris.Add(vertGridLayout[squares, 1, y + 1]);
+            tris.Add(vertGridLayout[squares, 1, y]);
+            tris.Add(vertGridLayout[squares, 0, y + 1]);
+        }
+
         //Set Mesh
-        finalMesh.vertices = vertices.ToArray();
-        finalMesh.normals = normals.ToArray();
-        finalMesh.uv = uvs.ToArray();
-        finalMesh.triangles = tris.ToArray();
+        finalVertices = vertices.ToArray();
+        finalMesh.vertices = finalVertices;
+
+        finalNormals = normals.ToArray();
+        finalMesh.normals = finalNormals;
+
+        finalUvs = uvs.ToArray();
+        finalMesh.uv = finalUvs;
+
+        finalTris = tris.ToArray();
+        finalMesh.triangles = finalTris;
 
         meshFilter.mesh = finalMesh;
+        generatedMesh = finalMesh;
 
     }
 }
