@@ -352,6 +352,7 @@
     <Compile Include="Assets\Scripts\World\WaterSetup.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\Models\Materials\RimLight\Rim.shader" />
     <None Include="Assets\PostProcessing\Editor Resources\Monitors\HistogramCompute.compute" />
     <None Include="Assets\PostProcessing\Editor Resources\Monitors\HistogramRender.shader" />
     <None Include="Assets\PostProcessing\Editor Resources\Monitors\ParadeRender.shader" />
