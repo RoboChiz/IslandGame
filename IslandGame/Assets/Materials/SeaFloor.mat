@@ -23,7 +23,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _CausticMap:
-        m_Texture: {fileID: 2800000, guid: 6e09aa2db97f1fa49acf2d8565ac0979, type: 3}
+        m_Texture: {fileID: 2800000, guid: e348d937bbc04e24abe44fe058e5b5a5, type: 3}
         m_Scale: {x: 2, y: 2}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -40,6 +40,10 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _EmissionMap:
         m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _GroundRamp:
+        m_Texture: {fileID: 2800000, guid: 20ca0de6c8a651c4bae314b2671cb952, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
@@ -66,7 +70,7 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0
     - _GlossyReflections: 1
-    - _Intensity: 0.74
+    - _Intensity: 1.011
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
@@ -78,6 +82,8 @@ Material:
     - _XSpeed: 0.5
     - _YSpeed: 0.2
     - _ZWrite: 1
+    - _maxGroundHeight: -0.55
+    - _minGroundHeight: -2.93
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 0}

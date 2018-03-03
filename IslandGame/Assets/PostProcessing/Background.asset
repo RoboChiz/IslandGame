@@ -95,7 +95,7 @@ MonoBehaviour:
       speedUp: 2
       speedDown: 1
       logMin: -8
-      logMax: 4
+      logMax: 2
   bloom:
     m_Enabled: 0
     m_Settings:
@@ -120,7 +120,7 @@ MonoBehaviour:
         neutralWhiteLevel: 5.3
         neutralWhiteClip: 10
       basic:
-        postExposure: 3.02
+        postExposure: 0.86
         temperature: 0
         tint: 0
         hueShift: 1
