@@ -62,12 +62,23 @@
 			//Percentage(x,a,b)=x−a/b−a
 			float yPos = IN.worldPos.y;
 			float percent = (yPos - _minGroundHeight)/(_maxGroundHeight - _minGroundHeight);
+
 			c *= tex2D (_GroundRamp, float2(percent, 0.5));
 
 			//Caustics
-			c += tex2D (_CausticMap, IN.uv_CausticMap + (float2(_XSpeed * _Time.x, _YSpeed * _Time.x) )) * _Intensity;
+			float midPoint = _minGroundHeight + ((_maxGroundHeight - _minGroundHeight) / 2.0);
+			float dist = 1;
 
+			if(midPoint - yPos > 0)
+			{
+				dist -= (midPoint - yPos);
+			}
+			else
+			{
+				dist -= (yPos - midPoint);
+			}
 
+			c += tex2D (_CausticMap, IN.uv_CausticMap + (float2(_XSpeed * _Time.x, _YSpeed * _Time.x) )) * _Intensity * clamp(dist,0,1);
 
 			o.Albedo = c.rgb;
 			// Metallic and smoothness come from slider variables

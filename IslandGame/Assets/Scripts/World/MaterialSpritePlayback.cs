@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[ExecuteInEditMode]
 public class MaterialSpritePlayback : MonoBehaviour
 {
-    public Texture2D[] sprites;
+    private Texture2D[] sprites;
     public float timePerFrame = 0.1f;
 
     private float timeSinceLastFrame;
@@ -13,7 +12,15 @@ public class MaterialSpritePlayback : MonoBehaviour
     public Material material;
     private int currentFrame = 0;
 
-    public string textureName = "Caustic Map";
+    public string textureLocation = "Caustics/";
+    public string shaderTextureName = "_CausticMap";
+
+    private bool ping = true;
+
+    private void Awake()
+    {
+        sprites = Resources.LoadAll<Texture2D>(textureLocation);
+    }
 
     // Update is called once per frame
     void Update ()
@@ -23,8 +30,9 @@ public class MaterialSpritePlayback : MonoBehaviour
             if (timeSinceLastFrame < 0f)
             {
                 timeSinceLastFrame = timePerFrame;
+
                 currentFrame = MathHelper.NumClamp(currentFrame + 1, 0, sprites.Length);
-                material.SetTexture(textureName, sprites[currentFrame]);
+                material.SetTexture(shaderTextureName, sprites[currentFrame]);
             }
             else
             {
