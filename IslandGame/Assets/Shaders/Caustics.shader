@@ -14,6 +14,9 @@
 		_GroundRamp ("Ground Ramp", 2D) = "white" {}
 		_minGroundHeight ("MinGroundHeight", Float) = 0.0
 		_maxGroundHeight ("MaxGroundHeight", Float) = 0.0
+
+		_minOceanHeight ("_minOceanHeight", Float) = 0.0
+		_maxOceanHeight ("_maxOceanHeight", Float) = 0.0
 	}
 	SubShader {
 		Tags { "RenderType"="Opaque" }
@@ -46,6 +49,9 @@
 		half _minGroundHeight;
 		half _maxGroundHeight;
 
+		half _minOceanHeight;
+		half _maxOceanHeight;
+
 		// Add instancing support for this shader. You need to check 'Enable Instancing' on materials that use the shader.
 		// See https://docs.unity3d.com/Manual/GPUInstancing.html for more information about instancing.
 		// #pragma instancing_options assumeuniformscaling
@@ -56,14 +62,22 @@
 		void surf (Input IN, inout SurfaceOutputStandard o) {
 			// Albedo comes from a texture tinted by color
 			fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * _Color;
-
+			fixed4 originalC = c;
 			//Ground Colour Ramp
 
 			//Percentage(x,a,b)=x−a/b−a
 			float yPos = IN.worldPos.y;
 			float percent = (yPos - _minGroundHeight)/(_maxGroundHeight - _minGroundHeight);
+			float cutOffPercent = clamp((yPos - _minOceanHeight)/(_maxOceanHeight - _minOceanHeight), 0.0, 1.0);
 
-			c *= tex2D (_GroundRamp, float2(percent, 0.5));
+			float4 white = float4(1,1,1,1);
+			float4 colorRamp = tex2D (_GroundRamp, float2(percent, 0.5));
+			c *= colorRamp;
+
+			if(yPos >= _minGroundHeight)
+			{
+				c = lerp(c, originalC, cutOffPercent);
+			}
 
 			//Caustics
 			float midPoint = _minGroundHeight + ((_maxGroundHeight - _minGroundHeight) / 2.0);
