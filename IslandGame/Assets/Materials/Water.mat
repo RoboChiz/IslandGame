@@ -57,7 +57,7 @@ Material:
     m_Floats:
     - _BumpScale: 1
     - _Cutoff: 0.5
-    - _DepthFactor: 1.2
+    - _DepthFactor: 3.9
     - _DetailNormalMapScale: 1
     - _DstBlend: 10
     - _GlossMapScale: 1
@@ -66,8 +66,10 @@ Material:
     - _Metallic: 0
     - _Mode: 3
     - _OcclusionStrength: 1
-    - _OceanSize: 16.35
-    - _OceanSizeWave: 1
+    - _OceanPhaseWave: 0
+    - _OceanSize: 16.39
+    - _OceanSizeWave: 0
+    - _OceanSpeedWave: 10
     - _Parallax: 0.02
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
@@ -77,5 +79,5 @@ Material:
     m_Colors:
     - _Color: {r: 0.3285033, g: 0.75568074, b: 0.9117647, a: 0.547}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _FoamLine: {r: 0.6485801, g: 1, b: 0.53676474, a: 0}
+    - _FoamLine: {r: 1, g: 1, b: 1, a: 0}
     - _OceanEdgeColour: {r: 1, g: 1, b: 1, a: 1}
