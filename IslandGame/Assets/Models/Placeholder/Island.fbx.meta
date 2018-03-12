@@ -27,6 +27,13 @@ ModelImporter:
     100038: Shrub_Group
     100040: Water
     100042: Coral
+    100044: Edge
+    100046: Palm1
+    100048: Palm2
+    100050: Palm3
+    100052: Palm4
+    100054: Palm5
+    100056: Palm6
     400000: Ground
     400002: //RootNode
     400004: Jetty
@@ -49,6 +56,13 @@ ModelImporter:
     400038: Shrub_Group
     400040: Water
     400042: Coral
+    400044: Edge
+    400046: Palm1
+    400048: Palm2
+    400050: Palm3
+    400052: Palm4
+    400054: Palm5
+    400056: Palm6
     2100000: sand
     2100002: oceanFloor
     2100004: swatch
@@ -56,6 +70,8 @@ ModelImporter:
     2100008: WhiteWater
     2100010: EdgeWater
     2100012: lambert1
+    2100014: lambert18
+    2100016: Palm
     2300000: Ground
     2300002: Jetty
     2300004: Palm_01
@@ -74,6 +90,13 @@ ModelImporter:
     2300030: Shrub_05
     2300032: Water
     2300034: Coral
+    2300036: Edge
+    2300038: Palm1
+    2300040: Palm2
+    2300042: Palm3
+    2300044: Palm4
+    2300046: Palm5
+    2300048: Palm6
     3300000: Ground
     3300002: Jetty
     3300004: Palm_01
@@ -92,6 +115,13 @@ ModelImporter:
     3300030: Shrub_05
     3300032: Water
     3300034: Coral
+    3300036: Edge
+    3300038: Palm1
+    3300040: Palm2
+    3300042: Palm3
+    3300044: Palm4
+    3300046: Palm5
+    3300048: Palm6
     4300000: Ground
     4300002: Water
     4300004: Jetty
@@ -110,6 +140,13 @@ ModelImporter:
     4300030: Shrub_05
     4300032: Shrub_01
     4300034: Coral
+    4300036: Edge
+    4300038: Palm1
+    4300040: Palm2
+    4300042: Palm3
+    4300044: Palm4
+    4300046: Palm5
+    4300048: Palm6
   externalObjects: {}
   materials:
     importMaterials: 1
