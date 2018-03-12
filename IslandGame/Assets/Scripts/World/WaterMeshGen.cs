@@ -18,22 +18,34 @@ public class WaterMeshGen : MonoBehaviour
     private float lastwaterDrop = 0.0f;
 
     private MeshFilter meshFilter;
+    private MeshCollider meshCollider;
 
     private int[,,] vertGridLayout;
+    private int[,,] vertWallGridLayout;
 
-    private Mesh generatedMesh;
+    private Mesh generatedMesh, generatedWallMesh;
 
     //The Mesh
     Vector3[] finalVertices, finalNormals;
     Vector2[] finalUvs;
     int[] finalTris;
 
+    //The Wall Mesh
+    Vector3[] finalWallVertices, finalWallNormals;
+    Vector2[] finalWallUvs;
+    int[] finalWallTris;
+
     private bool meshGenerated = false;
 
     public float waveHeight = 0.5f;
     public float waveSpeed = 5f;
 
+    public GameObject wallGameObject;
 
+    private void Start()
+    {
+        RegenerateMesh();
+    }
 
     // Update is called once per frame
     void Update ()
@@ -63,12 +75,25 @@ public class WaterMeshGen : MonoBehaviour
             {
                 for (int y = 0; y <= squares; y++)
                 {
-                    int id = vertGridLayout[x, 0, y];
+                    //Plane
+                    {
+                        int id = vertGridLayout[x, 0, y];
 
-                    float pos = Mathf.Sin((Time.time * waveSpeed) + x + y) * waveHeight;
-                    float diff = pos - finalVertices[id].y;
+                        float pos = Mathf.Sin((Time.time * waveSpeed) + x + y) * waveHeight;
+                        float diff = pos - finalVertices[id].y;
 
-                    finalVertices[id]  += Vector3.up * diff;
+                        finalVertices[id] += Vector3.up * diff;
+                    }
+
+                    //Wall
+                    {
+                        int id = vertWallGridLayout[x, 0, y];
+
+                        float pos = Mathf.Sin((Time.time * waveSpeed) + x + y) * waveHeight;
+                        float diff = pos - finalWallVertices[id].y;
+
+                        finalWallVertices[id] += Vector3.up * diff;
+                    }
                 }
             }
 
@@ -79,6 +104,11 @@ public class WaterMeshGen : MonoBehaviour
             generatedMesh.normals = finalNormals;
             generatedMesh.uv = finalUvs;
             generatedMesh.triangles = finalTris;
+
+            generatedWallMesh.vertices = finalWallVertices;
+            generatedWallMesh.normals = finalWallNormals;
+            generatedWallMesh.uv = finalWallUvs;
+            generatedWallMesh.triangles = finalWallTris;
         }
     }
 
@@ -88,8 +118,10 @@ public class WaterMeshGen : MonoBehaviour
     private void RegenerateMesh()
     {
         meshFilter = GetComponent<MeshFilter>();
+        meshCollider = GetComponent<MeshCollider>();
 
         Mesh finalMesh = new Mesh();
+        Mesh finalWallMesh = new Mesh();
 
         //Make Lists for Mesh
         List<Vector3> vertices = new List<Vector3>();
@@ -97,10 +129,16 @@ public class WaterMeshGen : MonoBehaviour
         List<Vector2> uvs = new List<Vector2>();
         List<int> tris = new List<int>();
 
+        List<Vector3> wallVertices = new List<Vector3>();
+        List<Vector3> wallNormals = new List<Vector3>();
+        List<Vector2> wallUvs = new List<Vector2>();
+        List<int> wallTris = new List<int>();
+
         float halfSize = planeSize / 2f;
         int squares = Mathf.RoundToInt(planeSize / gridSize) + (planeSize% gridSize != 0f ? 1 : 0);
 
-        vertGridLayout = new int[squares + 1, 2, squares + 1];
+        vertGridLayout = new int[squares + 1, 1, squares + 1];
+        vertWallGridLayout = new int[squares + 1, 2, squares + 1];
 
         //Setup Verts
         {
@@ -108,17 +146,25 @@ public class WaterMeshGen : MonoBehaviour
             {
                 for (int y = 0; y <= squares; y++)
                 {
+                    //Plane
                     vertGridLayout[x, 0, y] = vertices.Count;
                     vertices.Add(new Vector3(Mathf.Clamp(-halfSize + (x * gridSize), -halfSize, halfSize), 0f, Mathf.Clamp(-halfSize + (y * gridSize), -halfSize, halfSize)));
 
-                    vertGridLayout[x, 1, y] = vertices.Count;
-                    vertices.Add(new Vector3(Mathf.Clamp(-halfSize + (x * gridSize), -halfSize, halfSize), -waterDrop, Mathf.Clamp(-halfSize + (y * gridSize), -halfSize, halfSize)));
-
-                    normals.Add(Vector3.up);
                     normals.Add(Vector3.up);
 
                     uvs.Add(new Vector2(x, y));
-                    uvs.Add(new Vector2(x, y));
+
+                    //Wall
+                    vertWallGridLayout[x, 0, y] = wallVertices.Count;
+                    wallVertices.Add(new Vector3(Mathf.Clamp(-halfSize + (x * gridSize), -halfSize, halfSize), 0f, Mathf.Clamp(-halfSize + (y * gridSize), -halfSize, halfSize)));
+                    vertWallGridLayout[x, 1, y] = wallVertices.Count;
+                    wallVertices.Add(new Vector3(Mathf.Clamp(-halfSize + (x * gridSize), -halfSize, halfSize), -waterDrop, Mathf.Clamp(-halfSize + (y * gridSize), -halfSize, halfSize)));
+
+                    wallNormals.Add(Vector3.up);
+                    wallNormals.Add(Vector3.up);
+
+                    wallUvs.Add(new Vector2(x, y));
+                    wallUvs.Add(new Vector2(x, y));
                 }
             }
         }
@@ -145,52 +191,50 @@ public class WaterMeshGen : MonoBehaviour
         {
             //Left Wall
             //Tri 1
-            tris.Add(vertGridLayout[x,      0, 0]);
-            tris.Add(vertGridLayout[x + 1,  0, 0]);
-            tris.Add(vertGridLayout[x,      1, 0]);
+            wallTris.Add(vertWallGridLayout[x,      0, 0]);
+            wallTris.Add(vertWallGridLayout[x + 1,  0, 0]);
+            wallTris.Add(vertWallGridLayout[x,      1, 0]);
 
             //Tri 2
-            tris.Add(vertGridLayout[x + 1,  1, 0]);
-            tris.Add(vertGridLayout[x,      1, 0]);
-            tris.Add(vertGridLayout[x + 1,  0, 0]);
+            wallTris.Add(vertWallGridLayout[x + 1,  1, 0]);
+            wallTris.Add(vertWallGridLayout[x,      1, 0]);
+            wallTris.Add(vertWallGridLayout[x + 1,  0, 0]);
 
             //Right Wall
             //Tri 1
-            tris.Add(vertGridLayout[x + 1,  0, squares]);
-            tris.Add(vertGridLayout[x,      0, squares]);
-            tris.Add(vertGridLayout[x,      1, squares]);
+            wallTris.Add(vertWallGridLayout[x + 1,  0, squares]);
+            wallTris.Add(vertWallGridLayout[x,      0, squares]);
+            wallTris.Add(vertWallGridLayout[x,      1, squares]);
 
             //Tri 2
-            tris.Add(vertGridLayout[x,      1, squares]);
-            tris.Add(vertGridLayout[x + 1,  1, squares]);
-            tris.Add(vertGridLayout[x + 1,  0, squares]);
-
-
+            wallTris.Add(vertWallGridLayout[x,      1, squares]);
+            wallTris.Add(vertWallGridLayout[x + 1,  1, squares]);
+            wallTris.Add(vertWallGridLayout[x + 1,  0, squares]);
         }
 
         for (int y = 0; y < squares; y++)
         {
             //Front Wall
             //Tri 1
-            tris.Add(vertGridLayout[0, 0, y + 1]);
-            tris.Add(vertGridLayout[0, 0, y]);
-            tris.Add(vertGridLayout[0, 1, y]);
+            wallTris.Add(vertWallGridLayout[0, 0, y + 1]);
+            wallTris.Add(vertWallGridLayout[0, 0, y]);
+            wallTris.Add(vertWallGridLayout[0, 1, y]);
 
             //Tri 2
-            tris.Add(vertGridLayout[0, 1, y]);
-            tris.Add(vertGridLayout[0, 1, y + 1]);
-            tris.Add(vertGridLayout[0, 0, y + 1]);
+            wallTris.Add(vertWallGridLayout[0, 1, y]);
+            wallTris.Add(vertWallGridLayout[0, 1, y + 1]);
+            wallTris.Add(vertWallGridLayout[0, 0, y + 1]);
 
             //Back Wall
             //Tri 1
-            tris.Add(vertGridLayout[squares, 0, y]);
-            tris.Add(vertGridLayout[squares, 0, y + 1]);
-            tris.Add(vertGridLayout[squares, 1, y]);
+            wallTris.Add(vertWallGridLayout[squares, 0, y]);
+            wallTris.Add(vertWallGridLayout[squares, 0, y + 1]);
+            wallTris.Add(vertWallGridLayout[squares, 1, y]);
 
             //Tri 2
-            tris.Add(vertGridLayout[squares, 1, y + 1]);
-            tris.Add(vertGridLayout[squares, 1, y]);
-            tris.Add(vertGridLayout[squares, 0, y + 1]);
+            wallTris.Add(vertWallGridLayout[squares, 1, y + 1]);
+            wallTris.Add(vertWallGridLayout[squares, 1, y]);
+            wallTris.Add(vertWallGridLayout[squares, 0, y + 1]);
         }
 
         //Set Mesh
@@ -207,7 +251,40 @@ public class WaterMeshGen : MonoBehaviour
         finalMesh.triangles = finalTris;
 
         meshFilter.mesh = finalMesh;
+        meshCollider.sharedMesh = finalMesh;
+
         generatedMesh = finalMesh;
+
+        //Set Mesh
+        finalWallVertices = wallVertices.ToArray();
+        finalWallMesh.vertices = finalWallVertices;
+
+        finalWallNormals = wallNormals.ToArray();
+        finalWallMesh.normals = finalWallNormals;
+
+        finalWallUvs = wallUvs.ToArray();
+        finalWallMesh.uv = finalWallUvs;
+
+        finalWallTris = wallTris.ToArray();
+        finalWallMesh.triangles = finalWallTris;
+
+        if(wallGameObject == null)
+        {
+            wallGameObject = new GameObject();
+            wallGameObject.transform.parent = transform;
+            wallGameObject.name = "Wall Mesh";
+            wallGameObject.AddComponent<MeshFilter>();
+            wallGameObject.AddComponent<MeshRenderer>();
+            wallGameObject.AddComponent<MeshCollider>();
+        }
+
+        wallGameObject.GetComponent<MeshFilter>().mesh = finalWallMesh;
+        wallGameObject.GetComponent<MeshCollider>().sharedMesh = finalWallMesh;
+        wallGameObject.transform.localPosition = Vector3.zero;
+        generatedWallMesh = finalWallMesh;
+
+        //meshFilter.mesh = finalWallMesh;
+        //meshCollider.sharedMesh = finalWallMesh;
 
     }
 }

@@ -11,6 +11,12 @@ public class WaterSetup : MonoBehaviour {
         GameObject volumeGameobject = Instantiate(gameObject, transform.position, transform.rotation, transform.parent);
         volumeGameobject.name = "Water_Volume";
 
+        foreach (Transform child in volumeGameobject.transform)
+        {
+            Destroy(child.gameObject);
+        }
+
+
         //Setup Copy
         volumeGameobject.layer = 2;
         volumeGameobject.AddComponent<WaterBody>();
