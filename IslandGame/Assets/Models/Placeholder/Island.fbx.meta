@@ -34,6 +34,16 @@ ModelImporter:
     100052: Palm4
     100054: Palm5
     100056: Palm6
+    100058: Rock1
+    100060: Rock2
+    100062: Rock3
+    100064: Rock4
+    100066: Rock5
+    100068: Shrub1
+    100070: Shrub2
+    100072: Shrub3
+    100074: Shrub4
+    100076: Shrub5
     400000: Ground
     400002: //RootNode
     400004: Jetty
@@ -63,6 +73,16 @@ ModelImporter:
     400052: Palm4
     400054: Palm5
     400056: Palm6
+    400058: Rock1
+    400060: Rock2
+    400062: Rock3
+    400064: Rock4
+    400066: Rock5
+    400068: Shrub1
+    400070: Shrub2
+    400072: Shrub3
+    400074: Shrub4
+    400076: Shrub5
     2100000: sand
     2100002: oceanFloor
     2100004: swatch
@@ -97,6 +117,16 @@ ModelImporter:
     2300044: Palm4
     2300046: Palm5
     2300048: Palm6
+    2300050: Rock1
+    2300052: Rock2
+    2300054: Rock3
+    2300056: Rock4
+    2300058: Rock5
+    2300060: Shrub1
+    2300062: Shrub2
+    2300064: Shrub3
+    2300066: Shrub4
+    2300068: Shrub5
     3300000: Ground
     3300002: Jetty
     3300004: Palm_01
@@ -122,6 +152,16 @@ ModelImporter:
     3300044: Palm4
     3300046: Palm5
     3300048: Palm6
+    3300050: Rock1
+    3300052: Rock2
+    3300054: Rock3
+    3300056: Rock4
+    3300058: Rock5
+    3300060: Shrub1
+    3300062: Shrub2
+    3300064: Shrub3
+    3300066: Shrub4
+    3300068: Shrub5
     4300000: Ground
     4300002: Water
     4300004: Jetty
@@ -147,6 +187,16 @@ ModelImporter:
     4300044: Palm4
     4300046: Palm5
     4300048: Palm6
+    4300050: Shrub1
+    4300052: Shrub2
+    4300054: Shrub3
+    4300056: Shrub4
+    4300058: Shrub5
+    4300060: Rock1
+    4300062: Rock2
+    4300064: Rock3
+    4300066: Rock4
+    4300068: Rock5
   externalObjects: {}
   materials:
     importMaterials: 1
