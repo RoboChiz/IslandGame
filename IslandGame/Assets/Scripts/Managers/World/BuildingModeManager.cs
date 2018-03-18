@@ -30,6 +30,9 @@ public class BuildingModeManager : MonoBehaviour
     private float inputLockTimer = maxInputLockTimer;
 
     private GameObject cursorObject;
+    private Material currentCursorMaterial;
+
+    public Color validCursor, invalidCursor;
 
     private int currentSelection = 1;
 
@@ -48,7 +51,7 @@ public class BuildingModeManager : MonoBehaviour
         {
             InputDevice inputDevice = InputManager.controllers[0];
 
-            if(!isAnimating && inputDevice.GetButtonWithLock("BuildMode"))
+            if (!isAnimating && inputDevice.GetButtonWithLock("BuildMode"))
             {
                 //Stop Any Hiding
                 if (buildHideCoroutine != null)
@@ -70,7 +73,7 @@ public class BuildingModeManager : MonoBehaviour
                 isHiding = false;
             }
 
-            if(isActivated)
+            if (isActivated)
             {
                 //Map Cursor to Grid
                 Vector3 mousePos;
@@ -156,7 +159,7 @@ public class BuildingModeManager : MonoBehaviour
                     delete = InputManager.GetClickHold(1);
                 }
 
-                grid.transform.position = Vector3.Scale(grid.transform.position, new Vector3(1f,0f,1f)) + Vector3.Scale(actualCursorPos, new Vector3(0f, 1f, 0f));
+                grid.transform.position = Vector3.Scale(grid.transform.position, new Vector3(1f, 0f, 1f)) + Vector3.Scale(actualCursorPos, new Vector3(0f, 1f, 0f));
 
                 //Do Build Inputs
                 if (build)
@@ -177,6 +180,18 @@ public class BuildingModeManager : MonoBehaviour
 
                 lerpingRotationAmount = Mathf.Lerp(lerpingRotationAmount, rotationAmount, Time.deltaTime * lerpAmount);
                 cursor.transform.rotation = Quaternion.identity * Quaternion.AngleAxis(lerpingRotationAmount, Vector3.up);
+            }
+        }
+
+        if (cursorObject != null)
+        {
+            if (worldStateManager.CanPlace(currentSelection, actualCursorPos))
+            {
+                currentCursorMaterial.color = validCursor;
+            }
+            else
+            {
+                currentCursorMaterial.color = invalidCursor;
             }
         }
 
@@ -447,5 +462,13 @@ public class BuildingModeManager : MonoBehaviour
 
         foreach (Collider collider in cursorColliders)
             Destroy(collider);
+
+        foreach (MeshRenderer meshRenderer in cursorObject.GetComponentsInChildren<MeshRenderer>())
+        {
+            currentCursorMaterial = new Material(Resources.Load<Material>("Materials/GhostMaterial"));
+            meshRenderer.material = currentCursorMaterial;
+            meshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            meshRenderer.receiveShadows = false;
+        }
     }
 }

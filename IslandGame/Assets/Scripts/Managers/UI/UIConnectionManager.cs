@@ -79,6 +79,12 @@ public class UIConnectionManager : MonoBehaviour {
 
                     currentUIConnection.OnClicked();
                 }
+
+                if (currentUIConnection.GetComponent<InputField>() != null && mouseOnAnything && InputManager.GetClick(0))
+                {
+                    currentUIConnection.OnClicked();
+                }
+
                 if (!mouseOnAnything)
                 {
                     int hori = playerOne.GetRawIntInputWithDelay("MenuHorizontal", 0.25f, Time.unscaledDeltaTime);

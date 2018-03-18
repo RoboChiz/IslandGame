@@ -181,6 +181,43 @@ public class WorldStateManager : ISavingManager
         return null;
     }
 
+    public bool CanPlace(int _databaseID, Vector3 _position)
+    {
+        bool canPlace = true;
+
+        WorldChunk insideChunk = IsInsideWorldChunk(_position);
+
+        if (insideChunk != null)
+        {
+            Vector3 chunkPos = WorldToChunk(insideChunk, _position);
+            int chunkX = (int)chunkPos.x, chunkY = (int)chunkPos.y, chunkZ = (int)chunkPos.z;
+
+            BuildingPart part = FindObjectOfType<BuildingPartDatabaseManager>().GetBuildingPart(_databaseID);
+
+            for (int x = chunkX - (int)part.gridOffset.x; x < chunkX - (int)part.gridOffset.x + (int)part.gridSize.x; x++)
+            {
+                for (int y = chunkY - (int)part.gridOffset.y; y < chunkY - (int)part.gridOffset.y + (int)part.gridSize.y; y++)
+                {
+                    for (int z = chunkZ - (int)part.gridOffset.z; z < chunkZ - (int)part.gridOffset.z + (int)part.gridSize.z; z++)
+                    {
+                        if (insideChunk.gridData[x, y, z] > 0)
+                        {
+                            canPlace = false;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        else
+        {
+            canPlace = false;
+        }
+
+        return canPlace;
+    }
+
+
     public void CreateItem(int _databaseID, Vector3 _position, float _rotation)
     {
         WorldChunk insideChunk = IsInsideWorldChunk(_position);
@@ -263,7 +300,7 @@ public class WorldStateManager : ISavingManager
                 }
 
                 insideChunk.gridRotationAngles[xChunk, yChunk, zChunk] = 0;
-                Debug.Log("Deleted Block at " + xChunk + "," + yChunk + "," + zChunk);
+               // Debug.Log("Deleted Block at " + xChunk + "," + yChunk + "," + zChunk);
 
                 Destroy(insideChunk.gridObjects[xChunk, yChunk, zChunk]);
             }
