@@ -3,11 +3,30 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
+/// <summary>
+/// V3
+/// </summary>
 public class InputModule : PointerInputModule
 {
     public override void Process()
     {
-        ProcessMouseEvent();
+        if (!eventSystem.isFocused)
+            return;
+
+        bool usedEvent = SendUpdateEventToSelectedObject();
+
+        if (input.mousePresent)
+            ProcessMouseEvent();
+    }
+
+    protected bool SendUpdateEventToSelectedObject()
+    {
+        if (eventSystem.currentSelectedGameObject == null)
+            return false;
+
+        var data = GetBaseEventData();
+        ExecuteEvents.Execute(eventSystem.currentSelectedGameObject, data, ExecuteEvents.updateSelectedHandler);
+        return data.used;
     }
 
     /// <summary>

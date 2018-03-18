@@ -30,7 +30,7 @@ public class UIConnectionManager : MonoBehaviour {
         foreach (UIConnection uiConnector in list)
         {
             //Do Open and Close if Button
-            if (uiConnector.isActiveAndEnabled && uiConnector.GetComponent<RectTransform>() != null && (uiConnector.GetComponent<Button>() != null || uiConnector.GetComponent<Toggle>() != null))
+            if (uiConnector.isActiveAndEnabled && uiConnector.GetComponent<RectTransform>() != null)
             {
                 //Set as default
                 if(currentUIConnection == null && uiConnector.priority)
@@ -76,6 +76,8 @@ public class UIConnectionManager : MonoBehaviour {
                     {
                         currentUIConnection.GetComponent<Toggle>().onValueChanged.Invoke(!currentUIConnection.GetComponent<Toggle>().isOn);
                     }
+
+                    currentUIConnection.OnClicked();
                 }
                 if (!mouseOnAnything)
                 {

@@ -22,12 +22,33 @@ public class SaveScreen : MonoBehaviour
 
     private bool lockSlots = false;
 
+    public UIConnection backButton, saveInSlotButton;
+
 	// Use this for initialization
 	void Start ()
     {
         saveDataManager = FindObjectOfType<SaveDataManager>();
 
         UpdateSaveList();
+    }
+
+    private void Update()
+    {
+        if (inputField.isActiveAndEnabled && inputField.isFocused)
+        {
+            LockKeyboard(0);
+        }
+
+        //Do the Pause
+        if (InputManager.controllers.Count > 0)
+        {
+            InputDevice controller = InputManager.controllers[0];
+
+            if (controller.GetButtonWithLock("Pause"))
+            {
+                ReturnToPause();
+            }
+        }
     }
 
     void UpdateSaveList()
@@ -92,6 +113,7 @@ public class SaveScreen : MonoBehaviour
                                 text.text = fileNameSplit[fileNameSplit.Length - 1].Remove(fileNameSplit[fileNameSplit.Length - 1].Length - 3);
 
                                 int count = validFiles.Count;
+
                                 slot.gameObject.transform.Find("Save_Button").GetComponent<Button>().onClick.AddListener(delegate () { OnOverwriteSlot(count); } );
                                 slot.gameObject.transform.Find("Load_Button").GetComponent<Button>().onClick.AddListener(delegate () { OnLoadSlot(count); }); 
                                 slot.gameObject.transform.Find("Delete_Button").GetComponent<Button>().onClick.AddListener(delegate () { OnDeleteSlot(count); });
@@ -105,6 +127,53 @@ public class SaveScreen : MonoBehaviour
                     }
                 }
             }
+        }
+
+        for(int i = 0; i < saveSlots.Count; i++)
+        {
+            CustomButton saveButton = saveSlots[i].gameObject.transform.Find("Save_Button").gameObject.GetComponent<CustomButton>();
+            CustomButton loadButton = saveSlots[i].gameObject.transform.Find("Load_Button").gameObject.GetComponent<CustomButton>();
+            CustomButton deleteButton = saveSlots[i].gameObject.transform.Find("Delete_Button").gameObject.GetComponent<CustomButton>();
+
+            saveButton.OnLeft = deleteButton;
+            saveButton.OnRight = loadButton;
+
+            loadButton.OnLeft = saveButton;
+            loadButton.OnRight = deleteButton;
+
+            deleteButton.OnLeft = loadButton;
+            deleteButton.OnRight = saveButton;
+
+            if (i == 0)
+            {
+                saveInSlotButton.OnDown = saveButton;
+
+                saveButton.OnUp = saveInSlotButton;
+                loadButton.OnUp = saveInSlotButton;
+                deleteButton.OnUp = saveInSlotButton;
+            }
+            else
+            {
+                saveButton.OnUp = saveSlots[i-1].gameObject.transform.Find("Save_Button").GetComponent<CustomButton>();
+                loadButton.OnUp = saveSlots[i - 1].gameObject.transform.Find("Load_Button").GetComponent<CustomButton>();
+                deleteButton.OnUp = saveSlots[i - 1].gameObject.transform.Find("Delete_Button").GetComponent<CustomButton>();
+            }
+
+            if (i == saveSlots.Count-1)
+            {
+                backButton.OnUp = saveButton;
+
+                saveButton.OnDown = backButton;
+                loadButton.OnDown = backButton;
+                deleteButton.OnDown = backButton;
+            }
+            else
+            {
+                saveButton.OnDown = saveSlots[i + 1].gameObject.transform.Find("Save_Button").GetComponent<CustomButton>();
+                loadButton.OnDown = saveSlots[i + 1].gameObject.transform.Find("Load_Button").GetComponent<CustomButton>();
+                deleteButton.OnDown = saveSlots[i + 1].gameObject.transform.Find("Delete_Button").GetComponent<CustomButton>();
+            }
+
         }
 
         saveTemplate.SetActive(false);
@@ -181,6 +250,23 @@ public class SaveScreen : MonoBehaviour
     {
         pauseMenu.SetActive(true);
         gameObject.SetActive(false);
+        FindObjectOfType<PauseMenu>().isSaving = false;
     }
-	
+
+    public void LockKeyboard(int player)
+    {
+        if (InputManager.controllers.Count > player && InputManager.controllers[player].inputType == InputType.Keyboard)
+        {
+            InputManager.controllers[player].localLocked = true;
+        }
+    }
+
+    public void UnlockKeyboard(int player)
+    {
+        if (InputManager.controllers.Count > player && InputManager.controllers[player].inputType == InputType.Keyboard)
+        {
+            InputManager.controllers[player].localLocked = false;
+        }
+    }
+
 }

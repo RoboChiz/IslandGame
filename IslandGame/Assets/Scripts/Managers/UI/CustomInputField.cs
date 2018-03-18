@@ -4,11 +4,23 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class CustomButton : UIConnection
+public class CustomInputField : UIConnection
 {
-    public override void OnClicked()
-    {      
+    bool justUnlocked;
+    public void Start()
+    {
+        GetComponent<InputField>().onEndEdit.AddListener(delegate (string _string) { eventSystem.SetSelectedGameObject(null); justUnlocked = true; });
+    }
 
+    public override void OnClicked()
+    {
+        if(justUnlocked)
+        {
+            justUnlocked = false;
+            return;
+        }
+
+        eventSystem.SetSelectedGameObject(gameObject);
     }
 
     public override void OnSelected()
@@ -29,5 +41,6 @@ public class CustomButton : UIConnection
         }
         GetComponent<RectTransform>().localScale = Vector3.Lerp(GetComponent<RectTransform>().localScale, Vector3.one, Time.unscaledDeltaTime * 8f);
     }
+
 }
 

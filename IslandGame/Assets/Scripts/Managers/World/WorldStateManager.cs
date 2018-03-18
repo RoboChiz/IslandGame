@@ -212,7 +212,7 @@ public class WorldStateManager : ISavingManager
 
             if (canPlace)
             {
-                Debug.Log("Created Block at " + chunkPos.x + "," + chunkPos.y + "," + chunkPos.z);
+                //Debug.Log("Created Block at " + chunkPos.x + "," + chunkPos.y + "," + chunkPos.z);
                 for (int x = chunkX - (int)part.gridOffset.x; x < chunkX - (int)part.gridOffset.x + (int)part.gridSize.x; x++)
                 {
                     for (int y = chunkY - (int)part.gridOffset.y; y < chunkY - (int)part.gridOffset.y + (int)part.gridSize.y; y++)

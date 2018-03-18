@@ -20,6 +20,8 @@ public class IsoCam : MonoBehaviour
 
     private Camera myCamera;
 
+    public bool lockCamera = false;
+
     // Use this for initialization
     void Start()
     {
@@ -60,7 +62,7 @@ public class IsoCam : MonoBehaviour
             //myCamera.orthographicSize = actualSize;
 
             //User Inputs
-            if (InputManager.controllers.Count > 0)
+            if (!lockCamera && InputManager.controllers.Count > 0)
             {
                 InputDevice inputDevice = InputManager.controllers[0];
 

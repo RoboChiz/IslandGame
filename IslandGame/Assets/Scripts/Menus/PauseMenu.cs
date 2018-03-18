@@ -7,6 +7,8 @@ using UnityEngine.UI;
 public class PauseMenu : MonoBehaviour
 {
     public static bool isPaused { get; private set; }
+    public bool isSaving = false;
+
     private bool isAnimating = false;
 
     private RectTransform rectTransform;
@@ -33,7 +35,7 @@ public class PauseMenu : MonoBehaviour
         {
             InputDevice controller = InputManager.controllers[0];
 
-            if (!isAnimating)
+            if (!isAnimating && !isSaving)
             {
                 if (controller.GetButtonWithLock("Pause"))
                 {
@@ -43,13 +45,15 @@ public class PauseMenu : MonoBehaviour
                     //Freeze Time 
                     if(isPaused)
                     {
-                        Time.timeScale = 0f;
                         StartCoroutine(ShowPauseMenu());
+                        FindObjectOfType<PlayerMovement>().lockMovements = true;
+                        FindObjectOfType<IsoCam>().lockCamera = true;
                     }
                     else
                     {
-                        Time.timeScale = 1f;
                         StartCoroutine(HidePauseMenu());
+                        FindObjectOfType<PlayerMovement>().lockMovements = false;
+                        FindObjectOfType<IsoCam>().lockCamera = false;
                     }
                 }
             }
@@ -107,5 +111,6 @@ public class PauseMenu : MonoBehaviour
     {
         saveSlots.SetActive(true);
         pauseMenu.SetActive(false);
+        isSaving = true;
     }
 }
