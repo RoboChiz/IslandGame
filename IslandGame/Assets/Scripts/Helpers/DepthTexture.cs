@@ -7,10 +7,19 @@ public class DepthTexture : MonoBehaviour
 {
     private Camera cam;
 
+    public bool invert;
+
     // Use this for initialization
     void Start ()
     {
         cam = GetComponent<Camera>();
-        cam.depthTextureMode = DepthTextureMode.Depth;
+        if (!invert)
+        {
+            cam.depthTextureMode = DepthTextureMode.Depth;
+        }
+        else
+        {
+            cam.depthTextureMode = DepthTextureMode.None;
+        }
 	}
 }

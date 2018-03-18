@@ -23,7 +23,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _CausticMap:
-        m_Texture: {fileID: 2800000, guid: 6aa5e8645e90e1747bed615b1350d7ea, type: 3}
+        m_Texture: {fileID: 2800000, guid: 655a20a6ce0151844b5514c3ba9169bc, type: 3}
         m_Scale: {x: 2, y: 2}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -88,6 +88,7 @@ Material:
     - _minOceanHeight: -0.73
     - _oceanCutOff: 12.7
     - _oceanCutOffScale: 1
+    - _topOffset: -0.45
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 0}

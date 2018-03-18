@@ -17,6 +17,8 @@
 
 		_minOceanHeight ("_minOceanHeight", Float) = 0.0
 		_maxOceanHeight ("_maxOceanHeight", Float) = 0.0
+
+		_topOffset ("Top Offset", Float) = 0.0
 	}
 	SubShader {
 		Tags { "RenderType"="Opaque" }
@@ -51,6 +53,7 @@
 
 		half _minOceanHeight;
 		half _maxOceanHeight;
+		half _topOffset;
 
 		// Add instancing support for this shader. You need to check 'Enable Instancing' on materials that use the shader.
 		// See https://docs.unity3d.com/Manual/GPUInstancing.html for more information about instancing.
@@ -89,7 +92,7 @@
 			}
 			else
 			{
-				dist -= (yPos - midPoint);
+				dist -= (yPos - midPoint) + _topOffset;
 			}
 
 			c += tex2D (_CausticMap, IN.uv_CausticMap + (float2(_XSpeed * _Time.x, _YSpeed * _Time.x) )) * _Intensity * clamp(dist,0,1);

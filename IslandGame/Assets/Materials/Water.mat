@@ -55,15 +55,20 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
+    - _2ndDepthFactor: 1
     - _BumpScale: 1
     - _Cutoff: 0.5
-    - _DepthFactor: 3.9
+    - _DepthFactor: 8.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 10
+    - _FadeAmount: 1
+    - _FoamLineDepthFactor: 7.56
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
+    - _MaxDepth: 10.2
     - _Metallic: 0
+    - _MinDepth: -0.9
     - _Mode: 3
     - _OcclusionStrength: 1
     - _OceanPhaseWave: 0
@@ -71,13 +76,19 @@ Material:
     - _OceanSizeWave: 0
     - _OceanSpeedWave: 10
     - _Parallax: 0.02
+    - _ShoreCutOffFactor: 0.5
+    - _ShoreDepthFactor: 1
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _UVSec: 0
     - _ZWrite: 0
     m_Colors:
-    - _Color: {r: 0.3285033, g: 0.75568074, b: 0.9117647, a: 0.547}
+    - _2ndColour: {r: 1, g: 1, b: 1, a: 1}
+    - _Color: {r: 0.3285032, g: 0.75568074, b: 0.9117647, a: 0.709}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _FoamLine: {r: 1, g: 1, b: 1, a: 0}
-    - _OceanEdgeColour: {r: 1, g: 1, b: 1, a: 1}
+    - _FoamColor: {r: 1, g: 1, b: 1, a: 0.366}
+    - _FoamLine: {r: 1, g: 1, b: 1, a: 0.316}
+    - _MaxColor: {r: 0.2279411, g: 0.87221086, b: 1, a: 0.566}
+    - _MinColor: {r: 0.75735295, g: 0.95983773, b: 1, a: 0.016}
+    - _OceanEdgeColour: {r: 0.75735295, g: 0.9096348, b: 1, a: 1}

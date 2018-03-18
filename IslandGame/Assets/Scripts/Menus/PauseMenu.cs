@@ -12,11 +12,12 @@ public class PauseMenu : MonoBehaviour
     private RectTransform rectTransform;
     private CameraSwap cameraSwap;
 
-    public GameObject saveSlots;
+    public GameObject pauseMenu, saveSlots;
+    public EventSystem eventSystem;
 
     private void Start()
     {
-        rectTransform = GetComponent<RectTransform>();
+        rectTransform = pauseMenu.GetComponent<RectTransform>();
 
         //Hide Pause off screen
         rectTransform.anchoredPosition = new Vector2(0f, 1000f);
@@ -57,31 +58,30 @@ public class PauseMenu : MonoBehaviour
 
     public void LoadOptionState()
     {
-
-        //Setup Invert Toggles
-        Toggle invertVertical = transform.Find("InvertVertical_Toggle").GetComponent<Toggle>();
-        Toggle invertHorizontal = transform.Find("InvertHorizontal_Toggle").GetComponent<Toggle>();
-
-        invertVertical.isOn = cameraSwap.GetInvertVertical();
-        invertHorizontal.isOn = cameraSwap.GetInvertHorizontal();
     }
 
     private IEnumerator ShowPauseMenu()
     {
+        eventSystem.enabled = false;
+        pauseMenu.SetActive(true);
         LoadOptionState();
 
         yield return SlideTo(new Vector2(0f, 1000f),    new Vector2(0f, -50f),  0.45f);
         yield return SlideTo(new Vector2(0f, -50f),     new Vector2(0f, 0f),    0.1f);
 
         isAnimating = false;
+        eventSystem.enabled = true;
     }
 
     private IEnumerator HidePauseMenu()
     {
+        eventSystem.enabled = false;
         yield return SlideTo(new Vector2(0f, 0f),   new Vector2(0f, 50f),       0.1f);
         yield return SlideTo(new Vector2(0f, 50f),  new Vector2(0f, -1000f),    0.45f);
         
         isAnimating = false;
+        pauseMenu.SetActive(false);
+        eventSystem.enabled = true;
     }
 
     private IEnumerator SlideTo(Vector2 _start, Vector2 _end, float _travelTime)
@@ -106,6 +106,6 @@ public class PauseMenu : MonoBehaviour
     public void ShowSaveSlots()
     {
         saveSlots.SetActive(true);
-        gameObject.SetActive(false);
+        pauseMenu.SetActive(false);
     }
 }

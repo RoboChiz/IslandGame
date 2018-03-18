@@ -57,6 +57,7 @@ public abstract class InputDevice
     public int GetRawIntInput(string _input) { return (int)MathHelper.Sign(ActualGetInput(_input, true, currentLayout)); }
 
     public bool GetButton(string _input) { return ActualGetInput(_input, false, currentLayout) != 0; }
+    public bool GetRawButton(string _input) { return ActualGetInput(_input, true, currentLayout) != 0; }
 
     //Forces lock to be released before input is allowed
     public float GetInputWithLock(string _input)
@@ -133,6 +134,28 @@ public abstract class InputDevice
         return 0;
     }
 
+    public int GetRawIntInputWithDelay(string _input, float _delay, float _deltaTime)
+    {
+        float val = GetRawIntInput(_input);
+
+        if (!toggle && inputTimer <= 0f && (inputLock == _input || inputLock == ""))
+        {
+            if (val != 0)
+            {
+                inputLock = _input;
+                inputTimer = _delay;
+                return (int)Mathf.Sign(val);
+            }
+        }
+
+        if (inputLock == _input && val != 0f)
+        {
+            inputTimer -= _deltaTime;
+        }
+
+        return 0;
+    }
+
     public float GetRawInputWithLock(string _input)
     {
         if (!toggle && inputLock == "")
@@ -168,6 +191,20 @@ public abstract class InputDevice
         if (!toggle && inputLock == "")
         {
             if (GetButton(_input))
+            {
+                inputLock = _input;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public bool GetRawButtonWithLock(string _input)
+    {
+        if (!toggle && inputLock == "")
+        {
+            if (GetRawButton(_input))
             {
                 inputLock = _input;
                 return true;

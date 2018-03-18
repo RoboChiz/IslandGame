@@ -1,15 +1,26 @@
 ﻿Shader "Custom/RobWater" {
 	Properties {
-		_Color ("Color", Color) = (1,1,1,1)
-		_MainTex ("Albedo (RGB)", 2D) = "white" {}
-		_FoamLine ("Color", Color) = (1,1,1,1)
+		_MaxColor ("Max Color", Color) = (1,1,1,1)
+		_MinDepth ("Min Depth", float) = 1.0
+		
+		_MinColor ("Min Color", Color) = (1,1,1,1)
+		_MaxDepth ("Max Depth", float) = 10.0
+
 		_DepthFactor ("Depth Factor", float) = 1.0
+		_FadeAmount ("Fade Amount", float) = 1.0
+
+		//FoamLine
+		_FoamLineDepthFactor ("Foam Depth Factor", float) = 1.0
+		_FoamColor ("Foam Color", Color) = (1,1,1,1)
 
 		_OceanSize ("Ocean Size", float) = 1.0
 		_OceanSizeWave ("Ocean Size Wave", float) = 1.0
 		_OceanSpeedWave ("Ocean Speed Wave", float) = 1.0
 		_OceanPhaseWave ("Ocean Phase Wave", float) = 1.0
 		_OceanEdgeColour ("Color", Color) = (1,1,1,1)
+
+		
+		_MaxDepth ("Max Depth", float) = 10.0
 	}
 	SubShader {
 		Tags {"Queue"="Transparent" "RenderType"="Transparent" }
@@ -33,11 +44,18 @@
 
 		half _Glossiness;
 		half _DepthFactor;
-		fixed4 _Color;
-		fixed4 _FoamLine;
+		half _FadeAmount;
+		half _FoamLineDepthFactor;
+
+		fixed4 _MaxColor;
+		fixed4 _MinColor;
+		fixed4 _FoamColor;
 
 		half _OceanSize;
 		fixed4 _OceanEdgeColour;
+
+		half _MinDepth;
+		half _MaxDepth;
 
 		// Add instancing support for this shader. You need to check 'Enable Instancing' on materials that use the shader.
 		// See https://docs.unity3d.com/Manual/GPUInstancing.html for more information about instancing.
@@ -52,15 +70,16 @@
 		 }
 
 		void surf (Input IN, inout SurfaceOutputStandard o) {
-			// Albedo comes from a texture tinted by color
-			fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * _Color;
-
 			// FoamLine
 			half depth = SAMPLE_DEPTH_TEXTURE_PROJ(_CameraDepthTexture, UNITY_PROJ_COORD(IN.screenPos));
 			depth = LinearEyeDepth(depth).r;
- 
-            float foamLine = 1 - saturate(_DepthFactor * (depth - IN.screenPos.w));
-			float4 col = c + (foamLine * _FoamLine);
+
+			float depthLine = _DepthFactor * (depth - IN.screenPos.w);
+			fixed4 col = lerp(_MinColor, _MaxColor, clamp((depthLine - _MinDepth)/(_MaxDepth-_MinDepth),0,1));	
+
+			//Foam
+			float foamLine = 1 - saturate(_FoamLineDepthFactor * (depth - IN.screenPos.w));
+			col += (foamLine * _FoamColor * 0.5);
 
 			//White Edge at Contact
 			if(IN.localPos.y > -0.5 && (IN.localPos.x > _OceanSize || IN.localPos.x < -_OceanSize || IN.localPos.z > _OceanSize || IN.localPos.z < -_OceanSize))
