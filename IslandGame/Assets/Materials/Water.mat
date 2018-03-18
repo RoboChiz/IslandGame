@@ -58,7 +58,7 @@ Material:
     - _2ndDepthFactor: 1
     - _BumpScale: 1
     - _Cutoff: 0.5
-    - _DepthFactor: 8.5
+    - _DepthFactor: 7.55
     - _DetailNormalMapScale: 1
     - _DstBlend: 10
     - _FadeAmount: 1
@@ -66,7 +66,7 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _MaxDepth: 10.2
+    - _MaxDepth: 8.95
     - _Metallic: 0
     - _MinDepth: -0.9
     - _Mode: 3
@@ -89,6 +89,6 @@ Material:
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _FoamColor: {r: 1, g: 1, b: 1, a: 0.366}
     - _FoamLine: {r: 1, g: 1, b: 1, a: 0.316}
-    - _MaxColor: {r: 0.2279411, g: 0.87221086, b: 1, a: 0.566}
-    - _MinColor: {r: 0.75735295, g: 0.95983773, b: 1, a: 0.016}
+    - _MaxColor: {r: 0.2355104, g: 0.75435495, b: 0.8897059, a: 0.709}
+    - _MinColor: {r: 0, g: 0.9586205, b: 1, a: 0.009}
     - _OceanEdgeColour: {r: 0.75735295, g: 0.9096348, b: 1, a: 1}
