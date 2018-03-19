@@ -7,14 +7,13 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: WaterWall
-  m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
+  m_Shader: {fileID: 4800000, guid: 959d6032a18fb204ca0f846cfccf9deb, type: 3}
   m_ShaderKeywords: _ALPHAPREMULTIPLY_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 3000
-  stringTagMap:
-    RenderType: Transparent
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
@@ -56,22 +55,43 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
+    - _BottomLimit: -5
     - _BumpScale: 1
     - _Cutoff: 0.5
+    - _DepthFactor: 1
     - _DetailNormalMapScale: 1
     - _DstBlend: 10
+    - _FadeAmount: 1
+    - _FoamLineDepthFactor: 1
     - _GlossMapScale: 1
     - _Glossiness: 0
     - _GlossyReflections: 1
+    - _MaxDepth: 10
     - _Metallic: 0
+    - _MidDepth: 1
+    - _MinDepth: 1
     - _Mode: 3
     - _OcclusionStrength: 1
+    - _OceanPhaseWave: 1
+    - _OceanSize: 16.49
+    - _OceanSizeWave: 1
+    - _OceanSpeedWave: 1
     - _Parallax: 0.02
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
+    - _TopLimit: -1
     - _UVSec: 0
     - _ZWrite: 0
     m_Colors:
+    - _BottomShade: {r: 0.047058824, g: 0.29411766, b: 0.38039216, a: 1}
     - _Color: {r: 0.04779403, g: 0.29419205, b: 0.38235283, a: 0.753}
+    - _ColourOne: {r: 0.0470588, g: 0.29411763, b: 0.3803921, a: 0.816}
+    - _ColourTwo: {r: 0.11916088, g: 0.44502848, b: 0.5588235, a: 0.8156863}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _FoamColor: {r: 1, g: 1, b: 1, a: 1}
+    - _MaxColor: {r: 1, g: 1, b: 1, a: 1}
+    - _MidColor: {r: 1, g: 1, b: 1, a: 1}
+    - _MinColor: {r: 1, g: 1, b: 1, a: 1}
+    - _OceanEdgeColour: {r: 1, g: 1, b: 1, a: 1}
+    - _TopShade: {r: 1, g: 1, b: 1, a: 1}
