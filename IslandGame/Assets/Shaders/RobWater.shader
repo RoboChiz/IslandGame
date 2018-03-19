@@ -3,6 +3,9 @@
 		_MaxColor ("Max Color", Color) = (1,1,1,1)
 		_MinDepth ("Min Depth", float) = 1.0
 		
+		_MidColor ("Mid Color", Color) = (1,1,1,1)
+		_MidDepth ("Mid Depth", float) = 1.0
+
 		_MinColor ("Min Color", Color) = (1,1,1,1)
 		_MaxDepth ("Max Depth", float) = 10.0
 
@@ -48,6 +51,7 @@
 		half _FoamLineDepthFactor;
 
 		fixed4 _MaxColor;
+		fixed4 _MidColor;
 		fixed4 _MinColor;
 		fixed4 _FoamColor;
 
@@ -55,6 +59,7 @@
 		fixed4 _OceanEdgeColour;
 
 		half _MinDepth;
+		half _MidDepth;
 		half _MaxDepth;
 
 		// Add instancing support for this shader. You need to check 'Enable Instancing' on materials that use the shader.
@@ -75,7 +80,17 @@
 			depth = LinearEyeDepth(depth).r;
 
 			float depthLine = _DepthFactor * (depth - IN.screenPos.w);
-			fixed4 col = lerp(_MinColor, _MaxColor, clamp((depthLine - _MinDepth)/(_MaxDepth-_MinDepth),0,1));	
+			fixed4 col;
+			if(depthLine < _MidDepth)
+			{
+				col = lerp(_MinColor, _MidColor, clamp((depthLine - _MinDepth)/(_MidDepth-_MinDepth),0,1));	
+			}
+			else
+			{
+				col = lerp(_MidColor, _MaxColor, clamp((depthLine - _MidDepth)/(_MaxDepth-_MidDepth),0,1));	
+			}
+
+			
 
 			//Foam
 			float foamLine = 1 - saturate(_FoamLineDepthFactor * (depth - IN.screenPos.w));

@@ -3,6 +3,7 @@
 		_Color ("Color", Color) = (1,1,1,1)
 		_MainTex ("Albedo", 2D) = "white" {}
 		_CausticMap ("Caustic Map", 2D) = "white" {}
+		_CausticColour ("Caustic Colour", Color) = (1,1,1,1)
 
 		_Glossiness ("Smoothness", Range(0,1)) = 0.5
 		_Metallic ("Metallic", Range(0,1)) = 0.0
@@ -47,6 +48,7 @@
 		half _XSpeed;
 		half _YSpeed;
 		fixed4 _Color;
+		fixed4 _CausticColour;
 
 		half _minGroundHeight;
 		half _maxGroundHeight;
@@ -88,14 +90,14 @@
 
 			if(midPoint - yPos > 0)
 			{
-				dist -= (midPoint - yPos);
+				//dist -= clamp(midPoint - yPos, 0, 1);
 			}
 			else
 			{
 				dist -= (yPos - midPoint) + _topOffset;
 			}
 
-			c += tex2D (_CausticMap, IN.uv_CausticMap + (float2(_XSpeed * _Time.x, _YSpeed * _Time.x) )) * _Intensity * clamp(dist,0,1);
+			c += tex2D (_CausticMap, IN.uv_CausticMap + (float2(_XSpeed * _Time.x, _YSpeed * _Time.x) )) * _Intensity * clamp(dist,0,1) * _CausticColour;
 
 			o.Albedo = c.rgb;
 			// Metallic and smoothness come from slider variables

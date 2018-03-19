@@ -159,7 +159,7 @@ public class BuildingModeManager : MonoBehaviour
                     delete = InputManager.GetClickHold(1);
                 }
 
-                grid.transform.position = Vector3.Scale(grid.transform.position, new Vector3(1f, 0f, 1f)) + Vector3.Scale(actualCursorPos, new Vector3(0f, 1f, 0f));
+                grid.transform.position = Vector3.Scale(grid.transform.position, new Vector3(1f, 0f, 1f)) + Vector3.Scale(actualCursorPos, new Vector3(0f, 1f, 0f)) + new Vector3(0f,0.06f,0f);
 
                 //Do Build Inputs
                 if (build)

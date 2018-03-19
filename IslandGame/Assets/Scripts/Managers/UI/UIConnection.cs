@@ -18,11 +18,25 @@ public abstract class UIConnection : MonoBehaviour
     protected static Color hoverColour = new Color(1f, 1f, 1f, 0.588f);
     protected static Color selectedColour = new Color(1f, 1f, 1f, 0.588f);
 
+    public void Start()
+    {
+        FindObjectOfType<UIConnectionManager>().AddConnector(this);
+    }
+
     public void Update()
     {
         if(eventSystem == null)
         {
             eventSystem = FindObjectOfType<EventSystem>();
+        }
+    }
+
+    void OnDestroy()
+    {
+        UIConnectionManager manager = FindObjectOfType<UIConnectionManager>();
+        if(manager)
+        {
+            manager.RemoveConnector(this);
         }
     }
 }

@@ -8,17 +8,28 @@ public class UIConnectionManager : MonoBehaviour {
     public int currentUI;
 
     private UIConnection currentUIConnection;
+    private List<UIConnection> allConnectors;
 
 	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update ()
+	void Start ()
     {
-        UIConnection[] list = FindObjectsOfType<UIConnection>();
-        currentUI = list.Length;
+        allConnectors = new List<UIConnection>();
+    }
+
+    public void AddConnector(UIConnection _uiConnection)
+    {
+        allConnectors.Add(_uiConnection);
+    }
+
+    public void RemoveConnector(UIConnection _uiConnection)
+    {
+        allConnectors.Remove(_uiConnection);
+    }
+
+    // Update is called once per frame
+    void Update ()
+    {       
+        currentUI = allConnectors.Count;
 
         //Unselect Option if it becomes unavailable
         if(currentUIConnection != null && !currentUIConnection.isActiveAndEnabled)
@@ -27,7 +38,7 @@ public class UIConnectionManager : MonoBehaviour {
         }
 
         bool mouseOnAnything = false;
-        foreach (UIConnection uiConnector in list)
+        foreach (UIConnection uiConnector in allConnectors)
         {
             //Do Open and Close if Button
             if (uiConnector.isActiveAndEnabled && uiConnector.GetComponent<RectTransform>() != null)

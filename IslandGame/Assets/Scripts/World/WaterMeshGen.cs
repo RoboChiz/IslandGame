@@ -155,16 +155,19 @@ public class WaterMeshGen : MonoBehaviour
                     uvs.Add(new Vector2(x, y));
 
                     //Wall
-                    vertWallGridLayout[x, 0, y] = wallVertices.Count;
-                    wallVertices.Add(new Vector3(Mathf.Clamp(-halfSize + (x * gridSize), -halfSize, halfSize), 0f, Mathf.Clamp(-halfSize + (y * gridSize), -halfSize, halfSize)));
-                    vertWallGridLayout[x, 1, y] = wallVertices.Count;
-                    wallVertices.Add(new Vector3(Mathf.Clamp(-halfSize + (x * gridSize), -halfSize, halfSize), -waterDrop, Mathf.Clamp(-halfSize + (y * gridSize), -halfSize, halfSize)));
+                    if (x == 0 || y == 0 || x == squares || y == squares)
+                    {
+                        vertWallGridLayout[x, 0, y] = wallVertices.Count;
+                        wallVertices.Add(new Vector3(Mathf.Clamp(-halfSize + (x * gridSize), -halfSize, halfSize), 0f, Mathf.Clamp(-halfSize + (y * gridSize), -halfSize, halfSize)));
+                        vertWallGridLayout[x, 1, y] = wallVertices.Count;
+                        wallVertices.Add(new Vector3(Mathf.Clamp(-halfSize + (x * gridSize), -halfSize, halfSize), -waterDrop, Mathf.Clamp(-halfSize + (y * gridSize), -halfSize, halfSize)));
 
-                    wallNormals.Add(Vector3.up);
-                    wallNormals.Add(Vector3.up);
+                        wallNormals.Add(Vector3.up);
+                        wallNormals.Add(Vector3.up);
 
-                    wallUvs.Add(new Vector2(x, y));
-                    wallUvs.Add(new Vector2(x, y));
+                        wallUvs.Add(new Vector2(x, y));
+                        wallUvs.Add(new Vector2(x, y));
+                    }
                 }
             }
         }
