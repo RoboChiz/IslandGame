@@ -66,9 +66,9 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _MaxDepth: 8.95
+    - _MaxDepth: 21.07
     - _Metallic: 0
-    - _MidDepth: 1
+    - _MidDepth: 8.18
     - _MinDepth: -0.9
     - _Mode: 3
     - _OcclusionStrength: 1
@@ -91,6 +91,6 @@ Material:
     - _FoamColor: {r: 1, g: 1, b: 1, a: 0.366}
     - _FoamLine: {r: 1, g: 1, b: 1, a: 0.316}
     - _MaxColor: {r: 0.2355104, g: 0.75435495, b: 0.8897059, a: 0.709}
-    - _MidColor: {r: 1, g: 1, b: 1, a: 1}
+    - _MidColor: {r: 0.30201122, g: 0.810124, b: 0.97794116, a: 0.734}
     - _MinColor: {r: 0, g: 0.9586205, b: 1, a: 0.009}
     - _OceanEdgeColour: {r: 0.75735295, g: 0.9096348, b: 1, a: 1}
