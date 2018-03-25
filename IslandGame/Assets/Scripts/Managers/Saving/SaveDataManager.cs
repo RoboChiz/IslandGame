@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class SaveDataManager : MonoBehaviour
 {
@@ -95,6 +96,20 @@ public class SaveDataManager : MonoBehaviour
 
         //Save the Game Data
         SaveGame(_location);
+    }
+
+    public void LoadLevelSave(string _level, string _saveLocation)
+    {
+        StartCoroutine(ActualLoadLevel(_level, _saveLocation));
+    }
+
+    private IEnumerator ActualLoadLevel(string _level, string _saveLocation)
+    {
+        yield return SceneManager.LoadSceneAsync(_level);
+
+        yield return null;
+
+        FindObjectOfType<SaveDataManager>().Load(_saveLocation);
     }
 
     //----------------------------------Changeable Getters/Setters-----------------------------------

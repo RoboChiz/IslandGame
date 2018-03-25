@@ -7,11 +7,11 @@ public class UIConnectionManager : MonoBehaviour {
 
     public int currentUI;
 
-    private UIConnection currentUIConnection;
+    public UIConnection currentUIConnection;
     private List<UIConnection> allConnectors;
 
 	// Use this for initialization
-	void Start ()
+	void Awake ()
     {
         allConnectors = new List<UIConnection>();
     }
@@ -26,6 +26,11 @@ public class UIConnectionManager : MonoBehaviour {
         allConnectors.Remove(_uiConnection);
     }
 
+    private static bool IsNull(UIConnection s)
+    {
+        return s == null;
+    }
+
     // Update is called once per frame
     void Update ()
     {       
@@ -37,8 +42,11 @@ public class UIConnectionManager : MonoBehaviour {
             currentUIConnection = null;
         }
 
+        //Clear all Null Button
+        allConnectors.RemoveAll(IsNull);
+
         bool mouseOnAnything = false;
-        foreach (UIConnection uiConnector in allConnectors)
+        foreach (UIConnection uiConnector in allConnectors.ToArray())
         {
             //Do Open and Close if Button
             if (uiConnector.isActiveAndEnabled && uiConnector.GetComponent<RectTransform>() != null)
