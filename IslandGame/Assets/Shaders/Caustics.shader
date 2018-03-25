@@ -3,7 +3,7 @@
 		_Color ("Color", Color) = (1,1,1,1)
 		_MainTex ("Sand #1", 2D) = "white" {}
 		_AltTex ("Sand #2", 2D) = "white" {}
-		_MaskTex ("Sand Mask", 2D) = "white" {}
+		_MaskTex ("Sand Mask", 2D) = "black" {}
 		_CausticMap ("Caustic Map", 2D) = "white" {}
 		_CausticColour ("Caustic Colour", Color) = (1,1,1,1)
 
