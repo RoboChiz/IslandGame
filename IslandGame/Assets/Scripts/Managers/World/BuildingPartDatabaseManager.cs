@@ -74,7 +74,16 @@ public class BuildingPartDatabaseManager : MonoBehaviour
 
                 buildingPart.partType = BuildingPart.PartType.Max;
 
-                if(xmlNode.Attributes["type"] != null)
+                if (xmlNode.Attributes["placementYOffset"] != null)
+                {
+                    buildingPart.placementYOffset = float.Parse(xmlNode.Attributes["placementYOffset"].Value);
+                }
+                else
+                {
+                    buildingPart.placementYOffset = 0f;
+                }
+
+                if (xmlNode.Attributes["type"] != null)
                 {
                     switch(xmlNode.Attributes["type"].Value)
                     {
@@ -105,6 +114,8 @@ public class BuildingPart
 
     public string iconResourceName;
     public Sprite icon;
+
+    public float placementYOffset;
 
     public BuildingPart(int _uniqueID)
     {

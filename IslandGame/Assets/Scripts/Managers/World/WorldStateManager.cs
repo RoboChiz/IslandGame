@@ -264,7 +264,7 @@ public class WorldStateManager : ISavingManager
                 insideChunk.gridData[chunkX, chunkY, chunkZ] = _databaseID;
 
                 GameObject prefab = Instantiate(part.prefab);
-                prefab.transform.position = _position;
+                prefab.transform.position = _position + new Vector3(0f, part.placementYOffset, 0f); ;
                 prefab.transform.rotation = Quaternion.AngleAxis(_rotation, Vector3.up);
 
                 insideChunk.gridObjects[(int)chunkPos.x, (int)chunkPos.y, (int)chunkPos.z] = prefab;

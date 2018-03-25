@@ -436,10 +436,12 @@ public class BuildingModeManager : MonoBehaviour
             Destroy(cursorObject);
         }
 
-        cursorObject = Instantiate(FindObjectOfType<BuildingPartDatabaseManager>().GetBuildingPart(currentSelection).prefab);
+        BuildingPart buildingPart = FindObjectOfType<BuildingPartDatabaseManager>().GetBuildingPart(currentSelection);
+
+        cursorObject = Instantiate(buildingPart.prefab);
         cursorObject.name = "lalala";
         cursorObject.transform.parent = cursor.transform;
-        cursorObject.transform.localPosition = Vector3.zero;
+        cursorObject.transform.localPosition = new Vector3(0f, buildingPart.placementYOffset, 0f);
         cursorObject.transform.localRotation = Quaternion.identity;
 
         Joint[] joints = cursorObject.GetComponentsInChildren<Joint>();
