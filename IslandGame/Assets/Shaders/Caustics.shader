@@ -1,7 +1,9 @@
 ﻿Shader "Custom/Caustics" {
 	Properties {
 		_Color ("Color", Color) = (1,1,1,1)
-		_MainTex ("Albedo", 2D) = "white" {}
+		_MainTex ("Sand #1", 2D) = "white" {}
+		_AltTex ("Sand #2", 2D) = "white" {}
+		_MaskTex ("Sand Mask", 2D) = "white" {}
 		_CausticMap ("Caustic Map", 2D) = "white" {}
 		_CausticColour ("Caustic Colour", Color) = (1,1,1,1)
 
@@ -33,11 +35,15 @@
 		#pragma target 3.0
 
 		sampler2D _MainTex;
+		sampler2D _AltTex;
+		sampler2D _MaskTex;
 		sampler2D _CausticMap;
 		sampler2D _GroundRamp;
 
 		struct Input {
 			float2 uv_MainTex;
+			float2 uv_AltTex;
+			float2 uv_MaskTex;
 			float2 uv_CausticMap;
 			float3 worldPos;
 		};
@@ -65,8 +71,13 @@
 		UNITY_INSTANCING_BUFFER_END(Props)
 
 		void surf (Input IN, inout SurfaceOutputStandard o) {
-			// Albedo comes from a texture tinted by color
-			fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * _Color;
+			// Albedo comes from a texture tinted by color			
+			fixed4 one = tex2D (_MainTex, IN.uv_MainTex) * _Color;
+			fixed4 two = tex2D (_AltTex, IN.uv_AltTex) * _Color;
+			fixed4 mask = tex2D (_MaskTex, IN.uv_MaskTex);
+
+			fixed4 c = lerp(one, two, mask.x);
+
 			fixed4 originalC = c;
 			//Ground Colour Ramp
 
