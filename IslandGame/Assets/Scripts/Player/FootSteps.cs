@@ -38,7 +38,7 @@ public class FootSteps : MonoBehaviour
             RaycastHit hit;
             if(Physics.Raycast(foot.position, -foot.up, out hit, checkDistance ) && hit.transform.tag == "Sand")
             {
-                Vector3 spot = hit.point + (hit.normal.normalized * 0.05f);
+                Vector3 spot = hit.point + (hit.normal.normalized * 0.01f);
                 if (Vector3.Distance(spot, lastSpots[count]) > spacing)
                 {
                     lastSpots[count] = hit.point;
