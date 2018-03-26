@@ -5,7 +5,10 @@ using UnityEngine;
 public class FootSteps : MonoBehaviour
 {
     private GameObject footstepPrefab;
+    private AudioClip footstepNoise;
+
     public Transform[] feet;
+    public AudioSource footStepNoiseMaker;
 
     public float checkDistance = 0.2f, spacing = 0.2f;
     private Vector3[] lastSpots;
@@ -16,6 +19,8 @@ public class FootSteps : MonoBehaviour
 	void Start ()
     {
         footstepPrefab = Resources.Load<GameObject>("Prefabs/Footprint");
+        footstepNoise = Resources.Load<AudioClip>("SFX/footstep");
+
         steps = new List<FootStep>();
     }
 	
@@ -43,6 +48,11 @@ public class FootSteps : MonoBehaviour
                     step.GetComponent<MeshRenderer>().material.color = Color.clear;
 
                     steps.Add(new FootStep(step));
+
+                    if(footStepNoiseMaker != null)
+                    {
+                        footStepNoiseMaker.PlayOneShot(footstepNoise);
+                    }
                 }
             }
 
@@ -69,6 +79,11 @@ public class FootSteps : MonoBehaviour
                 {
                     step.prefabClone.GetComponent<MeshRenderer>().material.color = Color.white;
                 }
+            }
+            else
+            {
+                Destroy(step.prefabClone);
+                steps.Remove(step);
             }
         }
     }
