@@ -10,8 +10,9 @@ public class FootSteps : MonoBehaviour
     public Transform[] feet;
     public AudioSource footStepNoiseMaker;
 
-    public float checkDistance = 0.2f, spacing = 0.2f;
+    public float checkDistance = 0.2f, spacing = 0.5f;
     private Vector3[] lastSpots;
+    private bool [] beenhit;
 
     List<FootStep> steps;
 
@@ -30,6 +31,7 @@ public class FootSteps : MonoBehaviour
         if(lastSpots == null || lastSpots.Length != feet.Length)
         {
             lastSpots = new Vector3[feet.Length];
+            beenhit = new bool[feet.Length];
         }
 
         int count = 0;
@@ -38,40 +40,49 @@ public class FootSteps : MonoBehaviour
             RaycastHit hit;
             if(Physics.Raycast(foot.position, -foot.up, out hit, checkDistance ) && hit.transform.tag == "Sand")
             {
-                Vector3 spot = hit.point + (hit.normal.normalized * 0.01f);
-                if (Vector3.Distance(spot, lastSpots[count]) > spacing)
+                if (!beenhit[count])
                 {
-                    lastSpots[count] = hit.point;
-
-                    GameObject step = Instantiate(footstepPrefab, spot, Quaternion.LookRotation(-hit.normal, transform.forward));
-                    step.GetComponent<MeshRenderer>().material = new Material(step.GetComponent<MeshRenderer>().material);
-                    step.GetComponent<MeshRenderer>().material.color = Color.clear;
-
-                    steps.Add(new FootStep(step));
-
-                    if(footStepNoiseMaker != null)
+                    Vector3 spot = hit.point + (hit.normal.normalized * 0.01f);
+                    if (Vector3.Distance(spot, lastSpots[count]) > spacing)
                     {
-                        footStepNoiseMaker.PlayOneShot(footstepNoise);
+                        lastSpots[count] = hit.point;
+
+                        GameObject step = Instantiate(footstepPrefab, spot, Quaternion.LookRotation(-hit.normal, transform.forward));
+                        step.GetComponent<MeshRenderer>().material = new Material(step.GetComponent<MeshRenderer>().material);
+                        step.GetComponent<MeshRenderer>().material.color = Color.clear;
+
+                        steps.Add(new FootStep(step));
+
+                        beenhit[count] = true;
+
+                        if (footStepNoiseMaker != null)
+                        {
+                            footStepNoiseMaker.PlayOneShot(footstepNoise);
+                        }
                     }
                 }
+            }
+            else
+            {
+                beenhit[count] = false;
             }
 
             count++;
         }
 
-        float diff = FootStep.aliveTime - FootStep.fadeTime;
+       // float diff = FootStep.aliveTime - FootStep.fadeTime;
         foreach (FootStep step in steps.ToArray())
         {
             if (step.timer > 0f)
             {
                 step.timer -= Time.deltaTime;
 
-                if (step.timer > diff)
-                {
+               // if (step.timer > diff)
+               // {
                     //Fade In
-                    step.prefabClone.GetComponent<MeshRenderer>().material.color = Color.Lerp(Color.clear, Color.white, (FootStep.fadeTime - (step.timer - diff)) / FootStep.fadeTime);
-                }
-                else if (step.timer < FootStep.fadeTime)
+                //    step.prefabClone.GetComponent<MeshRenderer>().material.color = Color.Lerp(Color.clear, Color.white, (FootStep.fadeTime - (step.timer - diff)) / FootStep.fadeTime);
+                //} else
+                if (step.timer < FootStep.fadeTime)
                 {
                     step.prefabClone.GetComponent<MeshRenderer>().material.color = Color.Lerp(Color.white, Color.clear, (FootStep.fadeTime - step.timer) / FootStep.fadeTime);
                 }
