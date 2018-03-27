@@ -324,7 +324,17 @@ ModelImporter:
     4300114: Rock15
     4300116: Rock16
     4300118: Rock17
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Fish
+    second: {fileID: 2100000, guid: da041d4a6d75ae24db6b2f9cdb34371d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: palm
+    second: {fileID: 2100000, guid: a2d1a71aa91154a47a15c2916724ee59, type: 2}
   materials:
     importMaterials: 1
     materialName: 0
