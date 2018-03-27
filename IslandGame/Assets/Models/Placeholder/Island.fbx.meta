@@ -44,6 +44,31 @@ ModelImporter:
     100072: Shrub3
     100074: Shrub4
     100076: Shrub5
+    100078: Construction_Rock1
+    100080: Construction_Rock2
+    100082: Construction_Rock3
+    100084: coral1
+    100086: coral2
+    100088: coral3
+    100090: polySurface52
+    100092: Rock10
+    100094: Rock11
+    100096: Rock12
+    100098: Rock13
+    100100: Rock14
+    100102: Rock15
+    100104: Rock16
+    100106: Rock17
+    100108: Rock6
+    100110: Rock7
+    100112: Rock8
+    100114: Rock9
+    100116: Shrub6
+    100118: Shrub7
+    100120: Shrub8
+    100122: Shrub9
+    100124: starFish1
+    100126: starFish2
     400000: Ground
     400002: //RootNode
     400004: Jetty
@@ -83,6 +108,31 @@ ModelImporter:
     400072: Shrub3
     400074: Shrub4
     400076: Shrub5
+    400078: Construction_Rock1
+    400080: Construction_Rock2
+    400082: Construction_Rock3
+    400084: coral1
+    400086: coral2
+    400088: coral3
+    400090: polySurface52
+    400092: Rock10
+    400094: Rock11
+    400096: Rock12
+    400098: Rock13
+    400100: Rock14
+    400102: Rock15
+    400104: Rock16
+    400106: Rock17
+    400108: Rock6
+    400110: Rock7
+    400112: Rock8
+    400114: Rock9
+    400116: Shrub6
+    400118: Shrub7
+    400120: Shrub8
+    400122: Shrub9
+    400124: starFish1
+    400126: starFish2
     2100000: sand
     2100002: oceanFloor
     2100004: swatch
@@ -92,6 +142,8 @@ ModelImporter:
     2100012: lambert1
     2100014: lambert18
     2100016: Palm
+    2100018: Fish
+    2100020: palm
     2300000: Ground
     2300002: Jetty
     2300004: Palm_01
@@ -127,6 +179,31 @@ ModelImporter:
     2300064: Shrub3
     2300066: Shrub4
     2300068: Shrub5
+    2300070: Construction_Rock1
+    2300072: Construction_Rock2
+    2300074: Construction_Rock3
+    2300076: coral1
+    2300078: coral2
+    2300080: coral3
+    2300082: polySurface52
+    2300084: Rock10
+    2300086: Rock11
+    2300088: Rock12
+    2300090: Rock13
+    2300092: Rock14
+    2300094: Rock15
+    2300096: Rock16
+    2300098: Rock17
+    2300100: Rock6
+    2300102: Rock7
+    2300104: Rock8
+    2300106: Rock9
+    2300108: Shrub6
+    2300110: Shrub7
+    2300112: Shrub8
+    2300114: Shrub9
+    2300116: starFish1
+    2300118: starFish2
     3300000: Ground
     3300002: Jetty
     3300004: Palm_01
@@ -162,6 +239,31 @@ ModelImporter:
     3300064: Shrub3
     3300066: Shrub4
     3300068: Shrub5
+    3300070: Construction_Rock1
+    3300072: Construction_Rock2
+    3300074: Construction_Rock3
+    3300076: coral1
+    3300078: coral2
+    3300080: coral3
+    3300082: polySurface52
+    3300084: Rock10
+    3300086: Rock11
+    3300088: Rock12
+    3300090: Rock13
+    3300092: Rock14
+    3300094: Rock15
+    3300096: Rock16
+    3300098: Rock17
+    3300100: Rock6
+    3300102: Rock7
+    3300104: Rock8
+    3300106: Rock9
+    3300108: Shrub6
+    3300110: Shrub7
+    3300112: Shrub8
+    3300114: Shrub9
+    3300116: starFish1
+    3300118: starFish2
     4300000: Ground
     4300002: Water
     4300004: Jetty
@@ -197,6 +299,31 @@ ModelImporter:
     4300064: Rock3
     4300066: Rock4
     4300068: Rock5
+    4300070: coral1
+    4300072: coral2
+    4300074: coral3
+    4300076: Construction_Rock1
+    4300078: Construction_Rock2
+    4300080: Construction_Rock3
+    4300082: starFish2
+    4300084: starFish1
+    4300086: Rock6
+    4300088: polySurface52
+    4300090: Shrub6
+    4300092: Shrub7
+    4300094: Shrub8
+    4300096: Shrub9
+    4300098: Rock7
+    4300100: Rock8
+    4300102: Rock9
+    4300104: Rock10
+    4300106: Rock11
+    4300108: Rock12
+    4300110: Rock13
+    4300112: Rock14
+    4300114: Rock15
+    4300116: Rock16
+    4300118: Rock17
   externalObjects: {}
   materials:
     importMaterials: 1
