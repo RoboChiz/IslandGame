@@ -29,6 +29,9 @@ public class PlayerMovement : MonoBehaviour
     Queue<float> lastRotAngles = new Queue<float>();
 
     private Animator animator;
+    public ParticleSystem waterDrops;
+    public float waterTime = 0.0f;
+    private bool waterCheck;
 
     private void Start()
     {
@@ -186,6 +189,29 @@ public class PlayerMovement : MonoBehaviour
         animator.SetBool("IsSwimming", inWater);
         animator.SetBool("IsThinking", isThinking);
         animator.SetBool("IsOverWater", overWater);
+
+        //Do Particles
+
+        if(!inWater && inWater != waterCheck)
+        {          
+            waterTime = 5f;
+        }
+
+        waterCheck = inWater;
+
+        if (waterTime > 0f)
+        {
+            if (!waterDrops.isPlaying)
+            {
+                waterDrops.Play();
+            }
+
+            waterTime -= Time.fixedDeltaTime;
+        }
+        else
+        {
+            waterDrops.Stop();
+        }
     }
 
     private IEnumerator JumpOffset()
