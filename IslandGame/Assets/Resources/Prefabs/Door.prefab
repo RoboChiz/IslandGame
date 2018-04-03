@@ -21,9 +21,9 @@ GameObject:
   - component: {fileID: 4554203736722912}
   - component: {fileID: 33741659745612416}
   - component: {fileID: 23643357994148060}
-  - component: {fileID: 65704592446376746}
   - component: {fileID: 54029845101721160}
   - component: {fileID: 59160171039933224}
+  - component: {fileID: 65231973975009828}
   m_Layer: 0
   m_Name: DoorObject
   m_TagString: Untagged
@@ -69,7 +69,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1789655176112066}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.945276, y: -0.03836751, z: 0.7585152}
+  m_LocalPosition: {x: -1.4800706, y: -0.00063180923, z: -3.8858566}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4567780449474516}
@@ -84,7 +84,7 @@ Transform:
   m_GameObject: {fileID: 1346615463694982}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: -1, z: 0.5}
-  m_LocalScale: {x: 0.0022679507, y: 0.02, z: 0.01}
+  m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
   m_Children: []
   m_Father: {fileID: 4567780449474516}
   m_RootOrder: 0
@@ -117,7 +117,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 93d85b65a9289f7488ecde15b0624e15, type: 3}
+  - {fileID: 2100000, guid: 79c70007a8d9e4747902aefd6604be30, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -184,7 +184,7 @@ HingeJoint:
   m_Anchor: {x: 0, y: 100, z: 50}
   m_Axis: {x: 0, y: 1, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0, y: 1, z: 1}
+  m_ConnectedAnchor: {x: 0, y: 0, z: 1}
   m_UseSpring: 1
   m_Spring:
     spring: 2
@@ -208,7 +208,7 @@ HingeJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!65 &65704592446376746
+--- !u!65 &65231973975009828
 BoxCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -218,5 +218,5 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 100, y: 100, z: 80}
-  m_Center: {x: 0, y: 50, z: 0}
+  m_Size: {x: 22.679506, y: 200, z: 100}
+  m_Center: {x: 0, y: 100, z: 0}
