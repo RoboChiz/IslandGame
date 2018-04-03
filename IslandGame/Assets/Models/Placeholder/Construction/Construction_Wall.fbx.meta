@@ -12,7 +12,12 @@ ModelImporter:
     3300000: //RootNode
     4300000: Construction_Wall
     4300002: Construction_Ramp
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Wood
+    second: {fileID: 2100000, guid: 79c70007a8d9e4747902aefd6604be30, type: 2}
   materials:
     importMaterials: 1
     materialName: 0
