@@ -29,13 +29,17 @@ public class PlayerMovement : MonoBehaviour
     Queue<float> lastRotAngles = new Queue<float>();
 
     private Animator animator;
-    public ParticleSystem waterDrops;
+    public ParticleSystem waterDrops, localWave, movingWave;
     public float waterTime = 0.0f;
     private bool waterCheck;
+    public GameObject splash;
+    public AudioClip splashEnter, splashExit, swimmingSoundEffect, treadingSoundEffect;
+    public AudioSource waterMaker;
 
     private void Start()
     {
         animator = GetComponentInChildren<Animator>();
+        splash = Resources.Load<GameObject>("Prefabs/Splash");
     }
 
     // Update is called once per frame
@@ -191,13 +195,63 @@ public class PlayerMovement : MonoBehaviour
         animator.SetBool("IsOverWater", overWater);
 
         //Do Particles
-
         if(!inWater && inWater != waterCheck)
         {          
             waterTime = 5f;
+            waterMaker.Stop();
+            GetComponent<AudioSource>().PlayOneShot(splashExit);
+        }
+
+        if(inWater && !waterCheck)
+        {
+            StartCoroutine(DoSplash(transform.position));
+            GetComponent<AudioSource>().PlayOneShot(splashEnter);
+            waterMaker.Play();
+        }
+
+        if(inWater)
+        {
+
+            if (!localWave.isPlaying)
+            {
+                localWave.Play();
+            }
+
+            if (animationSpeed == 0)
+            {
+                if (waterMaker.clip != treadingSoundEffect)
+                {
+                    waterMaker.clip = treadingSoundEffect;
+                    waterMaker.Play();
+                }
+                movingWave.Stop();
+            }
+            else
+            {
+                if (waterMaker.clip != swimmingSoundEffect)
+                {
+                    waterMaker.clip = swimmingSoundEffect;
+                    waterMaker.Play();
+                }
+
+                if (!movingWave.isPlaying)
+                {
+                    movingWave.Play();
+                }
+            }
+        }
+        else
+        {
+            localWave.Stop();
+            movingWave.Stop();
         }
 
         waterCheck = inWater;
+
+        if(inWater && waterTime > 0f)
+        {
+            waterTime = 0f;
+        }
 
         if (waterTime > 0f)
         {
@@ -257,5 +311,13 @@ public class PlayerMovement : MonoBehaviour
         pointDirection = _pointDirection;
         expectedSpeed = _expectedSpeed;
         lastCameraQuat = Quaternion.Euler(_lastCameraQuat);
+    }
+
+    public IEnumerator DoSplash(Vector3 _position)
+    {
+       GameObject newSplash = Instantiate(splash, _position, Quaternion.identity);
+
+        yield return new WaitForSeconds(3f);
+        Destroy(newSplash);
     }
 }

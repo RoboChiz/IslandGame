@@ -5,7 +5,7 @@ using UnityEngine;
 public class FootSteps : MonoBehaviour
 {
     private GameObject footstepPrefab;
-    private AudioClip footstepNoise;
+    public AudioClip sandNoise, woodNoise;
 
     public Transform[] feet;
     public AudioSource footStepNoiseMaker;
@@ -20,7 +20,6 @@ public class FootSteps : MonoBehaviour
 	void Start ()
     {
         footstepPrefab = Resources.Load<GameObject>("Prefabs/Footprint");
-        footstepNoise = Resources.Load<AudioClip>("SFX/footstep");
 
         steps = new List<FootStep>();
     }
@@ -38,8 +37,8 @@ public class FootSteps : MonoBehaviour
 		foreach(Transform foot in feet)
         {
             RaycastHit hit;
-            if(Physics.Raycast(foot.position, -foot.up, out hit, checkDistance ) && hit.transform.tag == "Sand")
-            {
+            if(Physics.Raycast(foot.position, -foot.up, out hit, checkDistance ))
+            {         
                 if (!beenhit[count])
                 {
                     Vector3 spot = hit.point + (hit.normal.normalized * 0.01f);
@@ -47,17 +46,28 @@ public class FootSteps : MonoBehaviour
                     {
                         lastSpots[count] = hit.point;
 
-                        GameObject step = Instantiate(footstepPrefab, spot, Quaternion.LookRotation(-hit.normal, transform.forward));
-                        step.GetComponent<MeshRenderer>().material = new Material(step.GetComponent<MeshRenderer>().material);
-                        step.GetComponent<MeshRenderer>().material.color = Color.clear;
+                        if (hit.transform.tag == "Sand")
+                        {
+                            GameObject step = Instantiate(footstepPrefab, spot, Quaternion.LookRotation(-hit.normal, transform.forward));
+                            step.GetComponent<MeshRenderer>().material = new Material(step.GetComponent<MeshRenderer>().material);
+                            step.GetComponent<MeshRenderer>().material.color = Color.clear;
 
-                        steps.Add(new FootStep(step));
+                            steps.Add(new FootStep(step));
+                        }
 
                         beenhit[count] = true;
 
                         if (footStepNoiseMaker != null)
                         {
-                            footStepNoiseMaker.PlayOneShot(footstepNoise);
+                            if (hit.transform.tag == "Sand")
+                            {
+                                footStepNoiseMaker.PlayOneShot(sandNoise);
+                            }
+
+                            if (hit.transform.tag == "Wood")
+                            {
+                                footStepNoiseMaker.PlayOneShot(woodNoise);
+                            }
                         }
                     }
                 }

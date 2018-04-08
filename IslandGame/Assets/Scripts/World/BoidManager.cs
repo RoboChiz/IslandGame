@@ -1,5 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using UnityEditor;
 using UnityEngine;
 
 public class BoidManager : MonoBehaviour
@@ -14,12 +16,17 @@ public class BoidManager : MonoBehaviour
         oceanSizeMaxZ = 35f,
 
         islandSize = 7f;
-    public float oceanHeightOffsetMin = -1f, oceanHeightOffsetMax = -4f;
+    public float oceanHeightOffsetMax = -1f;
     private Transform fishOwner;
 
     public float[] ruleEffects;
 
-    public void Start()
+    public float[,] groundHeight;
+    public bool updateGridCast = true;
+    public float gridSize = 0.5f;
+    private float scale;
+
+    public IEnumerator Start()
     {
         boidParticles = new List<Boid>();
 
@@ -28,21 +35,94 @@ public class BoidManager : MonoBehaviour
         fishOwner.rotation = Quaternion.identity;
         fishOwner.parent = transform;
 
-        //Spawn Boid
-        int count = 0;
-        while(count < boidsToSpawn)
+        scale = 1f / gridSize;
+        float xSize = oceanSizeMaxX - oceanSizeMinX, zSize = oceanSizeMaxZ - oceanSizeMinZ;
+        int minX = (int)oceanSizeMinX, minZ = (int)oceanSizeMinZ;
+
+        //Do Grid Cast
+        if (updateGridCast)
         {
-            Vector3 position = new Vector3(Random.Range(oceanSizeMinX, oceanSizeMaxX), Random.Range(oceanHeightOffsetMin, oceanHeightOffsetMax), Random.Range(oceanSizeMinZ, oceanSizeMaxZ));
-            Quaternion rotation = Quaternion.AngleAxis(Random.Range(0f, 360f), Vector3.up);
-            Vector3 velocity = rotation * Vector3.forward;
-            float size = Random.Range(0.1f, 1f);
-            Vector3 randomSize = Vector3.one * size;
+            int count = 0, totalCount = 0;
+            groundHeight = new float[(int)(xSize * scale) + 1, (int)(zSize * scale) + 1];
+            string temporaryTextFileName = (groundHeight.GetLength(0) + "," + groundHeight.GetLength(1) + ",");
 
-            GameObject boid = Instantiate(Resources.Load<GameObject>("Prefabs/Fish"), position, rotation, fishOwner);
-            boid.transform.localScale = randomSize;
+            for (float x = oceanSizeMinX; x < oceanSizeMaxX; x += gridSize)
+            {
+                for (float z = oceanSizeMinZ; z < oceanSizeMaxZ; z += gridSize)
+                {
+                    RaycastHit hit;
+                    if (Physics.Raycast(new Vector3(x, 50, z), Vector3.down, out hit, Mathf.Infinity, 1 << LayerMask.NameToLayer("Ground"), QueryTriggerInteraction.UseGlobal))
+                    {
+                        float height = hit.point.y;
+                        groundHeight[Mathf.RoundToInt((x - minX) * scale), Mathf.RoundToInt((z - minZ) * scale)] = height;
+                    }
 
-            boidParticles.Add(new Boid(boid, position, velocity, size));
-            count++;
+                    count++;
+                    totalCount++;
+                    if (count >= 10)
+                    {
+                        yield return null;
+                        count = 0;
+                        Debug.Log("totalCount:" + totalCount);
+                    }              
+                }
+            }
+
+            //Print to Text
+            for (int x = 0; x < groundHeight.GetLength(0); x ++)
+            {
+                for (int z = 0; z < groundHeight.GetLength(1); z ++)
+                {
+                    temporaryTextFileName += (groundHeight[x,z]) + ",";
+                }
+            }
+
+            File.WriteAllText(Application.dataPath + "/Resources/" + "IslandHeightMap.txt", temporaryTextFileName);
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+        }
+        else
+        {
+            TextAsset cachedGridData = Resources.Load<TextAsset>("IslandHeightMap");
+            string[] splitArray = cachedGridData.text.Split(',');
+
+            int x = 0, z = 0;
+
+            groundHeight = new float[int.Parse(splitArray[0]), int.Parse(splitArray[1])];
+            for(int i = 2; i < splitArray.Length - 1; i++)
+            {
+                groundHeight[x, z] = float.Parse(splitArray[i]);
+
+                z++;
+                if(z >= groundHeight.GetLength(1))
+                {
+                    z = 0;
+                    x++;
+                }
+            }
+
+        }
+
+        //Spawn Boid
+        {
+            int count = 0;
+            while (count < boidsToSpawn)
+            {
+                Vector3 position = new Vector3(Random.Range(oceanSizeMinX, oceanSizeMaxX),0, Random.Range(oceanSizeMinZ, oceanSizeMaxZ));
+                position.y = GetHeight(position.x, position.z);
+
+                Quaternion rotation = Quaternion.AngleAxis(Random.Range(0f, 360f), Vector3.up);
+                Vector3 velocity = rotation * Vector3.forward;
+                float size = Random.Range(0.1f, 1f);
+                Vector3 randomSize = Vector3.one * size;
+
+                GameObject boid = Instantiate(Resources.Load<GameObject>("Prefabs/Fish"), position, rotation, fishOwner);
+                boid.transform.localScale = randomSize;
+
+                boidParticles.Add(new Boid(boid, position, velocity, size));
+                count++;
+
+            }
         }
     }
 
@@ -60,11 +140,12 @@ public class BoidManager : MonoBehaviour
 
             if(Mathf.Abs(boid.position.y - boid.targetY) < 0.2f)
             {
-                boid.targetY = Random.Range(oceanHeightOffsetMin, oceanHeightOffsetMax);
+                boid.targetY = Random.Range(GetHeight(boid.position.x, boid.position.z), oceanHeightOffsetMax);
             }
             else
             {
-                boid.velocity.y += Mathf.Sign(boid.targetY - boid.position.y) * ruleEffects[5];
+                float goTo = Mathf.Max(GetHeight(boid.position.x, boid.position.z), boid.targetY);
+                boid.velocity.y += Mathf.Sign(goTo - boid.position.y) * ruleEffects[5];
             }
 
             //v =u + at
@@ -180,13 +261,35 @@ public class BoidManager : MonoBehaviour
     public void StayInsideOcean(Boid _boid)
     {
         _boid.position.x = Mathf.Clamp(_boid.position.x, oceanSizeMinX + _boid.size, oceanSizeMaxX - _boid.size);
-        _boid.position.y = Mathf.Clamp(_boid.position.y, oceanHeightOffsetMax, oceanHeightOffsetMin);
-        _boid.position.z = Mathf.Clamp(_boid.position.z, oceanSizeMinZ + _boid.size, oceanSizeMaxZ - _boid.size); 
-        
-        if(_boid.position.magnitude <= islandSize)
+        _boid.position.z = Mathf.Clamp(_boid.position.z, oceanSizeMinZ + _boid.size, oceanSizeMaxZ - _boid.size);
+
+
+        //float minY = Mathf.Min(GetHeight(_boid.position.x, _boid.position.z), oceanHeightOffsetMax),
+        //maxY = Mathf.Max(GetHeight(_boid.position.x, _boid.position.z), oceanHeightOffsetMax);
+
+        //_boid.position.y = Mathf.Clamp(_boid.position.y, minY, maxY);
+        float height = GetHeight(_boid.position.x, _boid.position.z) + (_boid.size * 0.6f);
+
+        if (_boid.position.y < height)
         {
-            _boid.position = _boid.position.normalized * islandSize;
+            _boid.position.y = Mathf.Lerp(_boid.position.y, height, Time.deltaTime * 3f);
         }
+
+        if (_boid.position.y > oceanHeightOffsetMax)
+        {
+            _boid.position.y = Mathf.Clamp(_boid.position.y, -Mathf.Infinity, oceanHeightOffsetMax);
+        }
+
+        if (height >= oceanHeightOffsetMax)
+        {
+            _boid.position = _boid.position.normalized * (_boid.position.magnitude + 0.1f);
+        }
+    }
+
+    public float GetHeight(float _x, float _z)
+    {
+        int minX = (int)oceanSizeMinX, minZ = (int)oceanSizeMinZ;
+        return groundHeight[Mathf.RoundToInt((_x - minX) * scale), Mathf.RoundToInt((_z - minZ) * scale)];
     }
 
     public class Boid
