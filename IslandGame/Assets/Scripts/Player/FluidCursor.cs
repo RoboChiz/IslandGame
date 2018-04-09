@@ -6,6 +6,7 @@ public class FluidCursor : MonoBehaviour {
 
     public float moveSpeed = 4f, acceleration = 5f, brakeTime = 0.1f, lerpAmount = 5f;
     private float expectedSpeed = 0f, actualHeight;
+    public bool isLocked = false;
 
     public Vector3 lastDirection { get; private set; }
 
@@ -36,7 +37,12 @@ public class FluidCursor : MonoBehaviour {
             float verti = inputDevice.GetInput("MovementVertical");
             float height = inputDevice.GetIntInputWithDelay("MovementHeight", 0.3f, Time.fixedDeltaTime);
 
-            Vector3 input = new Vector3(hori, 0f, -verti).normalized;
+            Vector3 input = Vector3.zero;
+
+            if (!isLocked)
+            {
+                input = new Vector3(hori, 0f, -verti).normalized;
+            }
 
             Vector2 inputAmount = new Vector2(hori, verti);
             float moveAmount = Mathf.Clamp(inputAmount.magnitude, 0f, 1f);

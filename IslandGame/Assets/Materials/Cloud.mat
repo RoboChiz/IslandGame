@@ -6,8 +6,8 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: SeaFloor
-  m_Shader: {fileID: 4800000, guid: c672509c624417748899679a939b9226, type: 3}
+  m_Name: Cloud
+  m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -18,17 +18,9 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
-    - _AltTex:
-        m_Texture: {fileID: 2800000, guid: 7d691bb6d538df64e9d7bc3933df51d3, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     - _BumpMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _CausticMap:
-        m_Texture: {fileID: 2800000, guid: e846786589be5284dabf6bfacab23754, type: 3}
-        m_Scale: {x: 1.5, y: 1.5}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
         m_Texture: {fileID: 0}
@@ -46,20 +38,8 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _GroundRamp:
-        m_Texture: {fileID: 2800000, guid: 20ca0de6c8a651c4bae314b2671cb952, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 2d802f961abe4714f82d06426c69d195, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _MaskTex:
-        m_Texture: {fileID: 2800000, guid: 0e2c025bd942f944aa8e3c42061506b6, type: 3}
-        m_Scale: {x: 0.2, y: 0.2}
-        m_Offset: {x: 0, y: 0}
-    - _MaskText:
-        m_Texture: {fileID: 2800000, guid: 779d872b869b5c54b8e5adab8ee464e1, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -80,9 +60,8 @@ Material:
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _GlossMapScale: 1
-    - _Glossiness: 0
+    - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _Intensity: 3
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
@@ -91,17 +70,7 @@ Material:
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _UVSec: 0
-    - _XSpeed: 0.5
-    - _YSpeed: 0.2
     - _ZWrite: 1
-    - _maxGroundHeight: -0.57
-    - _maxOceanHeight: -0.27
-    - _minGroundHeight: -3.14
-    - _minOceanHeight: -0.73
-    - _oceanCutOff: 12.7
-    - _oceanCutOffScale: 1
-    - _topOffset: -0.3
     m_Colors:
-    - _CausticColour: {r: 0.6163495, g: 0.8273177, b: 0.88235295, a: 1}
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _EmissionColor: {r: 0, g: 0, b: 0, a: 0}
+    - _Color: {r: 0.98823535, g: 1, b: 0.8705883, a: 1}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}

@@ -153,6 +153,7 @@ public class PlayerMovement : MonoBehaviour
         {
             jumpLock = false;
             isJumping = false;
+            GetComponent<FootSteps>().DoJump();
         }
 
         //Turn to Face Look Direction

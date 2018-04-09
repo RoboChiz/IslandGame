@@ -24,6 +24,11 @@ public class FootSteps : MonoBehaviour
         steps = new List<FootStep>();
     }
 	
+    public void DoJump()
+    {
+        lastSpots = null;
+    }
+
 	// Update is called once per frame
 	void Update ()
     {
@@ -31,6 +36,11 @@ public class FootSteps : MonoBehaviour
         {
             lastSpots = new Vector3[feet.Length];
             beenhit = new bool[feet.Length];
+
+            for(int i = 0; i < lastSpots.Length; i++)
+            {
+                lastSpots[i] = Vector3.positiveInfinity;
+            }
         }
 
         int count = 0;

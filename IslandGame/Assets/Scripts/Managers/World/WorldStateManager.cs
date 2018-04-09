@@ -13,6 +13,9 @@ public class WorldStateManager : ISavingManager
     //Word Data
     private List<WorldChunk> worldChunks;
 
+    public bool buildLock = false;
+    private Vector3 lastBuildPos;
+
     public void Start()
     {
         worldChunks = new List<WorldChunk>();
@@ -217,6 +220,31 @@ public class WorldStateManager : ISavingManager
         return canPlace;
     }
 
+    public bool CanPlaceAt(int _x, int _y, int _z, int _databaseID, WorldChunk insideChunk)
+    {
+        BuildingPart part = FindObjectOfType<BuildingPartDatabaseManager>().GetBuildingPart(_databaseID);
+
+        bool canPlace = true;
+
+        for (int x = _x - (int)part.gridOffset.x; x < _x - (int)part.gridOffset.x + (int)part.gridSize.x; x++)
+        {
+            for (int y = _y - (int)part.gridOffset.y; y < _y - (int)part.gridOffset.y + (int)part.gridSize.y; y++)
+            {
+                for (int z = _z - (int)part.gridOffset.z; z < _z - (int)part.gridOffset.z + (int)part.gridSize.z; z++)
+                {
+                    if (x >= insideChunk.gridData.GetLength(0) || y >= insideChunk.gridData.GetLength(1) || z >= insideChunk.gridData.GetLength(2) 
+                        || insideChunk.gridData[x, y, z] > 0)
+                    {
+                        canPlace = false;
+                        break;
+                    }
+                }
+            }
+        }
+
+        return canPlace;
+    }
+
 
     public void CreateItem(int _databaseID, Vector3 _position, float _rotation)
     {
@@ -225,50 +253,55 @@ public class WorldStateManager : ISavingManager
         if (insideChunk != null)
         {
             Vector3 chunkPos = WorldToChunk(insideChunk, _position);
-            int chunkX = (int)chunkPos.x, chunkY = (int)chunkPos.y, chunkZ = (int)chunkPos.z;
 
-            BuildingPart part = FindObjectOfType<BuildingPartDatabaseManager>().GetBuildingPart(_databaseID);
-
-            bool canPlace = true;
-
-            for(int x = chunkX - (int)part.gridOffset.x;  x < chunkX - (int)part.gridOffset.x + (int)part.gridSize.x; x++)
+            bool isFromMovement = Vector3.Distance(chunkPos, lastBuildPos) >= 0.5f && buildLock;
+            if (!buildLock || isFromMovement)
             {
-                for (int y = chunkY - (int)part.gridOffset.y; y < chunkY - (int)part.gridOffset.y + (int)part.gridSize.y; y++)
+                int chunkX = (int)chunkPos.x, chunkY = (int)chunkPos.y, chunkZ = (int)chunkPos.z;
+                bool canPlace = false;
+
+                while (true)
                 {
-                    for (int z = chunkZ - (int)part.gridOffset.z; z < chunkZ - (int)part.gridOffset.z + (int)part.gridSize.z; z++)
+                    canPlace = CanPlaceAt(chunkX, chunkY, chunkZ, _databaseID, insideChunk);
+
+                    if (canPlace || chunkY >= insideChunk.gridData.GetLength(1) || isFromMovement)
                     {
-                        if (insideChunk.gridData[x, y, z] > 0)
-                        {
-                            canPlace = false;
-                            break;
-                        }
+                        break;
                     }
-                }
-            }
-
-
-            if (canPlace)
-            {
-                //Debug.Log("Created Block at " + chunkPos.x + "," + chunkPos.y + "," + chunkPos.z);
-                for (int x = chunkX - (int)part.gridOffset.x; x < chunkX - (int)part.gridOffset.x + (int)part.gridSize.x; x++)
-                {
-                    for (int y = chunkY - (int)part.gridOffset.y; y < chunkY - (int)part.gridOffset.y + (int)part.gridSize.y; y++)
+                    else
                     {
-                        for (int z = chunkZ - (int)part.gridOffset.z; z < chunkZ - (int)part.gridOffset.z + (int)part.gridSize.z; z++)
-                        {
-                            insideChunk.gridData[x, y, z] = -1;
-                        }
+                        chunkY++;
                     }
                 }
 
-                insideChunk.gridData[chunkX, chunkY, chunkZ] = _databaseID;
+                if (canPlace)
+                {
+                    BuildingPart part = FindObjectOfType<BuildingPartDatabaseManager>().GetBuildingPart(_databaseID);
+                    //Debug.Log("Created Block at " + chunkPos.x + "," + chunkPos.y + "," + chunkPos.z);
+                    for (int x = chunkX - (int)part.gridOffset.x; x < chunkX - (int)part.gridOffset.x + (int)part.gridSize.x; x++)
+                    {
+                        for (int y = chunkY - (int)part.gridOffset.y; y < chunkY - (int)part.gridOffset.y + (int)part.gridSize.y; y++)
+                        {
+                            for (int z = chunkZ - (int)part.gridOffset.z; z < chunkZ - (int)part.gridOffset.z + (int)part.gridSize.z; z++)
+                            {
+                                insideChunk.gridData[x, y, z] = -1;
+                            }
+                        }
+                    }
 
-                GameObject prefab = Instantiate(part.prefab);
-                prefab.transform.position = _position + new Vector3(0f, part.placementYOffset, 0f); ;
-                prefab.transform.rotation = Quaternion.AngleAxis(_rotation, Vector3.up);
+                    insideChunk.gridData[chunkX, chunkY, chunkZ] = _databaseID;
 
-                insideChunk.gridObjects[(int)chunkPos.x, (int)chunkPos.y, (int)chunkPos.z] = prefab;
-                insideChunk.gridRotationAngles[(int)chunkPos.x, (int)chunkPos.y, (int)chunkPos.z] = _rotation;
+                    GameObject prefab = Instantiate(part.prefab);
+                    Vector3 spawnPos = ChunkToWorld(insideChunk, new Vector3(chunkX, chunkY, chunkZ));
+                    prefab.transform.position = spawnPos + new Vector3(0f, part.placementYOffset, 0f);
+                    prefab.transform.rotation = Quaternion.AngleAxis(_rotation, Vector3.up);
+
+                    insideChunk.gridObjects[chunkX, chunkY, chunkZ] = prefab;
+                    insideChunk.gridRotationAngles[chunkX, chunkY, chunkZ] = _rotation;
+
+                    lastBuildPos = chunkPos;
+                    buildLock = true;
+                }
             }
         }
     }

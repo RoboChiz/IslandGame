@@ -17,6 +17,8 @@ public class PauseMenu : MonoBehaviour
     public GameObject pauseMenu, saveSlots;
     public EventSystem eventSystem;
 
+    private bool pastPlayerMovements, pastPlayerIsThinking;
+
     private void Start()
     {
         rectTransform = pauseMenu.GetComponent<RectTransform>();
@@ -46,13 +48,32 @@ public class PauseMenu : MonoBehaviour
                     if(isPaused)
                     {
                         StartCoroutine(ShowPauseMenu());
-                        FindObjectOfType<PlayerMovement>().lockMovements = true;
+                        pastPlayerMovements = FindObjectOfType<PlayerMovement>().lockMovements;
+                        pastPlayerIsThinking = FindObjectOfType<PlayerMovement>().isThinking;
+
+                        if (!pastPlayerMovements)
+                        {
+                            FindObjectOfType<PlayerMovement>().lockMovements = true;
+                        }
+                        if(pastPlayerIsThinking)
+                        {
+                            FindObjectOfType<BuildingModeManager>().isLocked = true;
+                        }
+
                         FindObjectOfType<IsoCam>().lockCamera = true;
                     }
                     else
                     {
                         StartCoroutine(HidePauseMenu());
-                        FindObjectOfType<PlayerMovement>().lockMovements = false;
+
+                        FindObjectOfType<PlayerMovement>().lockMovements = pastPlayerMovements;
+                        FindObjectOfType<PlayerMovement>().isThinking = pastPlayerIsThinking;
+
+                        if (pastPlayerIsThinking)
+                        {
+                            FindObjectOfType<BuildingModeManager>().isLocked = false;
+                        }
+
                         FindObjectOfType<IsoCam>().lockCamera = false;
                     }
                 }

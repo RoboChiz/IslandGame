@@ -53,6 +53,7 @@ public class KeyboardDevice : InputDevice
             {"Item6", new List<ControlName>() {new ControlName("6", false) } },
             {"Item7", new List<ControlName>() {new ControlName("7", false) } },
             {"Item8", new List<ControlName>() {new ControlName("8", false) } },
+            {"Item9", new List<ControlName>() {new ControlName("9", false) } },
         }
     );
 }

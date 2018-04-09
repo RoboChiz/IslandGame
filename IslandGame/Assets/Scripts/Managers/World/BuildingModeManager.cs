@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class BuildingModeManager : MonoBehaviour
 {
-    public bool isActivated = false;
+    public bool isActivated = false, isLocked = false;
     private bool isAnimating = false, isHiding = false;
 
     public Image buildModeImage, playModeImage;
@@ -46,8 +46,10 @@ public class BuildingModeManager : MonoBehaviour
 
     private void Update()
     {
+        cameraTarget.GetComponent<FluidCursor>().isLocked = isLocked;
+
         //User Inputs
-        if (InputManager.controllers.Count > 0 && !PauseMenu.isPaused)
+        if (!isLocked && InputManager.controllers.Count > 0 && !PauseMenu.isPaused)
         {
             InputDevice inputDevice = InputManager.controllers[0];
 
@@ -112,9 +114,10 @@ public class BuildingModeManager : MonoBehaviour
                 rotate = inputDevice.GetIntInputWithDelay("Rotate", 0.3f, Time.deltaTime);
 
                 //Item Swapping
+                int maxKeys = 10;
                 if (inputDevice.inputType == InputType.Keyboard)
                 {
-                    for (int i = 1; i < 9; i++)
+                    for (int i = 1; i < maxKeys; i++)
                     {
                         if (inputDevice.GetButtonWithLock("Item" + i))
                         {
@@ -129,7 +132,7 @@ public class BuildingModeManager : MonoBehaviour
                     if (itemSwitch != 0)
                     {
                         int max = FindObjectOfType<BuildingPartDatabaseManager>().GetBuildingPartCount() + 1;
-                        ChangeSelection(MathHelper.NumClamp(currentSelection + itemSwitch, 1, Mathf.Min(max, 9)));
+                        ChangeSelection(MathHelper.NumClamp(currentSelection + itemSwitch, 1, Mathf.Min(max, maxKeys)));
                     }
                 }
 
@@ -165,6 +168,10 @@ public class BuildingModeManager : MonoBehaviour
                 if (build)
                 {
                     worldStateManager.CreateItem(currentSelection, actualCursorPos, rotationAmount);
+                }
+                else
+                {
+                    worldStateManager.buildLock = false;
                 }
 
                 if (delete)
@@ -449,6 +456,7 @@ public class BuildingModeManager : MonoBehaviour
         PhysicsPrefab[] physicsPrefabs = cursorObject.GetComponentsInChildren<PhysicsPrefab>();
         Rigidbody[] cursorBodys = cursorObject.GetComponentsInChildren<Rigidbody>();
         Collider[] cursorColliders = cursorObject.GetComponentsInChildren<Collider>();
+        ItemPlacement[] itemPlacements = cursorObject.GetComponentsInChildren<ItemPlacement>();
 
         foreach (Joint joint in joints)
             Destroy(joint);
@@ -464,6 +472,9 @@ public class BuildingModeManager : MonoBehaviour
 
         foreach (Collider collider in cursorColliders)
             Destroy(collider);
+
+        foreach (ItemPlacement itemPlacement in itemPlacements)
+            Destroy(itemPlacement);
 
         foreach (MeshRenderer meshRenderer in cursorObject.GetComponentsInChildren<MeshRenderer>())
         {
