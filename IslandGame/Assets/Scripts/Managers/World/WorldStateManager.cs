@@ -203,7 +203,7 @@ public class WorldStateManager : ISavingManager
                 {
                     for (int z = chunkZ - (int)part.gridOffset.z; z < chunkZ - (int)part.gridOffset.z + (int)part.gridSize.z; z++)
                     {
-                        if (insideChunk.gridData[x, y, z] > 0)
+                        if (insideChunk.gridData[x, y, z] != 0)
                         {
                             canPlace = false;
                             break;
@@ -233,7 +233,7 @@ public class WorldStateManager : ISavingManager
                 for (int z = _z - (int)part.gridOffset.z; z < _z - (int)part.gridOffset.z + (int)part.gridSize.z; z++)
                 {
                     if (x >= insideChunk.gridData.GetLength(0) || y >= insideChunk.gridData.GetLength(1) || z >= insideChunk.gridData.GetLength(2) 
-                        || insideChunk.gridData[x, y, z] > 0)
+                        || insideChunk.gridData[x, y, z] != 0)
                     {
                         canPlace = false;
                         break;
@@ -284,7 +284,57 @@ public class WorldStateManager : ISavingManager
                         {
                             for (int z = chunkZ - (int)part.gridOffset.z; z < chunkZ - (int)part.gridOffset.z + (int)part.gridSize.z; z++)
                             {
-                                insideChunk.gridData[x, y, z] = -1;
+                                //If in Centre Go up or Down
+                                if (x == chunkX && z == chunkZ)
+                                {
+                                    if (y > chunkY)
+                                    {
+                                        insideChunk.gridData[x, y, z] = -1;
+                                    }
+                                    else if (y < chunkY)
+                                    {
+                                        insideChunk.gridData[x, y, z] = -2;
+                                    }
+                                    Debug.Log("Set " + x + "," + y + "," + z + " to " + insideChunk.gridData[x, y, z]);
+                                    continue;
+                                }
+
+                                //If on X Plane, go in Z
+                                if(x == chunkX)
+                                {
+                                    if (z > chunkZ)
+                                    {
+                                        insideChunk.gridData[x, y, z] = -6;
+                                    }
+                                    else if (z < chunkZ)
+                                    {
+                                        insideChunk.gridData[x, y, z] = -5;
+                                    }
+                                    Debug.Log("Set " + x + "," + y + "," + z + " to " + insideChunk.gridData[x, y, z]);
+                                    continue;
+                                }
+
+                                //If not on X Plane
+                                if (x != chunkX)
+                                {
+                                    if (x > chunkX)
+                                    {
+                                        insideChunk.gridData[x, y, z] = -4;
+                                    }
+                                    else if (x < chunkX)
+                                    {
+                                        insideChunk.gridData[x, y, z] = -3;
+                                    }
+                                    Debug.Log("Set " + x + "," + y + "," + z + " to " + insideChunk.gridData[x, y, z]);
+                                    continue;
+                                }
+
+                                if(x != chunkX || y != chunkY || z != chunkZ)
+                                {
+                                    Debug.LogError("AHHHHHH " + x + "," + y + "," + z);
+                                }
+
+                                //-1=Down -2=Up -3=PositiveX -4=NegativeX -5=PositiveY -6=NegativeY
                             }
                         }
                     }
@@ -316,6 +366,39 @@ public class WorldStateManager : ISavingManager
             int xChunk = (int)chunkPos.x;
             int yChunk = (int)chunkPos.y;
             int zChunk = (int)chunkPos.z;
+
+            //Find the Centre Chunk
+            //-1=Down -2=Up -3=PositiveX -4=NegativeX -5=PositiveY -6=NegativeY
+            if (insideChunk.gridData[xChunk, yChunk, zChunk] < 0)
+            {
+                while(insideChunk.gridData[xChunk, yChunk, zChunk] < 0)
+                {
+                    if(insideChunk.gridData[xChunk, yChunk, zChunk] == -1)
+                    {
+                        yChunk--;
+                    }
+                    if (insideChunk.gridData[xChunk, yChunk, zChunk] == -2)
+                    {
+                        yChunk++;
+                    }
+                    if (insideChunk.gridData[xChunk, yChunk, zChunk] == -3)
+                    {
+                        xChunk++;
+                    }
+                    if (insideChunk.gridData[xChunk, yChunk, zChunk] == -4)
+                    {
+                        xChunk--;
+                    }
+                    if (insideChunk.gridData[xChunk, yChunk, zChunk] == -5)
+                    {
+                        zChunk++;
+                    }
+                    if (insideChunk.gridData[xChunk, yChunk, zChunk] == -6)
+                    {
+                        zChunk--;
+                    }
+                }
+            }
 
             if (insideChunk.gridData[xChunk, yChunk, zChunk] > 0)
             {

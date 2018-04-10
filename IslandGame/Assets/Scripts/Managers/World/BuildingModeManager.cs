@@ -158,8 +158,11 @@ public class BuildingModeManager : MonoBehaviour
 
                 if (validCursor && inputDevice.inputType == InputType.Keyboard)
                 {
-                    build = InputManager.GetClickHold(0);
-                    delete = InputManager.GetClickHold(1);
+                    if (!RectTransformUtility.RectangleContainsScreenPoint(itemsPanel.GetComponent<RectTransform>(), Input.mousePosition, Camera.main))
+                    {
+                        build = InputManager.GetClickHold(0);
+                        delete = InputManager.GetClickHold(1);
+                    }             
                 }
 
                 grid.transform.position = Vector3.Scale(grid.transform.position, new Vector3(1f, 0f, 1f)) + Vector3.Scale(actualCursorPos, new Vector3(0f, 1f, 0f)) + new Vector3(0f,0.06f,0f);
@@ -231,6 +234,11 @@ public class BuildingModeManager : MonoBehaviour
         {
             actualCursorPos = finalPos;
         }
+    }
+
+    public void ChangeSelectionFromButton(int _value)
+    {
+        ChangeSelection(_value);
     }
 
     public void ChangeSelection(int _value)
@@ -474,7 +482,13 @@ public class BuildingModeManager : MonoBehaviour
             Destroy(collider);
 
         foreach (ItemPlacement itemPlacement in itemPlacements)
+        {
+            if(itemPlacement.actualObject != null)
+            {
+                Destroy(itemPlacement.localObject);
+            }
             Destroy(itemPlacement);
+        }
 
         foreach (MeshRenderer meshRenderer in cursorObject.GetComponentsInChildren<MeshRenderer>())
         {

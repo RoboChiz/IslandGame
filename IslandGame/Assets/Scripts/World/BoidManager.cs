@@ -268,21 +268,31 @@ public class BoidManager : MonoBehaviour
         //maxY = Mathf.Max(GetHeight(_boid.position.x, _boid.position.z), oceanHeightOffsetMax);
 
         //_boid.position.y = Mathf.Clamp(_boid.position.y, minY, maxY);
-        float height = GetHeight(_boid.position.x, _boid.position.z) + (_boid.size * 0.6f);
+        int count = 0;
+        while (count < 25)
+         {
+            float height = GetHeight(_boid.position.x, _boid.position.z) + (_boid.size * 0.6f);
 
-        if (_boid.position.y < height)
-        {
-            _boid.position.y = Mathf.Lerp(_boid.position.y, height, Time.deltaTime * 3f);
-        }
+            if (_boid.position.y < height)
+            {
+                _boid.position.y = Mathf.Lerp(_boid.position.y, height, Time.deltaTime * 3f);
+            }
 
-        if (_boid.position.y > oceanHeightOffsetMax)
-        {
-            _boid.position.y = Mathf.Clamp(_boid.position.y, -Mathf.Infinity, oceanHeightOffsetMax);
-        }
+            if (_boid.position.y > oceanHeightOffsetMax)
+            {
+                _boid.position.y = Mathf.Clamp(_boid.position.y, -Mathf.Infinity, oceanHeightOffsetMax);
+            }
 
-        if (height >= oceanHeightOffsetMax)
-        {
-            _boid.position = _boid.position.normalized * (_boid.position.magnitude + 0.1f);
+            if (height >= oceanHeightOffsetMax)
+            {
+                _boid.position = _boid.position.normalized * (_boid.position.magnitude + 0.1f);
+            }
+            else
+            {
+                break;
+            }
+
+            count++;
         }
     }
 
