@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class CustomButton : UIConnection
 {
-    public override void OnClicked()
+    public override void OnClicked(int _playerID)
     {      
 
     }

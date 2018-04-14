@@ -105,6 +105,8 @@ public class SaveDataManager : MonoBehaviour
 
     private IEnumerator ActualLoadLevel(string _level, string _saveLocation)
     {
+        //Wait for Transitions
+        yield return new WaitForSeconds(3f);
         yield return SceneManager.LoadSceneAsync(_level);
 
         yield return null;

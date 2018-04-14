@@ -151,7 +151,7 @@ public class InputManager : MonoBehaviour
             //Do InputLock unlocking
             if (controller.inputLock != "")
             {
-                if (controller.GetRawInput(controller.inputLock) == 0f)
+                if (controller.GetRawInput(controller.inputLock, true) == 0f)
                 {
                     controller.inputLock = "";
                     controller.inputTimer = 0f;
@@ -413,6 +413,19 @@ public class InputManager : MonoBehaviour
         }
 
         return "";
+    }
+
+    public static int GetMousePlayer()
+    {
+        for(int i = 0; i < controllers.Count; i++)
+        {
+            if(controllers[i].inputType == InputType.Keyboard)
+            {
+                return i;
+            }
+        }
+
+        return -1;
     }
 
 }

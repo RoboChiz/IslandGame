@@ -243,8 +243,8 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
-            localWave.Stop();
-            movingWave.Stop();
+            localWave.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            movingWave.Stop(true, ParticleSystemStopBehavior.StopEmitting);
         }
 
         waterCheck = inWater;
@@ -265,13 +265,17 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
-            waterDrops.Stop();
+            waterDrops.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
         }
     }
 
     private IEnumerator JumpOffset()
     {
         isJumping = true;
+
+        Rigidbody rigidbody = GetComponent<Rigidbody>();
+        rigidbody.velocity += new Vector3(0f, jumpVelocity, 0f);
+        jumpLock = true;
 
         if (!inWater)
         {
@@ -288,11 +292,6 @@ public class PlayerMovement : MonoBehaviour
                 yield return null;
             }
         }
-        
-
-        Rigidbody rigidbody = GetComponent<Rigidbody>();
-        rigidbody.velocity += new Vector3(0f, jumpVelocity, 0f);
-        jumpLock = true;
 
         if (inWater)
         {

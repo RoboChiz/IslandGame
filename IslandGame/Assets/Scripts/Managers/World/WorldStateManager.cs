@@ -161,13 +161,71 @@ public class WorldStateManager : ISavingManager
                         //-1 is used to fill space for big items, 0 is empty, >0 is an item
                         if (_id > 0)
                         {
-                            Debug.Log("Loaded Block at " + x + "," + y + "," + z);
-                            CreateItem(_id, ChunkToWorld(chunk, new Vector3(x, y, z)), _rotation);                        
+                            chunk.gridData[x, y, z] = _id;
+                            chunk.gridRotationAngles[x, y, z] = _rotation;                
                         }
                     }
                 }
             }
         }
+
+        StartCoroutine(DoAnimatedLoad(playerMovement));
+
+    }
+
+    public IEnumerator DoAnimatedLoad(PlayerMovement _playerMovement)
+    {
+        _playerMovement.lockMovements = true;
+        FindObjectOfType<PauseMenu>().lockPause = true;
+        FindObjectOfType<Transitions>().DoWave(false);
+
+
+        //Wait for Transition
+        yield return new WaitForSeconds(1f);
+
+        int count = 0;
+        int maxTimePause = 0;
+        int timeTillPause = 0;
+        for (int i = 0; i < worldChunks.Count; i++)
+        {
+            WorldChunk chunk = worldChunks[i];
+
+            //Load the Data
+            for (int x = 0; x < chunk.gridData.GetLength(0); x++)
+            {
+                for (int y = 0; y < chunk.gridData.GetLength(1); y++)
+                {
+                    for (int z = 0; z < chunk.gridData.GetLength(2); z++)
+                    {
+                        int _id = worldChunks[i].gridData[x,y,z];
+                        float _rotation = worldChunks[i].gridRotationAngles[x, y, z];
+
+                        //-1 is used to fill space for big items, 0 is empty, >0 is an item
+                        if (_id > 0)
+                        {
+                            // Debug.Log("Loaded Block at " + x + "," + y + "," + z);
+                            CreateItem(_id, ChunkToWorld(chunk, new Vector3(x, y, z)), _rotation, true);
+                            count++;
+
+                            timeTillPause--;
+                            if (timeTillPause <= 0)
+                            {
+                                timeTillPause = maxTimePause;
+                                yield return null;
+                            }
+
+                            if(count == 10 || count == 50 || count == 100)
+                            {
+                                maxTimePause++;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        _playerMovement.lockMovements = false;
+        FindObjectOfType<PauseMenu>().lockPause = false;
 
     }
 
@@ -246,7 +304,7 @@ public class WorldStateManager : ISavingManager
     }
 
 
-    public void CreateItem(int _databaseID, Vector3 _position, float _rotation)
+    public void CreateItem(int _databaseID, Vector3 _position, float _rotation, bool ignoreExisting = false)
     {
         WorldChunk insideChunk = IsInsideWorldChunk(_position);
 
@@ -260,18 +318,25 @@ public class WorldStateManager : ISavingManager
                 int chunkX = (int)chunkPos.x, chunkY = (int)chunkPos.y, chunkZ = (int)chunkPos.z;
                 bool canPlace = false;
 
-                while (true)
+                if (!ignoreExisting)
                 {
-                    canPlace = CanPlaceAt(chunkX, chunkY, chunkZ, _databaseID, insideChunk);
+                    while (true)
+                    {
+                        canPlace = CanPlaceAt(chunkX, chunkY, chunkZ, _databaseID, insideChunk);
 
-                    if (canPlace || chunkY >= insideChunk.gridData.GetLength(1) || isFromMovement)
-                    {
-                        break;
+                        if (canPlace || chunkY >= insideChunk.gridData.GetLength(1) || isFromMovement)
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            chunkY++;
+                        }
                     }
-                    else
-                    {
-                        chunkY++;
-                    }
+                }
+                else
+                {
+                    canPlace = true;
                 }
 
                 if (canPlace)
@@ -295,7 +360,7 @@ public class WorldStateManager : ISavingManager
                                     {
                                         insideChunk.gridData[x, y, z] = -2;
                                     }
-                                    Debug.Log("Set " + x + "," + y + "," + z + " to " + insideChunk.gridData[x, y, z]);
+                                    //Debug.Log("Set " + x + "," + y + "," + z + " to " + insideChunk.gridData[x, y, z]);
                                     continue;
                                 }
 
@@ -310,7 +375,7 @@ public class WorldStateManager : ISavingManager
                                     {
                                         insideChunk.gridData[x, y, z] = -5;
                                     }
-                                    Debug.Log("Set " + x + "," + y + "," + z + " to " + insideChunk.gridData[x, y, z]);
+                                    //Debug.Log("Set " + x + "," + y + "," + z + " to " + insideChunk.gridData[x, y, z]);
                                     continue;
                                 }
 
@@ -325,13 +390,13 @@ public class WorldStateManager : ISavingManager
                                     {
                                         insideChunk.gridData[x, y, z] = -3;
                                     }
-                                    Debug.Log("Set " + x + "," + y + "," + z + " to " + insideChunk.gridData[x, y, z]);
+                                    //Debug.Log("Set " + x + "," + y + "," + z + " to " + insideChunk.gridData[x, y, z]);
                                     continue;
                                 }
 
                                 if(x != chunkX || y != chunkY || z != chunkZ)
                                 {
-                                    Debug.LogError("AHHHHHH " + x + "," + y + "," + z);
+                                    //Debug.LogError("AHHHHHH " + x + "," + y + "," + z);
                                 }
 
                                 //-1=Down -2=Up -3=PositiveX -4=NegativeX -5=PositiveY -6=NegativeY

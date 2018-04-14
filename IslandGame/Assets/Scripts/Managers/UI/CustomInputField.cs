@@ -6,21 +6,23 @@ using UnityEngine.UI;
 
 public class CustomInputField : UIConnection
 {
-    bool justUnlocked;
-    public void Start()
-    {
-        GetComponent<InputField>().onEndEdit.AddListener(delegate (string _string) { eventSystem.SetSelectedGameObject(null); justUnlocked = true; });
-    }
+    bool isLocked;
+    int lockedPlayer = -1;
 
-    public override void OnClicked()
+    public override void OnClicked(int _playerID)
     {
-        if(justUnlocked)
+        if(!isLocked)
         {
-            justUnlocked = false;
-            return;
+            isLocked = true;
+            eventSystem.SetSelectedGameObject(gameObject);
+            InputManager.controllers[_playerID].localLocked = true;
+            lockedPlayer = _playerID;
         }
-
-        eventSystem.SetSelectedGameObject(gameObject);
+        else
+        {
+            Unlock();
+        }
+       
     }
 
     public override void OnSelected()
@@ -30,7 +32,14 @@ public class CustomInputField : UIConnection
             GetComponent<Image>().color = selectedColour;
         }
 
-        GetComponent<RectTransform>().localScale = Vector3.Lerp(GetComponent<RectTransform>().localScale, Vector3.one * 1.1f, Time.unscaledDeltaTime * 8f);
+        if (isLocked)
+        {
+            GetComponent<RectTransform>().localScale = Vector3.Lerp(GetComponent<RectTransform>().localScale, Vector3.one * 1.1f, Time.unscaledDeltaTime * 8f);
+        }
+        else
+        {
+            GetComponent<RectTransform>().localScale = Vector3.Lerp(GetComponent<RectTransform>().localScale, Vector3.one * 1.025f, Time.unscaledDeltaTime * 8f);
+        }
     }
 
     public override void OnUnSelected()
@@ -40,6 +49,19 @@ public class CustomInputField : UIConnection
             GetComponent<Image>().color = normalColour;
         }
         GetComponent<RectTransform>().localScale = Vector3.Lerp(GetComponent<RectTransform>().localScale, Vector3.one, Time.unscaledDeltaTime * 8f);
+
+        Unlock();
+    }
+
+    private void Unlock()
+    {
+        if (isLocked)
+        {
+            isLocked = false;
+            eventSystem.SetSelectedGameObject(null);
+            InputManager.controllers[lockedPlayer].localLocked = false;
+            lockedPlayer = -1;
+        }
     }
 
 }

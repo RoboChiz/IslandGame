@@ -5,12 +5,13 @@ using UnityEngine.EventSystems;
 
 public abstract class UIConnection : MonoBehaviour
 {
+    protected UIConnectionManager myManager;
     public UIConnection OnUp, OnDown, OnLeft, OnRight;
     public bool priority;
 
     public abstract void OnSelected();
     public abstract void OnUnSelected();
-    public abstract void OnClicked();
+    public abstract void OnClicked(int _playerID);
 
     protected static EventSystem eventSystem;
 
@@ -20,7 +21,8 @@ public abstract class UIConnection : MonoBehaviour
 
     public void Start()
     {
-        FindObjectOfType<UIConnectionManager>().AddConnector(this);
+        myManager = FindObjectOfType<UIConnectionManager>();
+        myManager.AddConnector(this);
     }
 
     public void Update()
@@ -33,10 +35,9 @@ public abstract class UIConnection : MonoBehaviour
 
     void OnDestroy()
     {
-        UIConnectionManager manager = FindObjectOfType<UIConnectionManager>();
-        if(manager)
+        if(myManager)
         {
-            manager.RemoveConnector(this);
+            myManager.RemoveConnector(this);
         }
     }
 }

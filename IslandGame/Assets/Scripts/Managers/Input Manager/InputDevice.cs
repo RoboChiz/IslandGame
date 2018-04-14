@@ -50,21 +50,21 @@ public abstract class InputDevice
     enum WantedInput { Either, PlusOnly, MinusOnly, Inverse }
 
     //Get Inputs
-    public float GetInput(string _input) { return ActualGetInput(_input, false, currentLayout); }
-    public int GetIntInput(string _input) { return (int)MathHelper.Sign(ActualGetInput(_input, false, currentLayout)); }
+    public float GetInput(string _input, bool _overrideLocalLock = false) { return ActualGetInput(_input, false, currentLayout, _overrideLocalLock); }
+    public int GetIntInput(string _input, bool _overrideLocalLock = false) { return MathHelper.Sign(ActualGetInput(_input, false, currentLayout, _overrideLocalLock)); }
 
-    public float GetRawInput(string _input) { return ActualGetInput(_input, true, currentLayout); }
-    public int GetRawIntInput(string _input) { return (int)MathHelper.Sign(ActualGetInput(_input, true, currentLayout)); }
+    public float GetRawInput(string _input, bool _overrideLocalLock = false) { return ActualGetInput(_input, true, currentLayout, _overrideLocalLock); }
+    public int GetRawIntInput(string _input, bool _overrideLocalLock = false) { return MathHelper.Sign(ActualGetInput(_input, true, currentLayout, _overrideLocalLock)); }
 
-    public bool GetButton(string _input) { return ActualGetInput(_input, false, currentLayout) != 0; }
-    public bool GetRawButton(string _input) { return ActualGetInput(_input, true, currentLayout) != 0; }
+    public bool GetButton(string _input, bool _overrideLocalLock = false) { return ActualGetInput(_input, false, currentLayout, _overrideLocalLock) != 0; }
+    public bool GetRawButton(string _input, bool _overrideLocalLock = false) { return ActualGetInput(_input, true, currentLayout, _overrideLocalLock) != 0; }
 
     //Forces lock to be released before input is allowed
-    public float GetInputWithLock(string _input)
+    public float GetInputWithLock(string _input, bool _overrideLocalLock = false)
     {
         if (!toggle && inputLock == "")
         {
-            float val = GetInput(_input);
+            float val = GetInput(_input, _overrideLocalLock);
             if (val != 0)
             {
                 inputLock = _input;
@@ -75,9 +75,9 @@ public abstract class InputDevice
         return 0;
     }
 
-    public float GetInputWithDelay(string _input, float _delay, float _deltaTime, float _cutOff)
+    public float GetInputWithDelay(string _input, float _delay, float _deltaTime, float _cutOff, bool _overrideLocalLock = false)
     {
-        float val = GetInput(_input);
+        float val = GetInput(_input, _overrideLocalLock);
 
         if (!toggle && inputTimer <= 0f && (inputLock == _input || inputLock == ""))
         {
@@ -97,11 +97,11 @@ public abstract class InputDevice
         return 0;
     }
 
-    public int GetIntInputWithLock(string _input)
+    public int GetIntInputWithLock(string _input, bool _overrideLocalLock = false)
     {
         if (!toggle && inputLock == "")
         {
-            float val = GetIntInput(_input);
+            float val = GetIntInput(_input, _overrideLocalLock);
             if (val != 0)
             {
                 inputLock = _input;
@@ -112,9 +112,9 @@ public abstract class InputDevice
         return 0;
     }
 
-    public int GetIntInputWithDelay(string _input, float _delay, float _deltaTime)
+    public int GetIntInputWithDelay(string _input, float _delay, float _deltaTime, bool _overrideLocalLock = false)
     {
-        float val = GetIntInput(_input);
+        float val = GetIntInput(_input, _overrideLocalLock);
 
         if (!toggle && inputTimer <= 0f && (inputLock == _input || inputLock == ""))
         {           
@@ -134,9 +134,9 @@ public abstract class InputDevice
         return 0;
     }
 
-    public int GetRawIntInputWithDelay(string _input, float _delay, float _deltaTime)
+    public int GetRawIntInputWithDelay(string _input, float _delay, float _deltaTime, bool _overrideLocalLock = false)
     {
-        float val = GetRawIntInput(_input);
+        float val = GetRawIntInput(_input, _overrideLocalLock);
 
         if (!toggle && inputTimer <= 0f && (inputLock == _input || inputLock == ""))
         {
@@ -156,11 +156,11 @@ public abstract class InputDevice
         return 0;
     }
 
-    public float GetRawInputWithLock(string _input)
+    public float GetRawInputWithLock(string _input, bool _overrideLocalLock = false)
     {
         if (!toggle && inputLock == "")
         {
-            float val = GetRawInput(_input);
+            float val = GetRawInput(_input, _overrideLocalLock);
             if (val != 0)
             {
                 inputLock = _input;
@@ -171,11 +171,11 @@ public abstract class InputDevice
         return 0;
     }
 
-    public int GetRawIntInputWithLock(string _input)
+    public int GetRawIntInputWithLock(string _input, bool _overrideLocalLock = false)
     {
         if (!toggle && inputLock == "")
         {
-            int val = GetRawIntInput(_input);
+            int val = GetRawIntInput(_input, _overrideLocalLock);
             if (val != 0)
             {
                 inputLock = _input;
@@ -186,11 +186,11 @@ public abstract class InputDevice
         return 0;
     }
 
-    public bool GetButtonWithLock(string _input)
+    public bool GetButtonWithLock(string _input, bool _overrideLocalLock = false)
     {
         if (!toggle && inputLock == "")
         {
-            if (GetButton(_input))
+            if (GetButton(_input, _overrideLocalLock))
             {
                 inputLock = _input;
                 return true;
@@ -200,11 +200,11 @@ public abstract class InputDevice
         return false;
     }
 
-    public bool GetRawButtonWithLock(string _input)
+    public bool GetRawButtonWithLock(string _input, bool _overrideLocalLock = false)
     {
         if (!toggle && inputLock == "")
         {
-            if (GetRawButton(_input))
+            if (GetRawButton(_input, _overrideLocalLock))
             {
                 inputLock = _input;
                 return true;
@@ -214,9 +214,9 @@ public abstract class InputDevice
         return false;
     }
 
-    public bool GetButtonWithDelay(string _input, float _delay, float _deltaTime)
+    public bool GetButtonWithDelay(string _input, float _delay, float _deltaTime, bool _overrideLocalLock = false)
     {
-        bool val = GetButton(_input);
+        bool val = GetButton(_input, _overrideLocalLock);
 
         if (!toggle && inputTimer <= 0f && (inputLock == "" || inputLock == _input))
         {
@@ -236,11 +236,11 @@ public abstract class InputDevice
         return false;
     }
 
-    public bool GetButtonWithLockForToggle(string _input)
+    public bool GetButtonWithLockForToggle(string _input, bool _overrideLocalLock = false)
     {
         if (inputLock == "")
         {
-            if (GetButton(_input))
+            if (GetButton(_input, _overrideLocalLock))
             {
                 inputLock = _input;
                 return true;
@@ -250,11 +250,11 @@ public abstract class InputDevice
         return false;
     }
 
-    public int GetRawIntInputWithLockForToggle(string _input)
+    public int GetRawIntInputWithLockForToggle(string _input, bool _overrideLocalLock = false)
     {
         if (inputLock == "")
         {
-            int val = GetRawIntInput(_input);
+            int val = GetRawIntInput(_input, _overrideLocalLock);
             if (val != 0)
             {
                 inputLock = _input;
@@ -265,11 +265,11 @@ public abstract class InputDevice
         return 0;
     }
 
-    private float ActualGetInput(string _input, bool getRaw, ControlLayout controlLayout)
+    private float ActualGetInput(string _input, bool getRaw, ControlLayout controlLayout, bool overrideLocalLock = false)
     {
         float returnVal = 0f;
 
-        if (!localLocked && !locked && controlLayout != null)
+        if ((!localLocked || overrideLocalLock) && !locked && controlLayout != null)
         {
             if (controlLayout.controls.ContainsKey(_input))
             {

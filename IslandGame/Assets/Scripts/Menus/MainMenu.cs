@@ -10,7 +10,7 @@ public class MainMenu : MonoBehaviour
     public GameObject mainMenu, loadScreen, loadButtonPrefab, scrollView;
     private List<string> validFiles;
 
-    public UIConnection backButton;
+    public UIConnection backButton, saveInNewSlot;
 
     struct SaveSlot
     {
@@ -163,6 +163,9 @@ public class MainMenu : MonoBehaviour
 
     private void LoadLevel(string _fileName)
     {
+        FindObjectOfType<Transitions>().DoWave(true);
+
+
         FindObjectOfType<SaveDataManager>().LoadLevelSave("Gameplay_Test", _fileName);
 
         mainMenu.SetActive(false);

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class UIConnectionManager : MonoBehaviour {
@@ -9,21 +10,33 @@ public class UIConnectionManager : MonoBehaviour {
 
     public UIConnection currentUIConnection;
     private List<UIConnection> allConnectors;
+    private EventSystem eventSystem;
 
-	// Use this for initialization
-	void Awake ()
+    public int playerCanUse = 0;//0 = All, 1 = Player 1, 2 = Player 2 .etc
+
+    public bool submitInput { get; private set; }
+    public bool cancelInput { get; private set; }
+
+    // Use this for initialization
+    void Awake ()
     {
-        allConnectors = new List<UIConnection>();
+        allConnectors = new List<UIConnection>();    
     }
 
     public void AddConnector(UIConnection _uiConnection)
     {
-        allConnectors.Add(_uiConnection);
+        if (allConnectors != null)
+        {
+            allConnectors.Add(_uiConnection);
+        }
     }
 
     public void RemoveConnector(UIConnection _uiConnection)
     {
-        allConnectors.Remove(_uiConnection);
+        if (allConnectors != null)
+        {
+            allConnectors.Remove(_uiConnection);
+        }
     }
 
     private static bool IsNull(UIConnection s)
@@ -48,8 +61,13 @@ public class UIConnectionManager : MonoBehaviour {
         bool mouseOnAnything = false;
         foreach (UIConnection uiConnector in allConnectors.ToArray())
         {
+            RectTransform rectTransform = uiConnector.GetComponent<RectTransform>();
+            Button button = uiConnector.GetComponent<Button>();
+            Toggle toggle = uiConnector.GetComponent<Toggle>();
+            InputField inputField = uiConnector.GetComponent<InputField>();
+
             //Do Open and Close if Button
-            if (uiConnector.isActiveAndEnabled && uiConnector.GetComponent<RectTransform>() != null)
+            if (uiConnector.isActiveAndEnabled && rectTransform != null && (button != null || inputField != null || toggle != null))
             {
                 //Set as default
                 if(currentUIConnection == null && uiConnector.priority)
@@ -57,9 +75,9 @@ public class UIConnectionManager : MonoBehaviour {
                     currentUIConnection = uiConnector;
                 }
          
-                if (Cursor.visible)
+                if (Cursor.visible && (playerCanUse == 0 || (playerCanUse-1) == InputManager.GetMousePlayer()))
                 {
-                    if (RectTransformUtility.RectangleContainsScreenPoint(uiConnector.GetComponent<RectTransform>(), Input.mousePosition, Camera.main))
+                    if (RectTransformUtility.RectangleContainsScreenPoint(rectTransform, Input.mousePosition, Camera.main))
                     {
                         currentUIConnection = uiConnector;
                         mouseOnAnything = true;
@@ -77,57 +95,76 @@ public class UIConnectionManager : MonoBehaviour {
             }
         }
 
-        //Do Input
-        if (InputManager.controllers.Count > 0)
+        submitInput = false;
+        cancelInput = false;
+
+        if(eventSystem == null)
         {
-            InputDevice playerOne = InputManager.controllers[0];
-
-            if (currentUIConnection != null)
+            eventSystem = FindObjectOfType<EventSystem>();
+        }
+        else if(eventSystem.isActiveAndEnabled)         
+        {
+            //Do Input
+            for (int i = 0; i < InputManager.controllers.Count; i++)
             {
-                if (playerOne.GetRawButtonWithLock("Submit"))
+                if (playerCanUse == 0 || playerCanUse == i + 1)
                 {
-                    if (currentUIConnection.GetComponent<Button>() != null)
+                    InputDevice player = InputManager.controllers[i];
+
+                    if (currentUIConnection != null)
                     {
-                        currentUIConnection.GetComponent<Button>().onClick.Invoke();
-                    }
+                        if (player.GetRawButtonWithLock("Submit", true))
+                        {
+                            if (currentUIConnection.GetComponent<Button>() != null)
+                            {
+                                currentUIConnection.GetComponent<Button>().onClick.Invoke();
+                            }
 
-                    if (currentUIConnection.GetComponent<Toggle>() != null)
-                    {
-                        currentUIConnection.GetComponent<Toggle>().onValueChanged.Invoke(!currentUIConnection.GetComponent<Toggle>().isOn);
-                    }
+                            if (currentUIConnection.GetComponent<Toggle>() != null)
+                            {
+                                currentUIConnection.GetComponent<Toggle>().onValueChanged.Invoke(!currentUIConnection.GetComponent<Toggle>().isOn);
+                            }
 
-                    currentUIConnection.OnClicked();
-                }
+                            currentUIConnection.OnClicked(i);
+                            submitInput = true;
+                        }
 
-                if (currentUIConnection.GetComponent<InputField>() != null && mouseOnAnything && InputManager.GetClick(0))
-                {
-                    currentUIConnection.OnClicked();
-                }
+                        if (player.GetRawButtonWithLock("Cancel", true))
+                        {
+                            cancelInput = true;
+                        }
 
-                if (!mouseOnAnything)
-                {
-                    int hori = playerOne.GetRawIntInputWithDelay("MenuHorizontal", 0.25f, Time.unscaledDeltaTime);
-                    int vert = playerOne.GetRawIntInputWithDelay("MenuVertical", 0.25f, Time.unscaledDeltaTime);
+                        if (currentUIConnection.GetComponent<InputField>() != null && mouseOnAnything && player.inputType == InputType.Keyboard && InputManager.GetClick(0))
+                        {
+                            currentUIConnection.OnClicked(i);
+                        }
 
-                    //Navigation
-                    if (hori > 0 && currentUIConnection.OnRight != null)
-                    {
-                        currentUIConnection = currentUIConnection.OnRight;
-                    }
+                        if (!mouseOnAnything)
+                        {
+                            int hori = player.GetRawIntInputWithDelay("MenuHorizontal", 0.25f, Time.unscaledDeltaTime);
+                            int vert = player.GetRawIntInputWithDelay("MenuVertical", 0.25f, Time.unscaledDeltaTime);
 
-                    if (hori < 0 && currentUIConnection.OnLeft != null)
-                    {
-                        currentUIConnection = currentUIConnection.OnLeft;
-                    }
+                            //Navigation
+                            if (hori > 0 && currentUIConnection.OnRight != null)
+                            {
+                                currentUIConnection = currentUIConnection.OnRight;
+                            }
 
-                    if (vert < 0 && currentUIConnection.OnUp != null)
-                    {
-                        currentUIConnection = currentUIConnection.OnUp;
-                    }
+                            if (hori < 0 && currentUIConnection.OnLeft != null)
+                            {
+                                currentUIConnection = currentUIConnection.OnLeft;
+                            }
 
-                    if (vert > 0 && currentUIConnection.OnDown != null)
-                    {
-                        currentUIConnection = currentUIConnection.OnDown;
+                            if (vert < 0 && currentUIConnection.OnUp != null)
+                            {
+                                currentUIConnection = currentUIConnection.OnUp;
+                            }
+
+                            if (vert > 0 && currentUIConnection.OnDown != null)
+                            {
+                                currentUIConnection = currentUIConnection.OnDown;
+                            }
+                        }
                     }
                 }
             }
