@@ -36,6 +36,7 @@ public class Transitions : MonoBehaviour
             if(wavePercent[i] > 0)
             {
                 float actualHeight = ((float)Screen.width / waves[i].width) * Screen.height;
+                GUI.color = Color.white;
                 GUI.DrawTexture(new Rect(0f, Screen.height * (1f - wavePercent[i]), Screen.width, actualHeight), waves[i]);
 
                 if (i == waves.Length - 1)

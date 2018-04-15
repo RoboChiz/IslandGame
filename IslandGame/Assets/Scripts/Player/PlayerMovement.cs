@@ -36,10 +36,11 @@ public class PlayerMovement : MonoBehaviour
     public AudioClip splashEnter, splashExit, swimmingSoundEffect, treadingSoundEffect;
     public AudioSource waterMaker;
 
+    private bool doneSplash = false;
+
     private void Start()
     {
         animator = GetComponentInChildren<Animator>();
-        splash = Resources.Load<GameObject>("Prefabs/Splash");
     }
 
     // Update is called once per frame
@@ -141,6 +142,11 @@ public class PlayerMovement : MonoBehaviour
             //Do Jump
             if(jump && (!isFalling || inWater) && !jumpLock)
             {
+                if(inWater)
+                {
+                    animator.SetTrigger("DoDolphinDive");
+                }
+
                 StartCoroutine(JumpOffset());
             }
         }
@@ -155,6 +161,13 @@ public class PlayerMovement : MonoBehaviour
             isJumping = false;
             GetComponent<FootSteps>().DoJump();
         }
+
+        RaycastHit waterHit;
+        Physics.Raycast(transform.position + (Vector3.up * 5f), Vector3.down, out waterHit, Mathf.Infinity, LayerMask.GetMask("Water"), QueryTriggerInteraction.Collide);
+        RaycastHit groundHit = new RaycastHit();
+        Physics.Raycast(transform.position + (Vector3.up * 5f), Vector3.down, out groundHit, Mathf.Infinity, ~(LayerMask.GetMask("Water") | LayerMask.GetMask("Ignore Raycast")), QueryTriggerInteraction.Collide);
+
+        overWater = (waterHit.point.y - groundHit.point.y > 0.6f);
 
         //Turn to Face Look Direction
         if (lastDirection != Vector3.zero)
@@ -185,7 +198,6 @@ public class PlayerMovement : MonoBehaviour
         }
 
         // -- Do Animation --
-
         animator.SetInteger("Speed", animationSpeed);
         animator.SetBool("IsJumping", isJumping);
         animator.SetBool("HasJumped", jumpLock);
@@ -201,13 +213,6 @@ public class PlayerMovement : MonoBehaviour
             waterTime = 5f;
             waterMaker.Stop();
             GetComponent<AudioSource>().PlayOneShot(splashExit);
-        }
-
-        if(inWater && !waterCheck)
-        {
-            StartCoroutine(DoSplash(transform.position));
-            GetComponent<AudioSource>().PlayOneShot(splashEnter);
-            waterMaker.Play();
         }
 
         if(inWater)
@@ -248,6 +253,11 @@ public class PlayerMovement : MonoBehaviour
         }
 
         waterCheck = inWater;
+
+        if(!inWater && doneSplash)
+        {
+            doneSplash = false;
+        }
 
         if(inWater && waterTime > 0f)
         {
@@ -319,5 +329,16 @@ public class PlayerMovement : MonoBehaviour
 
         yield return new WaitForSeconds(3f);
         Destroy(newSplash);
+    }
+
+    public void DoSplash()
+    {
+        if (!doneSplash)
+        {
+            doneSplash = true;
+            StartCoroutine(DoSplash(transform.position));
+            GetComponent<AudioSource>().PlayOneShot(splashEnter);
+            waterMaker.Play();
+        }
     }
 }

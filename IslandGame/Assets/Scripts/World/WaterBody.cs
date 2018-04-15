@@ -57,16 +57,17 @@ public class WaterBody : MonoBehaviour
                 RaycastHit groundHit = new RaycastHit();
                 if (Physics.Raycast(objectPos, Vector3.down, out groundHit, 15f, ~(LayerMask.GetMask("Water") | LayerMask.GetMask("Ignore Raycast")), QueryTriggerInteraction.Collide))
                 {
-                    float groundWaterDiff = hit.point.y - groundHit.point.y;
+                    float groundWaterDiff = Mathf.Abs(hit.point.y - groundHit.point.y);
 
                     //If the difference between the top of the water and the ground is less than the height of the player, presume we're above ground
                     if(groundWaterDiff < 0.5f)
                     {
                         isActuallyInWater = false;
                     }
-                    else if (groundWaterDiff < 5f)
+
+                    if(Mathf.Abs(objectPos.y - hit.point.y) < 0.25f)
                     {
-                        player.overWater = true;
+                        player.DoSplash();
                     }
 
                 }
