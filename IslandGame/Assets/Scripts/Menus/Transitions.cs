@@ -8,11 +8,14 @@ public class Transitions : MonoBehaviour
     private Texture2D whiteCube;
     private Color[] waveColours;
 
+    public Texture2D splashRing;
+    private float ringAlpha = 0f, ringRot = 0f, ringSize = 200f;
+
     public bool startWavesUp = false;
     public float[] wavePercent;
 
     private bool isWaving = false;
-    private const float endPercent = 1.4f, travelTime = 1f;
+    private const float endPercent = 2f, travelTime = 1.5f;
 
     private void Start()
     {
@@ -47,6 +50,32 @@ public class Transitions : MonoBehaviour
                     GUI.color = Color.white;
                 }
             }           
+        }
+
+        if(wavePercent.Length >= 1)
+        {
+            if(wavePercent[0] >= endPercent)
+            {
+                ringAlpha = Mathf.Lerp(ringAlpha, 1f, Time.deltaTime * 5f);
+            }
+            else
+            {
+                ringAlpha = Mathf.Lerp(ringAlpha, 0f, Time.deltaTime * 5f);
+            }
+
+            if(ringAlpha > 0f)
+            {
+                ringRot += Time.deltaTime * 25f;
+                ringSize = 200 + (Mathf.Sin(Time.time * 3f) * 25f);
+
+                GUI.color = new Color(1f,1f,1f,ringAlpha);
+
+                Vector2 pivotPoint = new Vector2(Screen.width - 150f, Screen.height - 150f);
+                GUIUtility.RotateAroundPivot(ringRot, pivotPoint);
+                GUI.DrawTexture(new Rect(pivotPoint.x - (ringSize / 2f), pivotPoint.y - (ringSize / 2f), ringSize, ringSize), splashRing);
+                GUIUtility.RotateAroundPivot(-ringRot, pivotPoint);
+                GUI.color = Color.white;
+            }
         }
     }
 

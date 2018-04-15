@@ -1,8 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using UnityEditor;
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 public class BoidManager : MonoBehaviour
 {
@@ -42,6 +44,7 @@ public class BoidManager : MonoBehaviour
         //Do Grid Cast
         if (updateGridCast)
         {
+#if UNITY_EDITOR
             int count = 0, totalCount = 0;
             groundHeight = new float[(int)(xSize * scale) + 1, (int)(zSize * scale) + 1];
             string temporaryTextFileName = (groundHeight.GetLength(0) + "," + groundHeight.GetLength(1) + ",");
@@ -80,6 +83,7 @@ public class BoidManager : MonoBehaviour
             File.WriteAllText(Application.dataPath + "/Resources/" + "IslandHeightMap.txt", temporaryTextFileName);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
+#endif
         }
         else
         {
@@ -123,6 +127,8 @@ public class BoidManager : MonoBehaviour
                 count++;
 
             }
+
+            yield return null;
         }
     }
 
