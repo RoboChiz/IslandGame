@@ -21,7 +21,11 @@ public class MainMenu : MonoBehaviour
 
     public void NewGame()
     {
-        SceneManager.LoadScene("Gameplay_Test");
+        FindObjectOfType<Transitions>().DoWave(true);
+        FindObjectOfType<SaveDataManager>().LoadLevelSave("Gameplay_Test", null);
+
+        mainMenu.SetActive(false);
+        loadScreen.SetActive(false);
     }
 
     public void LoadGame()
@@ -164,8 +168,6 @@ public class MainMenu : MonoBehaviour
     private void LoadLevel(string _fileName)
     {
         FindObjectOfType<Transitions>().DoWave(true);
-
-
         FindObjectOfType<SaveDataManager>().LoadLevelSave("Gameplay_Test", _fileName);
 
         mainMenu.SetActive(false);

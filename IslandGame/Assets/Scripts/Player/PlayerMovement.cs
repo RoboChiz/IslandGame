@@ -145,6 +145,8 @@ public class PlayerMovement : MonoBehaviour
                 if(inWater)
                 {
                     animator.SetTrigger("DoDolphinDive");
+                    doneSplash = false;
+                    DoSplash();
                 }
 
                 StartCoroutine(JumpOffset());

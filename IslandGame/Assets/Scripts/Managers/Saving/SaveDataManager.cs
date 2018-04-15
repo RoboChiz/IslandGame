@@ -111,7 +111,14 @@ public class SaveDataManager : MonoBehaviour
 
         yield return null;
 
-        FindObjectOfType<SaveDataManager>().Load(_saveLocation);
+        if (_saveLocation != null)
+        {
+            FindObjectOfType<SaveDataManager>().Load(_saveLocation);
+        }
+        else
+        {
+            FindObjectOfType<Transitions>().DoWave(false);
+        }
     }
 
     //----------------------------------Changeable Getters/Setters-----------------------------------
