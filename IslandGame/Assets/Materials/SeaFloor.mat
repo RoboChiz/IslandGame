@@ -27,7 +27,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _CausticMap:
-        m_Texture: {fileID: 2800000, guid: b90e96dfc9fc84c41b264751ef81af76, type: 3}
+        m_Texture: {fileID: 2800000, guid: 8d0adfa39995e4b4bb5346e68d0a13b4, type: 3}
         m_Scale: {x: 1.5, y: 1.5}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
