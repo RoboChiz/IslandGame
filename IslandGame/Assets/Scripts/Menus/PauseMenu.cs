@@ -119,7 +119,7 @@ public class PauseMenu : MonoBehaviour
         isAnimating = false;
         pauseMenu.SetActive(false);
         eventSystem.enabled = true;
-    }
+    } 
 
     private IEnumerator SlideTo(Vector2 _start, Vector2 _end, float _travelTime)
     {
@@ -137,7 +137,8 @@ public class PauseMenu : MonoBehaviour
 
     public void QuitGame()
     {
-        Application.Quit();
+        FindObjectOfType<Transitions>().DoWave(true);
+        FindObjectOfType<SaveDataManager>().ReturnToMenu();
     }
 
     public void ShowSaveSlots()

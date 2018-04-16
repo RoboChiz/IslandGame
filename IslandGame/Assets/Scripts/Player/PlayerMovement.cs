@@ -29,7 +29,7 @@ public class PlayerMovement : MonoBehaviour
     Queue<float> lastRotAngles = new Queue<float>();
 
     private Animator animator;
-    public ParticleSystem waterDrops, localWave, movingWave;
+    public ParticleSystem waterDrops, movingWave;
     public float waterTime = 0.0f;
     private bool waterCheck;
     public GameObject splash;
@@ -219,10 +219,9 @@ public class PlayerMovement : MonoBehaviour
 
         if(inWater)
         {
-
-            if (!localWave.isPlaying)
+            if (!movingWave.isPlaying)
             {
-                localWave.Play();
+                movingWave.Play();
             }
 
             if (animationSpeed == 0)
@@ -232,7 +231,9 @@ public class PlayerMovement : MonoBehaviour
                     waterMaker.clip = treadingSoundEffect;
                     waterMaker.Play();
                 }
-                movingWave.Stop();
+
+                var emission = movingWave.emission;
+                emission.rateOverTime = 1f;
             }
             else
             {
@@ -242,15 +243,13 @@ public class PlayerMovement : MonoBehaviour
                     waterMaker.Play();
                 }
 
-                if (!movingWave.isPlaying)
-                {
-                    movingWave.Play();
-                }
+                var emission = movingWave.emission;
+                emission.rateOverTime = 4f;
+
             }
         }
         else
         {
-            localWave.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
             movingWave.Stop(true, ParticleSystemStopBehavior.StopEmitting);
         }
 

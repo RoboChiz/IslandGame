@@ -305,7 +305,16 @@ public class BoidManager : MonoBehaviour
     public float GetHeight(float _x, float _z)
     {
         int minX = (int)oceanSizeMinX, minZ = (int)oceanSizeMinZ;
-        return groundHeight[Mathf.RoundToInt((_x - minX) * scale), Mathf.RoundToInt((_z - minZ) * scale)];
+        int finalX = Mathf.RoundToInt((_x - minX) * scale), finalZ = Mathf.RoundToInt((_z - minZ) * scale);
+
+        if (finalX >= 0 && finalX < groundHeight.GetLength(0) && finalZ > 0 && finalZ < groundHeight.GetLength(1))
+        {
+            return groundHeight[finalX, finalZ];
+        }
+        else
+        {
+            return -10f;
+        }
     }
 
     public class Boid

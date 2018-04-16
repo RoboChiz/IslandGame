@@ -15,7 +15,7 @@ public class Transitions : MonoBehaviour
     public float[] wavePercent;
 
     private bool isWaving = false;
-    private const float endPercent = 2f, travelTime = 1.5f;
+    private const float endPercent = 1f, travelTime = 1.5f;
 
     private void Start()
     {
@@ -38,15 +38,17 @@ public class Transitions : MonoBehaviour
         {
             if(wavePercent[i] > 0)
             {
-                float actualHeight = ((float)Screen.width / waves[i].width) * Screen.height;
                 GUI.color = Color.white;
-                GUI.DrawTexture(new Rect(0f, Screen.height * (1f - wavePercent[i]), Screen.width, actualHeight), waves[i]);
+                float startPos = -waves[i].height;
+                float endPos = Screen.height + waves[i].height;
+                float yPos = Mathf.Lerp(endPos, startPos, wavePercent[i]);
+                GUI.DrawTexture(new Rect(0, yPos, Screen.width, waves[i].height), waves[i]);
 
                 if (i == waves.Length - 1)
                 {
-                    float startPos = Screen.height * (1f - wavePercent[i]) + actualHeight;
+                    float startBarHeight = yPos + waves[i].height - 5f;
                     GUI.color = waveColours[i];
-                    GUI.DrawTexture(new Rect(0f, startPos, Screen.width, Screen.height - startPos + 1), whiteCube);
+                    GUI.DrawTexture(new Rect(0f, startBarHeight, Screen.width, -startBarHeight + Screen.height), whiteCube);
                     GUI.color = Color.white;
                 }
             }           

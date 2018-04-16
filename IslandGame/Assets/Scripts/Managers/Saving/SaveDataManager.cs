@@ -121,6 +121,22 @@ public class SaveDataManager : MonoBehaviour
         }
     }
 
+    public void ReturnToMenu()
+    {
+        StartCoroutine(ActualReturnToMenu());
+    }
+
+    private IEnumerator ActualReturnToMenu()
+    {
+        //Wait for Transitions
+        yield return new WaitForSeconds(3f);
+        yield return SceneManager.LoadSceneAsync("MainMenu");
+
+        yield return null;
+
+        FindObjectOfType<Transitions>().DoWave(false);
+    }
+
     //----------------------------------Changeable Getters/Setters-----------------------------------
 
     //-----------------------------------------Useful Methods----------------------------------------
